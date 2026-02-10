@@ -9,11 +9,11 @@ from api.assets.Resource import Resource, ResourceType
 from api.assets.Texture import Texture
 
 RENDER_WIDTH, RENDER_HEIGHT = 640, 360
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT = 640, 360
 NAME = "Omicronde"
 FPS = 60
 
-game = Game((WIDTH, HEIGHT), NAME, pg.RESIZABLE, FPS, (RENDER_WIDTH, RENDER_HEIGHT))
+game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS)
 
 game.set_icon(join("assets", "icon.jpg"))
 
