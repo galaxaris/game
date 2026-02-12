@@ -1,3 +1,7 @@
+# To run the game from CMD or VS Code terminal (PyCharm runs strangely)
+# Execute the program with "python -m game.main" from the root directory of the project
+
+
 from os.path import join
 
 from api.Game import Game
