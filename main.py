@@ -17,7 +17,7 @@ WIDTH, HEIGHT = 1600, 900
 NAME = "Omicronde"
 FPS = 60
 
-game = Game((WIDTH, HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, (RENDER_WIDTH, RENDER_HEIGHT))
+game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS)
 
 game.set_icon(join("assets", "icon.jpg"))
 
