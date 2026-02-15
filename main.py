@@ -14,7 +14,7 @@ from api.assets.Resource import Resource, ResourceType
 from api.assets.Texture import Texture
 from api.entity.Player import Player
 from api.environment.Background import Background
-from api.environment.Parallax import ParallaxImage, ParallaxBackground
+from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Solid import Solid
 from api.utils import Debug
 
@@ -34,7 +34,6 @@ game.enable_debug()
 glob = Resource(ResourceType.GLOBAL, "assets")
 anim = Animation(Texture("run.png", glob), 12, 100)
 
-icon = Texture("icon.jpg", glob)
 blue_tile = Texture("Blue.png", glob)
 
 t_p1 = Texture("0.9x parallax-demon-woods-close-trees.png", glob)
@@ -53,14 +52,13 @@ for coll in collections:
     coll.set_color((200, 200, 200))
 
 game.screen.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
-game.screen.camera.set_limits((-RENDER_WIDTH, -RENDER_HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT))
+game.screen.camera.set_limits((-RENDER_WIDTH*3, -RENDER_HEIGHT*3), (RENDER_WIDTH*3, RENDER_HEIGHT*3))
 
 p_bg = ParallaxBackground((RENDER_WIDTH, RENDER_HEIGHT), [
-    ParallaxImage(pg.Vector2(0.9, 0.45), t_p1),
-    ParallaxImage(pg.Vector2(0.7, 0.35), t_p2),
-    ParallaxImage(pg.Vector2(0.5, 0.25), t_p3),
-    ParallaxImage(pg.Vector2(0.25, 0.125), t_p4)
-])
+    ParallaxLayer(pg.Vector2(0.9, 0.45), t_p1),
+    ParallaxLayer(pg.Vector2(0.7, 0.35), t_p2),
+    ParallaxLayer(pg.Vector2(0.5, 0.25), t_p3),
+], (75, 105, 52))
 
 bg = Background(blue_tile,True,(RENDER_WIDTH, RENDER_HEIGHT))
 screen = game.screen
@@ -75,6 +73,7 @@ def debug_info():
 
     game.debug("Jump : " + ("True" if player.jump else "False"), "right")
     game.debug("Fall : " + ("True" if player.fall else "False"), "right")
+    game.debug("Boost : " + ("True" if player.boost else "False"), "right")
     game.debug(f"Velocity : {player.vel.x:.1f} | {player.vel.y:.1f}" , "right")
 
     if player.collided_objs:
