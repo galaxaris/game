@@ -1,14 +1,11 @@
 # To run the game from CMD or VS Code terminal (PyCharm runs strangely)
 # Execute the program with "python -m game.main" from the root directory of the project
-from math import floor
-from os.path import join
 
-from pygame.surface import Surface
+from os.path import join
 
 from api.Game import Game
 import pygame as pg
 
-from api.UI.Text import Text
 from api.assets.Animation import Animation
 from api.assets.Resource import Resource, ResourceType
 from api.assets.Texture import Texture
@@ -16,7 +13,6 @@ from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Solid import Solid
-from api.utils import Debug
 
 RENDER_WIDTH, RENDER_HEIGHT = 640, 360
 WIDTH, HEIGHT = 1600, 900
@@ -45,14 +41,14 @@ player = Player((-10, 0), (50, 50))
 player.set_gravity(0.5)
 player.set_position((310,410))
 
-collections = [Solid((x,500), (100, 100)) for x in range(0, 500, 100)]
-collections += [Solid((100,y), (100, 100)) for y in range(200, 700, 100)]
+collections = [Solid((x,600), (100, 100)) for x in range(0, 2000, 100)]
+collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 
 for coll in collections:
     coll.set_color((200, 200, 200))
 
 game.screen.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
-game.screen.camera.set_limits((-RENDER_WIDTH*3, -RENDER_HEIGHT*3), (RENDER_WIDTH*3, RENDER_HEIGHT*3))
+game.screen.camera.set_limits((-RENDER_WIDTH*3, -RENDER_HEIGHT-100), (RENDER_WIDTH*3, RENDER_HEIGHT-100))
 
 p_bg = ParallaxBackground((RENDER_WIDTH, RENDER_HEIGHT), [
     ParallaxLayer(pg.Vector2(0.9, 0.45), t_p1),
@@ -88,7 +84,6 @@ def loop():
 
     player.set_animation(anim)
 
-    
     screen.set_layer(1, "#object")
     screen.set_layer(2, "#player")
 
