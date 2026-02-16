@@ -47,6 +47,7 @@ player = Player((-10, 0), (50, 50))
 player.set_gravity(0.5)
 player.set_position((310,410))
 
+
 player.bind_animations({
     "run": run_anim,
     "run_fast": run_fast_anim,
@@ -56,7 +57,7 @@ player.bind_animations({
 
 })
 
-collections = [Solid((x,600), (100, 100)) for x in range(0, 2000, 100)]
+collections = [Solid((x,600), (100, 100)) for x in range(0, 1000, 100)]
 collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (200, 50))]
@@ -95,8 +96,6 @@ def loop():
     screen.add(player, "#player")
     screen.set_background(p_bg)
     screen.camera.focus(player)
-
-
 
 
 def main():
