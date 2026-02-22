@@ -29,8 +29,8 @@ game.enable_debug()
 
 glob = Resource(ResourceType.GLOBAL, "assets")
 
-run_anim = Animation(Texture("player/run.png", glob), 12, 100)
-run_fast_anim = Animation(Texture("player/run.png", glob), 12, 70)
+run_anim = Animation(Texture("player/run.png", glob), 12, 70)
+run_fast_anim = Animation(Texture("player/run.png", glob), 12, 50)
 idle_anim = Animation(Texture("player/idle.png", glob), 11, 100)
 jump_anim = Texture("player/jump.png", glob)
 fall_anim = Texture("player/fall.png", glob)
