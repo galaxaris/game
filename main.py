@@ -6,6 +6,7 @@ from os.path import join
 from api.Game import Game
 import pygame as pg
 
+from api.UI.Dialog import Dialog
 from api.UI.Text import Text
 from api.UI.TextBox import TextBox
 from api.assets.Animation import Animation
@@ -84,14 +85,14 @@ icon = Texture("icon.jpg", glob)
 
 
 text = Text((110, 500), 32, "Galaxaris")
-textbox = TextBox("Title Sample", "This is a text box", "**/assets/FRm6x11.ttf", texture=icon, image_side="right")
-textbox.set_text("**/assets/FRm6x11.ttf",
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",)
+dialog = Dialog("**/assets/FRm6x11.ttf")
+dialog.add_character("Galaxaris", icon)
+dialog.add_character("Omicronde", icon)
+dialog.add_message("Galaxaris", "Hello there, I'm Galaxaris !")
+dialog.add_message("Omicronde", "And I'm Omicronde, nice to meet you !")
+dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game engine made in Python with Pygame. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel sapien eget nunc commodo efficitur. Sed ac nisl a enim efficitur efficitur.")
 
-
-scene.UI.add("test", textbox)
+scene.UI.add("test", dialog)
 
 def debug_info():
     game.register_debug_entity(player)
