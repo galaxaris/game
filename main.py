@@ -6,6 +6,8 @@ from os.path import join
 from api.Game import Game
 import pygame as pg
 
+from api.UI.Text import Text
+from api.UI.TextBox import TextBox
 from api.assets.Animation import Animation
 from api.assets.Resource import Resource, ResourceType
 from api.assets.Texture import Texture
@@ -13,6 +15,7 @@ from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Solid import Solid
+from api.utils.Inputs import get_inputs
 
 RENDER_WIDTH, RENDER_HEIGHT = 640, 360
 WIDTH, HEIGHT = 1600, 900
@@ -60,13 +63,13 @@ player.bind_animations({
 collections = [Solid((x,600), (100, 100)) for x in range(0, 1000, 100)]
 collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
-collections += [Solid((550, 500), (200, 50))]
+collections += [Solid((550, 500), (500, 50))]
 
 for coll in collections:
     coll.set_color((200, 200, 200))
 
-game.screen.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
-game.screen.camera.set_limits((47, -RENDER_HEIGHT-100), (RENDER_WIDTH*3, RENDER_HEIGHT-100))
+game.scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
+game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*3, RENDER_HEIGHT-100))
 
 p_bg = ParallaxBackground((RENDER_WIDTH, RENDER_HEIGHT), [
     ParallaxLayer(pg.Vector2(0.9, 0.45), t_p1),
@@ -75,27 +78,49 @@ p_bg = ParallaxBackground((RENDER_WIDTH, RENDER_HEIGHT), [
 ], (75, 105, 52))
 
 bg = Background(blue_tile,True,(RENDER_WIDTH, RENDER_HEIGHT))
-screen = game.screen
+scene = game.scene
 
+icon = Texture("icon.jpg", glob)
+
+
+text = Text((110, 500), 32, "Galaxaris")
+textbox = TextBox("Title Sample", "This is a text box", "**/assets/FRm6x11.ttf", texture=icon, image_side="right")
+textbox.set_text("**/assets/FRm6x11.ttf",
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip",)
+
+
+scene.UI.add("test", textbox)
 
 def debug_info():
     game.register_debug_entity(player)
 
 
 def loop():
-    game.screen.default_surface.fill((0,0,0,0))
+    game.scene.default_surface.fill((0,0,0,0))
+ 
 
-    screen.set_layer(1, "#object")
-    screen.set_layer(2, "#player")
+    scene.set_layer(1, "#object")
+    scene.set_layer(2, "#player")
 
     debug_info()
 
     for colls in collections:
-        screen.add(colls, "#object")
+        scene.add(colls, "#object")
 
-    screen.add(player, "#player")
-    screen.set_background(p_bg)
-    screen.camera.focus(player)
+    scene.add(player, "#player")
+
+    inputs = pg.key.get_pressed()
+
+    if inputs[pg.K_a]:
+        scene.UI.show("test")
+
+
+
+    scene.set_background(p_bg)
+    scene.camera.focus(player)
+
 
 
 def main():
