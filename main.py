@@ -18,7 +18,7 @@ from api.environment.Solid import Solid
 from api.utils.Inputs import get_inputs
 
 RENDER_WIDTH, RENDER_HEIGHT = 640, 360
-WIDTH, HEIGHT = 1600, 900
+WIDTH, HEIGHT = 1280, 720
 NAME = "Omicronde"
 FPS = 60
 
