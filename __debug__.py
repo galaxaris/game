@@ -74,9 +74,9 @@ collections += [Solid((550, 500), (500, 50))]
 for coll in collections:
     coll.set_color((200, 200, 200))
 
-#Add a killbox
-#killbox = Trigger_KillBox((-200, HEIGHT - 100), (1000, 10), ["player"], game)
-#collections += [killbox]
+#Add a killbox at 100px from the bottom of the screen, that kills the player on contact
+killbox = Trigger((0, HEIGHT-100), (WIDTH, 1000), ["player"], [lambda obj: obj.kill(game)], once=False)
+collections += [killbox]
 
 game.scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
 game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*3, RENDER_HEIGHT-100))
