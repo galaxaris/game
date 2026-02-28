@@ -1,3 +1,7 @@
+"""
+=== Debug file for the game ===
+"""
+
 # To run the game from CMD or VS Code terminal (PyCharm runs strangely)
 # Execute the program with "python -m game.main" from the root directory of the project
 
@@ -17,6 +21,7 @@ from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Solid import Solid
 from api.utils.Inputs import get_inputs
+from api.environment.Trigger import Trigger, Trigger_KillBox
 
 RENDER_WIDTH, RENDER_HEIGHT = 640, 360
 WIDTH, HEIGHT = 1600, 900
@@ -61,13 +66,23 @@ player.bind_animations({
 
 })
 
-collections = [Solid((x,600), (100, 100)) for x in range(0, 1000, 100)]
+collections = []
+collections += [Solid((x,600), (100, 100)) for x in range(0, 400, 100)] #Floor
+collections += [Solid((x,600), (100, 100)) for x in range(500, 1000, 100)] #Floor, leaving a gap for the player to fall through
 collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
 for coll in collections:
     coll.set_color((200, 200, 200))
+
+#Add a killbox at 100px from the bottom of the screen, that kills the player on contact
+#killbox = Trigger((0, HEIGHT), (WIDTH*10, 1000), ["player"], [lambda obj: obj.kill(game)], once=False)
+killbox = Trigger_KillBox((0, HEIGHT+400), (1000, 1000), ["player"], game, once=False)
+collections += [killbox]
+#Killbox2 to handle the case of very long width GameObject (see TODO in Trigger_KillBox class)
+killbox2 = Trigger_KillBox((1000, HEIGHT+400), (1000, 1000), ["player"], game, once=False)
+collections += [killbox2]
 
 game.scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
 game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*3, RENDER_HEIGHT-100))
