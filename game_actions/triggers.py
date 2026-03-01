@@ -11,7 +11,7 @@ def create_killBox(collections, lenght, game, game_heigth):
     Adds a killbox of specified lenght, 400px behind the back of screen
     """
     for x in range(0, lenght*1000, 1000):
-        collections += [Trigger_KillBox((x, game_heigth+400), (1000, 100), ["player"], game, once=False)]
+        collections += [Trigger_KillBox((x, game_heigth+400), (1000, 100), ["player"], once=False)]
 
 
 def print_alert_msg(msg):
