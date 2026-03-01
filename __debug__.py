@@ -5,11 +5,12 @@
 # To run the game from CMD or VS Code terminal (PyCharm runs strangely)
 # Execute the program with "python -m game.main" from the root directory of the project
 
+#Libs
 from os.path import join
-
-from api.Game import Game
 import pygame as pg
 
+#API
+from api.Game import Game
 from api.UI.Dialog import Dialog
 from api.UI.Text import Text
 from api.UI.TextBox import TextBox
@@ -22,6 +23,9 @@ from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Solid import Solid
 from api.utils.Inputs import get_inputs
 from api.environment.Trigger import Trigger, Trigger_KillBox
+
+#Game modules
+from game.game_actions.triggers import *
 
 RENDER_WIDTH, RENDER_HEIGHT = 640, 360
 WIDTH, HEIGHT = 1600, 900
@@ -66,6 +70,7 @@ player.bind_animations({
 
 })
 
+#Envir blocks
 collections = []
 collections += [Solid((x,600), (100, 100)) for x in range(0, 400, 100)] #Floor
 collections += [Solid((x,600), (100, 100)) for x in range(500, 1000, 100)] #Floor, leaving a gap for the player to fall through
@@ -76,13 +81,12 @@ collections += [Solid((550, 500), (500, 50))]
 for coll in collections:
     coll.set_color((200, 200, 200))
 
-#Add a killbox at 100px from the bottom of the screen, that kills the player on contact
-#killbox = Trigger((0, HEIGHT), (WIDTH*10, 1000), ["player"], [lambda obj: obj.kill(game)], once=False)
-killbox = Trigger_KillBox((0, HEIGHT+400), (1000, 1000), ["player"], game, once=False)
-collections += [killbox]
-#Killbox2 to handle the case of very long width GameObject (see TODO in Trigger_KillBox class)
-killbox2 = Trigger_KillBox((1000, HEIGHT+400), (1000, 1000), ["player"], game, once=False)
-collections += [killbox2]
+#Triggers
+create_killBox(collections, 5, game, HEIGHT)
+
+collections += [Trigger((700, 400), (100, 100), ["player"], [lambda obj: print_alert_msg("Trigger that can be actived each time triggered!")])]
+collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(collections)], once=True)]
+
 
 game.scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
 game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*3, RENDER_HEIGHT-100))
