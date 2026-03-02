@@ -20,7 +20,7 @@ def print_alert_msg(msg):
 def summon_stairs1(collections):
     print("Summoning stairs... - To be activated only once!")
     y=451
-    for x in range(1100, 2000, 100):
+    for x in range(1100, 5000, 100):
         step = Solid((x, y), (30, 10))
         step.set_color((155, 255, 55))
         collections += [step]
