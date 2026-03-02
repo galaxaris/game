@@ -56,9 +56,8 @@ t_p2 = Texture("0.70x parallax-demon-woods-mid-trees.png", glob)
 t_p3 = Texture("0.5x parallax-demon-woods-far-trees.png", glob)
 t_p4 = Texture("0.25x parallax-demon-woods-bg.png", glob)
 
-player = Player((-10, 0), (50, 50))
+player = Player((310,410), (50, 50))
 player.set_gravity(0.5)
-player.set_position((310,410))
 
 
 player.bind_animations({
