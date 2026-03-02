@@ -1,7 +1,7 @@
 """
 === Debug file for the game ===
 """
-
+import os
 # To run the game from CMD or VS Code terminal (PyCharm runs strangely)
 # Execute the program with "python -m game.main" from the root directory of the project
 
@@ -39,6 +39,10 @@ game.set_icon(join("assets", "icon.jpg"))
 #DEBUG MODE
 
 game.enable_debug()
+game.toggle_fullscreen(True)
+
+if os.environ.get("NO_FULLSCREEN") == "1":
+    game.toggle_fullscreen(False)
 
 glob = Resource(ResourceType.GLOBAL, "assets")
 
