@@ -17,6 +17,7 @@ from api.UI.TextBox import TextBox
 from api.assets.Animation import Animation
 from api.assets.Resource import Resource, ResourceType
 from api.assets.Texture import Texture
+from api.engine.Scene import Scene
 from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
@@ -90,7 +91,6 @@ create_killBox(collections, 5, game, HEIGHT)
 collections += [Trigger((700, 400), (100, 100), ["player"], [lambda obj: print_alert_msg("Trigger that can be actived each time triggered!")])]
 collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(collections)], once=True)]
 
-
 game.scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
 game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*3, RENDER_HEIGHT-100))
 
@@ -116,6 +116,14 @@ dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game eng
 
 scene.UI.add("test", dialog)
 
+new_scene = Scene((RENDER_WIDTH, RENDER_HEIGHT))
+new_scene.set_background(bg)
+new_scene.add(text)
+
+new_scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
+
+
+
 def debug_info():
     game.register_debug_entity(player)
 
@@ -133,18 +141,24 @@ def loop():
         scene.add(colls, "#object")
 
     scene.add(player, "#player")
+    new_scene.add(player, "#player")
+    new_scene.camera.focus(player)
 
     inputs = pg.key.get_pressed()
 
     if inputs[pg.K_a]:
         scene.UI.show("test")
 
-
+    if inputs[pg.K_o]:
+        player.kill()
 
     scene.set_background(p_bg)
     scene.camera.focus(player)
 
-
+    if inputs[pg.K_p]:
+        game.scene = new_scene
+    if inputs[pg.K_m]:
+        game.scene = scene
 
 def main():
     game.run(loop)
