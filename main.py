@@ -49,7 +49,8 @@ WIDTH, HEIGHT = 1280, 720
 NAME = "Omicronde"
 FPS = 60
 
-##### Initializing the game #####
+#%%############### Initializing the game ##############
+#######################################################
 game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS)
 
 game.set_icon(join("assets", "icon.jpg"))
@@ -128,11 +129,11 @@ for coll in collections:
 
 ### Predefined triggers
 ### Creates a killBox that kills the player when falling too much (y > HEIGHT)
-create_killBox(collections, 5, game, HEIGHT)
+create_killBox(collections, 50, game, HEIGHT)
 
 ### Custom triggers
 collections += [Trigger((700, 400), (100, 100), ["player"], [lambda obj: print_alert_msg("Trigger that can be actived each time triggered!")])]
-collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(collections)], once=True)]
+collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(collections, HEIGHT)], once=True)]
 
 #%%################ CAMERA SETUP ####################
 #####################################################
@@ -140,7 +141,7 @@ collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_st
 ### Offsets the camera
 #To center the player. Thus the camera follows the player when moving, while keeping it centered on the screen.
 game.scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
-game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*3, RENDER_HEIGHT-100))
+game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*20, RENDER_HEIGHT-100))
 
 #%%################ BACKGROUND SETUP ####################
 ########################################################
