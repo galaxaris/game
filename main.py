@@ -56,7 +56,7 @@ FPS = 60
 #######################################################
 game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS)
 
-game.set_icon(join("assets", "icon.jpg"))
+game.set_icon(join("assets", "Images", "icon.jpg"))
 
 ### DEBUG MODE ###
 
@@ -73,19 +73,19 @@ game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1")
 glob = Resource(ResourceType.GLOBAL, "assets")
 
 #Loads animations
-run_anim = Animation(Texture("player/run.png", glob), 12, 70)
-run_fast_anim = Animation(Texture("player/run.png", glob), 12, 50)
-idle_anim = Animation(Texture("player/idle.png", glob), 11, 100)
-jump_anim = Texture("player/jump.png", glob)
-fall_anim = Texture("player/fall.png", glob)
+run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 70)
+run_fast_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 50)
+idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle.png", glob), 11, 100)
+jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
+fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", glob)
 
 
-blue_tile = Texture("Blue.png", glob)
+blue_tile = Texture("Images\\Background\\Tiles\\Blue.png", glob)
 #Loads parallax layers
-t_p1 = Texture("0.9x parallax-demon-woods-close-trees.png", glob)
-t_p2 = Texture("0.70x parallax-demon-woods-mid-trees.png", glob)
-t_p3 = Texture("0.5x parallax-demon-woods-far-trees.png", glob)
-t_p4 = Texture("0.25x parallax-demon-woods-bg.png", glob)
+t_p1 = Texture("Images\\Background\\Parallax\\Forest\\0.9x parallax-demon-woods-close-trees.png", glob)
+t_p2 = Texture("Images\\Background\\Parallax\\Forest\\0.70x parallax-demon-woods-mid-trees.png", glob)
+t_p3 = Texture("Images\\Background\\Parallax\\Forest\\0.5x parallax-demon-woods-far-trees.png", glob)
+t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods-bg.png", glob)
 
 
 
@@ -157,12 +157,12 @@ p_bg = ParallaxBackground((RENDER_WIDTH, RENDER_HEIGHT), [
 bg = Background(blue_tile,True,(RENDER_WIDTH, RENDER_HEIGHT))
 scene = game.scene
 
-icon = Texture("icon.jpg", glob)
+icon = Texture("Images\\icon.jpg", glob)
 
 #%%################ UI setup ####################
 ################################################
 text = Text((110, 500), 32, "Galaxaris")
-dialog = Dialog("**/assets/FRm6x11.ttf")
+dialog = Dialog("**/assets/Fonts/FRm6x11.ttf")
 dialog.add_character("Galaxaris", icon)
 dialog.add_character("Omicronde", icon)
 dialog.add_message("Galaxaris", "Hello there, I'm Galaxaris !")
