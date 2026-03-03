@@ -1,4 +1,5 @@
 """
+=== Debug file for the game ===
 === Omicronde Project Game - Galaxaris ===
 
 This is the entry point of the Omicronde Game. Built using the Omicronde API.
@@ -18,6 +19,7 @@ import os
 # To run the game from CMD or VS Code terminal (PyCharm runs strangely)
 # Execute the program with "python -m game.main" from the root directory of the project
 
+
 ### Libs ###
 from os.path import join
 import pygame as pg
@@ -30,6 +32,7 @@ from api.UI.TextBox import TextBox
 from api.assets.Animation import Animation
 from api.assets.Resource import Resource, ResourceType
 from api.assets.Texture import Texture
+from api.engine.Scene import Scene
 from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
@@ -56,13 +59,12 @@ game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE |
 game.set_icon(join("assets", "icon.jpg"))
 
 ### DEBUG MODE ###
+
 game.enable_debug()
-game.toggle_fullscreen(True)
 
 #Toggles fullscreen
-if os.environ.get("NO_FULLSCREEN") == "1":
-    game.toggle_fullscreen(False)
 
+game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1")
 
 #%%################ LOADING ASSETS ####################
 #######################################################
@@ -77,14 +79,15 @@ idle_anim = Animation(Texture("player/idle.png", glob), 11, 100)
 jump_anim = Texture("player/jump.png", glob)
 fall_anim = Texture("player/fall.png", glob)
 
-#Loads the background tile (if no parallax)
-blue_tile = Texture("Blue.png", glob)
 
+blue_tile = Texture("Blue.png", glob)
 #Loads parallax layers
 t_p1 = Texture("0.9x parallax-demon-woods-close-trees.png", glob)
 t_p2 = Texture("0.70x parallax-demon-woods-mid-trees.png", glob)
 t_p3 = Texture("0.5x parallax-demon-woods-far-trees.png", glob)
 t_p4 = Texture("0.25x parallax-demon-woods-bg.png", glob)
+
+
 
 
 #%%################ PLAYER INITIALIZATION ####################
@@ -101,7 +104,6 @@ player.bind_animations({
     "fall": fall_anim,
 
 })
-
 
 #%%################ ENVIRONMENT SETUP ####################
 ##########################################################
@@ -120,7 +122,7 @@ collections += [Solid((550, 500), (500, 50))]
 for coll in collections:
     coll.set_color((200, 200, 200))
 
-#### TRIGGERS #### 
+#### TRIGGERS ####
 # (see game/game_actions/triggers.py for the functions (callbacks) called by the triggers)
 # A trigger is an invisible area that executes a callback function when the targeted object enter it.
 
@@ -155,14 +157,10 @@ p_bg = ParallaxBackground((RENDER_WIDTH, RENDER_HEIGHT), [
 bg = Background(blue_tile,True,(RENDER_WIDTH, RENDER_HEIGHT))
 scene = game.scene
 
-#%%################ UI setup ####################
-################################################
-
-# TODO: to be implemented in a JSON BDD (when we will have a level system, with the editor)
-
 icon = Texture("icon.jpg", glob)
 
-### Sample dialogs.
+#%%################ UI setup ####################
+################################################
 text = Text((110, 500), 32, "Galaxaris")
 dialog = Dialog("**/assets/FRm6x11.ttf")
 dialog.add_character("Galaxaris", icon)
@@ -173,24 +171,23 @@ dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game eng
 
 scene.UI.add("test", dialog)
 
+new_scene = Scene((RENDER_WIDTH, RENDER_HEIGHT))
+new_scene.set_background(bg)
+new_scene.add(text)
+
+new_scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
+
+
+
 #%%############### UTILS FUNCTIONS ####################
 #######################################################
-
 def debug_info():
-    """
-    FOR DEBUG PURPOSES ONLY -
-
-    Displays debug information on the screen.
-    """
     game.register_debug_entity(player)
 
 
 #%%################ MAIN LOOP ####################
 ##################################################
 def loop():
-    """
-    Main game loop. Handles game logic, rendering, and input processing. Called every frame (60fps) by the game engine (API).
-    """
     game.scene.default_surface.fill((0,0,0,0))
  
 
@@ -203,17 +200,24 @@ def loop():
         scene.add(colls, "#object")
 
     scene.add(player, "#player")
+    new_scene.add(player, "#player")
+    new_scene.camera.focus(player)
 
     inputs = pg.key.get_pressed()
 
     if inputs[pg.K_a]:
         scene.UI.show("test")
 
-
+    if inputs[pg.K_o]:
+        player.kill()
 
     scene.set_background(p_bg)
     scene.camera.focus(player)
 
+    if inputs[pg.K_p]:
+        game.scene = new_scene
+    if inputs[pg.K_m]:
+        game.scene = scene
 
 def main():
     """
@@ -222,7 +226,8 @@ def main():
     game.run(loop)
 
 
-#%%################ RUNNING THE GAME GUYS ####################
+
+#%%################ RUNNING THE GAME #########################
 ##############################################################
 if __name__ == "__main__":
     main()
