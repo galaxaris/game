@@ -39,7 +39,7 @@ from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Solid import Solid
-from api.utils import State, GlobalVariables
+from api.utils import State, GlobalVariables, Debug
 from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
 from api.environment.Trigger import Trigger, Trigger_KillBox
 
@@ -97,7 +97,6 @@ t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods
 ##############################################################
 player = Player((310,410), (50, 50))
 player.set_gravity(0.5)
-
 
 player.bind_animations({
     "run": run_anim,
@@ -182,12 +181,19 @@ collections += [info_box]
 game_menu = Modal((50, 50), (RENDER_WIDTH-100, RENDER_HEIGHT-100), (0, 0, 0))
 text = Text((0,0), 20, "Game Menu", "**/assets/Fonts/FRm6x11.ttf")
 
-
-
-quit_button = Button((0,100), (100, 40), "Quit", "**/assets/Fonts/FRm6x11.ttf")
+resume_button = Button((0,50), (100, 40), "Resume", "**/assets/Fonts/FRm6x11.ttf")
+restart_button = Button((0,100), (100, 40), "Restart", "**/assets/Fonts/FRm6x11.ttf")
+quit_button = Button((0,150), (100, 40), "Quit", "**/assets/Fonts/FRm6x11.ttf")
+debug_button = Button((RENDER_WIDTH-220,50), (100, 40), "Debug", "**/assets/Fonts/FRm6x11.ttf")
 quit_button.set_callback(lambda e: game.stop())
+resume_button.set_callback(lambda e: scene.UI.hide("menu"))
+restart_button.set_callback(lambda e: player.kill())
+debug_button.set_callback(lambda e: game.enable_debug())
 game_menu.add_element(text)
+game_menu.add_element(resume_button)
+game_menu.add_element(restart_button)
 game_menu.add_element(quit_button)
+game_menu.add_element(debug_button, 1)
 
 scene.UI.add("menu", game_menu)
 
