@@ -26,7 +26,9 @@ import pygame as pg
 
 ### API ###
 from api.Game import Game
+from api.UI.Button import Button
 from api.UI.Dialog import Dialog
+from api.UI.Modal import Modal
 from api.UI.Text import Text
 from api.UI.TextBox import TextBox
 from api.assets.Animation import Animation
@@ -37,7 +39,8 @@ from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Solid import Solid
-from api.utils.Inputs import get_inputs
+from api.utils import State, GlobalVariables
+from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
 from api.environment.Trigger import Trigger, Trigger_KillBox
 
 ### Game modules ###
@@ -137,6 +140,7 @@ create_killBox(collections, 50, game, HEIGHT)
 collections += [Trigger((700, 400), (100, 100), ["player"], [lambda obj: print_alert_msg("Trigger that can be actived each time triggered!")])]
 collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(collections, HEIGHT)], once=True)]
 
+
 #%%################ CAMERA SETUP ####################
 #####################################################
 
@@ -158,23 +162,40 @@ bg = Background(blue_tile,True,(RENDER_WIDTH, RENDER_HEIGHT))
 scene = game.scene
 
 icon = Texture("Images\\icon.jpg", glob)
-
+me = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 #%%################ UI setup ####################
 ################################################
-text = Text((110, 500), 32, "Galaxaris")
+
 dialog = Dialog("**/assets/Fonts/FRm6x11.ttf")
 dialog.add_character("Galaxaris", icon)
-dialog.add_character("Omicronde", icon)
+dialog.add_character("You", me)
 dialog.add_message("Galaxaris", "Hello there, I'm Galaxaris !")
-dialog.add_message("Omicronde", "And I'm Omicronde, nice to meet you !")
+dialog.add_message("You", "And I'm me, nice to meet you !")
 dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game engine made in Python with Pygame. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel sapien eget nunc commodo efficitur. Sed ac nisl a enim efficitur efficitur.")
 
 scene.UI.add("test", dialog)
 
+info_box = Trigger((110, 568), (32, 32), ["player"], [lambda obj: scene.UI.show("test")])
+info_box.set_texture(icon)
+collections += [info_box]
+
+game_menu = Modal((50, 50), (RENDER_WIDTH-100, RENDER_HEIGHT-100), (0, 0, 0))
+text = Text((0,0), 20, "Game Menu", "**/assets/Fonts/FRm6x11.ttf")
+
+
+
+quit_button = Button((0,100), (100, 40), "Quit", "**/assets/Fonts/FRm6x11.ttf")
+quit_button.set_callback(lambda e: game.stop())
+game_menu.add_element(text)
+game_menu.add_element(quit_button)
+
+scene.UI.add("menu", game_menu)
+
+#################### NEW SCENE TEST ########################
+############################################################
+
 new_scene = Scene((RENDER_WIDTH, RENDER_HEIGHT))
 new_scene.set_background(bg)
-new_scene.add(text)
-
 new_scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
 
 
@@ -187,6 +208,7 @@ def debug_info():
 
 #%%################ MAIN LOOP ####################
 ##################################################
+
 def loop():
     game.scene.default_surface.fill((0,0,0,0))
  
@@ -205,9 +227,6 @@ def loop():
 
     inputs = pg.key.get_pressed()
 
-    if inputs[pg.K_a]:
-        scene.UI.show("test")
-
     if inputs[pg.K_o]:
         player.kill()
 
@@ -219,11 +238,20 @@ def loop():
     if inputs[pg.K_m]:
         game.scene = scene
 
+    if not "menu" in scene.UI.enabled_elements:
+        if get_once_inputs()["pause"]:
+            prevent_input("pause")
+            print("Opening menu: menu")
+            scene.UI.show("menu")
+
+
 def main():
     """
     Main loop starting the game
     """
     game.run(loop)
+
+
 
 
 
