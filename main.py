@@ -187,7 +187,7 @@ quit_button = Button((0,150), (100, 40), "Quit", "**/assets/Fonts/FRm6x11.ttf")
 debug_button = Button((RENDER_WIDTH-220,50), (100, 40), "Debug", "**/assets/Fonts/FRm6x11.ttf")
 quit_button.set_callback(lambda e: game.stop())
 resume_button.set_callback(lambda e: scene.UI.hide("menu"))
-restart_button.set_callback(lambda e: player.kill())
+restart_button.set_callback(lambda e: player.kill() or scene.UI.hide("menu"))
 debug_button.set_callback(lambda e: game.enable_debug())
 game_menu.add_element(text)
 game_menu.add_element(resume_button)
@@ -196,6 +196,8 @@ game_menu.add_element(quit_button)
 game_menu.add_element(debug_button, 1)
 
 scene.UI.add("menu", game_menu)
+
+
 
 #################### NEW SCENE TEST ########################
 ############################################################
