@@ -27,14 +27,17 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 
 #%%################ IMPORTS ####################
 ################################################
-import os
-# To run the game from CMD or VS Code terminal (PyCharm runs strangely)
-# Execute the program with "python -m game.main" from the root directory of the project
+#### RUN THE GAME WITH "python -m game.main" FROM THE ROOT DIRECTORY OF THE PROJECT ####
 
 
 ### Libs ###
+import os
 from os.path import join
 import pygame as pg
+
+#### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
+#=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 ### API ###
 from api.Game import Game
@@ -98,8 +101,12 @@ idle_anim = Animation(Texture("Images\\Player\\little robot\\robot_sprite.png", 
 jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", glob)
 
+#Textures
+ggg = Texture("Images\\Background\\tiles\\ggg.png",glob)
 
+#Loads background
 blue_tile = Texture("Images\\Background\\Tiles\\Blue.png", glob)
+
 #Loads parallax layers
 t_p1 = Texture("Images\\Background\\Parallax\\Forest\\0.9x parallax-demon-woods-close-trees.png", glob)
 t_p2 = Texture("Images\\Background\\Parallax\\Forest\\0.70x parallax-demon-woods-mid-trees.png", glob)
@@ -145,7 +152,6 @@ collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
 #Setting a texture for all solids (to be better implemented with a "Tile" class, allowing to repeat a texture on a surface of any size, and also use a texture atlas)
-ggg = Texture("Images\\Background\\tiles\\ggg.png",glob)
 for coll in collections:
     coll.set_color((200, 200, 200))
     coll.set_texture(ggg)
