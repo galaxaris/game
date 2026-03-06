@@ -38,8 +38,12 @@ _If you encounter any issue during installation, do not hesitate to [contact us]
 9. Have fun!
 
 ### Features
-All lot of wonderful features! Stay tuned for updates and new content!
 
+The _Omicronde Project_ is platformer video game project. Intended for children between 6 and 10 years old, it is a fun and educational game about our future and the importance of taking care of our planet... 
+
+You will play a little robot responsible for cleaning up the planet and fighting pollution. You will explore different environments, solve mysteries, and fight bosses to save the world!
+
+**Still in development (Beta)! This is, for now, a demo of the Game Engine (based on the _Omicronde API_).**
 
 -----------------------------
 
