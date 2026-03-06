@@ -116,13 +116,15 @@ player.bind_animations({
 collections = []
 collections += [Solid((x,600), (100, 100)) for x in range(0, 400, 100)] #Floor
 collections += [Solid((x,600), (100, 100)) for x in range(500, 1000, 100)] #Floor, leaving a gap for the player to fall through
+
 collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
-#Setting a color for all solids (awaiting for sprite support)
+grass = Texture("Images\\grass.png", glob)
 for coll in collections:
-    coll.set_color((200, 200, 200))
+    coll.set_texture(grass)
+
 
 #### TRIGGERS ####
 # (see game/game_actions/triggers.py for the functions (callbacks) called by the triggers)
