@@ -74,7 +74,7 @@ FPS = 60
 
 #%%############### Initializing the game ##############
 #######################################################
-game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS)
+game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, "**/" + join(resource_path("assets"), "Fonts\\FRm6x11.ttf"))
 
 game.set_icon(resource_path(os.path.join("assets", "Images", "icon.jpg")))
 
