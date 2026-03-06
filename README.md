@@ -37,7 +37,7 @@ _If you encounter any issue during installation, do not hesitate to [contact us]
    If not working, try using `py` or `python3` instead of `python`.
 9. Have fun!
 
-### Features
+## Features
 
 The _Omicronde Project_ is platformer video game project. Intended for children between 6 and 10 years old, it is a fun and educational game about our future and the importance of taking care of our planet... 
 
