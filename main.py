@@ -113,6 +113,7 @@ audio_manager.load_music("pause", "assets\\Music\\Alicia.mp3")
 #Loads SFX
 audio_manager.load_sfx("jump", "assets\\SFX\\r2-navclose.mp3")
 audio_manager.load_sfx("hit_ground", "assets\\SFX\\Casserole.mp3")
+audio_manager.load_sfx("death", "assets\\SFX\\blblblbl.mp3")
 
 
 
