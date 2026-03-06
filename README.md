@@ -13,6 +13,10 @@ _Developed by Galaxaris_
 _If you encounter any issue during installation, do not hesitate to [contact us](https://gaugoth-corp.pages-perso.free.fr/en/credits/contact/?subject=Omicronde%20Project%20installation%20issue)!_
 
 1. If not already installed, download and install Python 3.11 or higher from the official website: [python.org](https://www.python.org/downloads/).
+2. Download pygame using pip:
+   ```
+   pip install pygame
+   ```
 2. Create a folder for the game on your computer (e.g., `C:\Games\Omicronde` or `~/Games/Omicronde`).
 3. Download the Omicronde source code from this link: [[game-main.zip](https://github.com/galaxaris/game/archive/refs/heads/main.zip)].
 4. Download the Omicronde API source code from this link: [[api-main.zip](https://github.com/galaxaris/api/archive/refs/heads/main.zip)].
