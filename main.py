@@ -144,8 +144,10 @@ collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
 #Setting a color for all solids (awaiting for sprite support)
+ggg = Texture("Images\\Background\\tiles\\ggg.png",glob)
 for coll in collections:
     coll.set_color((200, 200, 200))
+    coll.set_texture(ggg)
 
 #### TRIGGERS ####
 # (see game/game_actions/triggers.py for the functions (callbacks) called by the triggers)
