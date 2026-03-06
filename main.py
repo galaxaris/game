@@ -283,13 +283,13 @@ def loop():
     if not "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
-            print("Opening menu: menu")
+            #print("Opening menu: menu")
             scene.UI.show("menu")
             audio_manager.play_music("pause")
     elif "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
-            print("Closing menu: menu")
+            #print("Closing menu: menu")
             scene.UI.hide("menu")
             audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
