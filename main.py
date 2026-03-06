@@ -27,14 +27,17 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 
 #%%################ IMPORTS ####################
 ################################################
-import os
-# To run the game from CMD or VS Code terminal (PyCharm runs strangely)
-# Execute the program with "python -m game.main" from the root directory of the project
+#### RUN THE GAME WITH "python -m game.main" FROM THE ROOT DIRECTORY OF THE PROJECT ####
 
 
 ### Libs ###
+import os
 from os.path import join
 import pygame as pg
+
+#### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
+#=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 ### API ###
 from api.Game import Game
@@ -98,8 +101,12 @@ idle_anim = Animation(Texture("Images\\Player\\little robot\\robot_sprite_sheet.
 jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", glob)
 
+#Textures
+ggg = Texture("Images\\Background\\tiles\\ggg.png",glob)
 
+#Loads background
 blue_tile = Texture("Images\\Background\\Tiles\\Blue.png", glob)
+
 #Loads parallax layers
 t_p1 = Texture("Images\\Background\\Parallax\\Forest\\0.9x parallax-demon-woods-close-trees.png", glob)
 t_p2 = Texture("Images\\Background\\Parallax\\Forest\\0.70x parallax-demon-woods-mid-trees.png", glob)
@@ -111,7 +118,7 @@ audio_manager.load_music("inGame", "assets\\Music\\Gestral Beach - My Grandma Hi
 audio_manager.load_music("pause", "assets\\Music\\Alicia.mp3")
 
 #Loads SFX
-audio_manager.load_sfx("jump", "assets\\SFX\\r2-navclose.mp3")
+audio_manager.load_sfx("jump", "assets\\SFX\\frog-sound.mp3")
 audio_manager.load_sfx("hit_ground", "assets\\SFX\\Casserole.mp3")
 audio_manager.load_sfx("death", "assets\\SFX\\blblblbl.mp3")
 
@@ -119,7 +126,7 @@ audio_manager.load_sfx("death", "assets\\SFX\\blblblbl.mp3")
 
 #%%################ PLAYER INITIALIZATION ####################
 ##############################################################
-player = Player((310,410), (50, 50))
+player = Player((310,410), (50, 50), sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death"})
 player.set_gravity(0.5)
 
 player.bind_animations({
@@ -144,8 +151,7 @@ collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
-#Setting a color for all solids (awaiting for sprite support)
-ggg = Texture("Images\\Background\\tiles\\ggg.png",glob)
+#Setting a texture for all solids (to be better implemented with a "Tile" class, allowing to repeat a texture on a surface of any size, and also use a texture atlas)
 for coll in collections:
     coll.set_color((200, 200, 200))
     coll.set_texture(ggg)
@@ -277,13 +283,13 @@ def loop():
     if not "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
-            print("Opening menu: menu")
+            #print("Opening menu: menu")
             scene.UI.show("menu")
             audio_manager.play_music("pause")
     elif "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
-            print("Closing menu: menu")
+            #print("Closing menu: menu")
             scene.UI.hide("menu")
             audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
