@@ -119,7 +119,7 @@ audio_manager.load_sfx("death", "assets\\SFX\\blblblbl.mp3")
 
 #%%################ PLAYER INITIALIZATION ####################
 ##############################################################
-player = Player((310,410), (50, 50))
+player = Player((310,410), (50, 50), sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death"})
 player.set_gravity(0.5)
 
 player.bind_animations({
@@ -144,7 +144,7 @@ collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
-#Setting a color for all solids (awaiting for sprite support)
+#Setting a texture for all solids (to be better implemented with a "Tile" class, allowing to repeat a texture on a surface of any size, and also use a texture atlas)
 ggg = Texture("Images\\Background\\tiles\\ggg.png",glob)
 for coll in collections:
     coll.set_color((200, 200, 200))
