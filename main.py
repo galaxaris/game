@@ -1,5 +1,4 @@
 """
-=== Debug file for the game ===
 === Omicronde Project Game - Galaxaris ===
 
 This is the entry point of the Omicronde Game. Built using the Omicronde API.
@@ -9,20 +8,36 @@ Authors: Galaxaris & Associates
 v.Beta (in development)
 - 03/03/2026
 
-Copyright (c) 2024 Galaxaris & Associates. All rights reserved.
+Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 
 """
 
+### TODO: levels to be implemented and loaded in a JSON BDD (using the editor) => GameObjects, triggers, UI, background, music, etc...
+
+### TODO: create an 'InputManager' to centralize game input handling
+### TODO: create a 'SceneManager' to manage multiple game scenes (menus, levels...) and transitions between them
+
+### TODO: create a 'ResourceManager' to centralize the loading and stock of game assets
+    ## => try/except for loading function, "pink" texture as fallback
+    ### TODO: create a 'TextureManager' to manage and stock game textures; texture atlases (=> sprites) and animations
+        ## => TODO: define a standard for texture atlases & anims (associated .json files?)
+    ### TODO: create a 'SoundManager' to manage and stock game SFX and music
+    ### TODO: create a 'UIManager' to define specific game UI elements and keep an overall style (fonts, colors...)
+
+
 #%%################ IMPORTS ####################
 ################################################
-import os
-# To run the game from CMD or VS Code terminal (PyCharm runs strangely)
-# Execute the program with "python -m game.main" from the root directory of the project
+#### RUN THE GAME WITH "python -m game.main" FROM THE ROOT DIRECTORY OF THE PROJECT ####
 
 
 ### Libs ###
+import os
 from os.path import join
 import pygame as pg
+
+#### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
+#=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 ### API ###
 from api.Game import Game
@@ -34,6 +49,7 @@ from api.UI.TextBox import TextBox
 from api.assets.Animation import Animation
 from api.assets.Resource import Resource, ResourceType
 from api.assets.Texture import Texture
+from api.assets.AudioManager import AudioManager
 from api.engine.Scene import Scene
 from api.entity.Player import Player
 from api.environment.Background import Background
@@ -61,6 +77,9 @@ game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE |
 
 game.set_icon(join("assets", "Images", "icon.jpg"))
 
+audio_manager = AudioManager()
+GlobalVariables.set_variable("audio_manager", audio_manager)
+
 ### DEBUG MODE ###
 
 game.enable_debug()
@@ -78,24 +97,36 @@ glob = Resource(ResourceType.GLOBAL, "assets")
 #Loads animations
 run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 70)
 run_fast_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 50)
-idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle.png", glob), 11, 100)
+idle_anim = Animation(Texture("Images\\Player\\little robot\\robot_sprite.png", glob), 1, 100)
 jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", glob)
 
+#Textures
+ggg = Texture("Images\\Background\\tiles\\ggg.png",glob)
 
+#Loads background
 blue_tile = Texture("Images\\Background\\Tiles\\Blue.png", glob)
+
 #Loads parallax layers
 t_p1 = Texture("Images\\Background\\Parallax\\Forest\\0.9x parallax-demon-woods-close-trees.png", glob)
 t_p2 = Texture("Images\\Background\\Parallax\\Forest\\0.70x parallax-demon-woods-mid-trees.png", glob)
 t_p3 = Texture("Images\\Background\\Parallax\\Forest\\0.5x parallax-demon-woods-far-trees.png", glob)
 t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods-bg.png", glob)
 
+#Loads music
+audio_manager.load_music("inGame", "assets\\Music\\Gestral Beach - My Grandma Hits Harder!.mp3")
+audio_manager.load_music("pause", "assets\\Music\\Alicia.mp3")
+
+#Loads SFX
+audio_manager.load_sfx("jump", "assets\\SFX\\frog-sound.mp3")
+audio_manager.load_sfx("hit_ground", "assets\\SFX\\Casserole.mp3")
+audio_manager.load_sfx("death", "assets\\SFX\\blblblbl.mp3")
 
 
 
 #%%################ PLAYER INITIALIZATION ####################
 ##############################################################
-player = Player((310,410), (50, 50))
+player = Player((310,410), (50, 50), sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death"})
 player.set_gravity(0.5)
 
 player.bind_animations({
@@ -116,15 +147,14 @@ player.bind_animations({
 collections = []
 collections += [Solid((x,600), (100, 100)) for x in range(0, 400, 100)] #Floor
 collections += [Solid((x,600), (100, 100)) for x in range(500, 1000, 100)] #Floor, leaving a gap for the player to fall through
-
 collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
-grass = Texture("Images\\grass.png", glob)
+#Setting a texture for all solids (to be better implemented with a "Tile" class, allowing to repeat a texture on a surface of any size, and also use a texture atlas)
 for coll in collections:
-    coll.set_texture(grass)
-
+    coll.set_color((200, 200, 200))
+    coll.set_texture(ggg)
 
 #### TRIGGERS ####
 # (see game/game_actions/triggers.py for the functions (callbacks) called by the triggers)
@@ -199,9 +229,11 @@ game_menu.add_element(debug_button, 1)
 
 scene.UI.add("menu", game_menu)
 
+#%%################# MUSIC SETUP ########################
+#########################################################
+audio_manager.play_music("inGame") #Play the main theme in loop
 
-
-#################### NEW SCENE TEST ########################
+#%%################# NEW SCENE TEST ########################
 ############################################################
 
 new_scene = Scene((RENDER_WIDTH, RENDER_HEIGHT))
@@ -253,6 +285,13 @@ def loop():
             prevent_input("pause")
             print("Opening menu: menu")
             scene.UI.show("menu")
+            audio_manager.play_music("pause")
+    elif "menu" in scene.UI.enabled_elements:
+        if get_once_inputs()["pause"]:
+            prevent_input("pause")
+            print("Closing menu: menu")
+            scene.UI.hide("menu")
+            audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
 
 def main():
