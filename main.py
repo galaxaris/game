@@ -82,7 +82,8 @@ GlobalVariables.set_variable("audio_manager", audio_manager)
 
 ### DEBUG MODE ###
 
-game.enable_debug()
+#Enables debug mode by default
+#game.enable_debug()
 
 #Toggles fullscreen
 
