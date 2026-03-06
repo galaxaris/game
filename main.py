@@ -46,6 +46,7 @@ from api.UI.TextBox import TextBox
 from api.assets.Animation import Animation
 from api.assets.Resource import Resource, ResourceType
 from api.assets.Texture import Texture
+from api.assets.AudioManager import AudioManager
 from api.engine.Scene import Scene
 from api.entity.Player import Player
 from api.environment.Background import Background
@@ -72,6 +73,9 @@ FPS = 60
 game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS)
 
 game.set_icon(join("assets", "Images", "icon.jpg"))
+
+audio_manager = AudioManager()
+GlobalVariables.set_variable("audio_manager", audio_manager)
 
 ### DEBUG MODE ###
 
@@ -103,8 +107,12 @@ t_p3 = Texture("Images\\Background\\Parallax\\Forest\\0.5x parallax-demon-woods-
 t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods-bg.png", glob)
 
 #Loads music
-game.audio_manager.load_music("inGame", "assets\\Music\\Gestral Beach - My Grandma Hits Harder!.mp3")
-game.audio_manager.load_music("pause", "assets\\Music\\Alicia.mp3")
+audio_manager.load_music("inGame", "assets\\Music\\Gestral Beach - My Grandma Hits Harder!.mp3")
+audio_manager.load_music("pause", "assets\\Music\\Alicia.mp3")
+
+#Loads SFX
+audio_manager.load_sfx("jump", "assets\\SFX\\r2-navclose.mp3")
+audio_manager.load_sfx("hit_ground", "assets\\SFX\\Casserole.mp3")
 
 
 
@@ -214,7 +222,7 @@ scene.UI.add("menu", game_menu)
 
 #%%################# MUSIC SETUP ########################
 #########################################################
-game.audio_manager.play_music("inGame") #Play the main theme in loop
+audio_manager.play_music("inGame") #Play the main theme in loop
 
 #%%################# NEW SCENE TEST ########################
 ############################################################
@@ -268,13 +276,13 @@ def loop():
             prevent_input("pause")
             print("Opening menu: menu")
             scene.UI.show("menu")
-            game.audio_manager.play_music("pause")
+            audio_manager.play_music("pause")
     elif "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
             print("Closing menu: menu")
             scene.UI.hide("menu")
-            game.audio_manager.play_music("inGame") #Resume the main theme when closing the menu
+            audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
 
 def main():
