@@ -75,17 +75,14 @@ FPS = 60
 
 #%%############### Initializing the game ##############
 #######################################################
-game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, "**/" + join(resource_path("assets"), "Fonts\\FRm6x11.ttf"))
+game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, "**/" + join(resource_path("assets"), "Fonts\\Gm6x11.ttf"))
 
 game.set_icon(resource_path(os.path.join("assets", "Images", "icon.jpg")))
-
-audio_manager = AudioManager()
-GlobalVariables.set_variable("audio_manager", audio_manager)
 
 ### DEBUG MODE ###
 
 #Enables debug mode by default
-#game.enable_debug()
+game.enable_debug()
 
 #Toggles fullscreen
 
@@ -103,7 +100,7 @@ glob = Resource(ResourceType.GLOBAL, assets_path)
 #Loads animations
 run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 70)
 run_fast_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 50)
-idle_anim = Animation(Texture("Images\\Player\\little robot\\robot_sprite_sheet.png", glob), 12, 150)
+idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle.png", glob), 11, 100)
 jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", glob)
 
@@ -120,13 +117,14 @@ t_p3 = Texture("Images\\Background\\Parallax\\Forest\\0.5x parallax-demon-woods-
 t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods-bg.png", glob)
 
 #Loads music
-audio_manager.load_music("inGame", join(assets_path, "Music\\Gestral Beach - My Grandma Hits Harder!.mp3"))
-audio_manager.load_music("pause", join(assets_path, "Music\\Alicia.mp3"))
+audio_manager = game.audio_manager
+#audio_manager.load_music("inGame", join(assets_path, "Music\\Gestral Beach - My Grandma Hits Harder!.mp3"))
+#audio_manager.load_music("pause", join(assets_path, "Music\\Alicia.mp3"))
 
 #Loads SFX
-audio_manager.load_sfx("jump", join(assets_path, "SFX\\frog-sound.mp3"))
-audio_manager.load_sfx("hit_ground", join(assets_path, "SFX\\Casserole.mp3"))
-audio_manager.load_sfx("death", join(assets_path, "SFX\\blblblbl.mp3"))
+#audio_manager.load_sfx("jump", join(assets_path, "SFX\\frog-sound.mp3"))
+#audio_manager.load_sfx("hit_ground", join(assets_path, "SFX\\Casserole.mp3"))
+#audio_manager.load_sfx("death", join(assets_path, "SFX\\blblblbl.mp3"))
 
 
 
@@ -157,10 +155,12 @@ collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
+
+grass = Texture("Images\\grass.png", glob)
 #Setting a texture for all solids (to be better implemented with a "Tile" class, allowing to repeat a texture on a surface of any size, and also use a texture atlas)
 for coll in collections:
     coll.set_color((200, 200, 200))
-    coll.set_texture(ggg)
+    coll.set_texture(grass)
 
 #### TRIGGERS ####
 # (see game/game_actions/triggers.py for the functions (callbacks) called by the triggers)
