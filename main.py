@@ -33,7 +33,7 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 ### Libs ###
 import os
 from os.path import join
-import pygame as pg
+import time
 
 #### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
 #=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue 
@@ -64,6 +64,15 @@ from api.utils.RessourcePath import resource_path
 from game.game_actions.triggers import *
 from game.game_actions.ui import menu_in_game
 
+#%%############## CLOSE SPLASH SCREEN #################
+#######################################################
+try:
+    import pyi_splash
+    time.sleep(5)
+    pyi_splash.close()
+except ImportError:
+    # we are not in an exe file
+    pass
 
 #%%############### GLOBAL VARIABLES ###################
 #######################################################
