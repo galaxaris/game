@@ -77,9 +77,6 @@ game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE |
 
 game.set_icon(join("assets", "Images", "icon.jpg"))
 
-audio_manager = AudioManager()
-GlobalVariables.set_variable("audio_manager", audio_manager)
-
 ### DEBUG MODE ###
 
 game.enable_debug()
@@ -97,7 +94,7 @@ glob = Resource(ResourceType.GLOBAL, "assets")
 #Loads animations
 run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 70)
 run_fast_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 50)
-idle_anim = Animation(Texture("Images\\Player\\little robot\\robot_sprite.png", glob), 1, 100)
+idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle.png", glob), 11, 100)
 jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", glob)
 
@@ -113,7 +110,9 @@ t_p2 = Texture("Images\\Background\\Parallax\\Forest\\0.70x parallax-demon-woods
 t_p3 = Texture("Images\\Background\\Parallax\\Forest\\0.5x parallax-demon-woods-far-trees.png", glob)
 t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods-bg.png", glob)
 
-#Loads music
+
+audio_manager = game.audio_manager
+"""#Loads music
 audio_manager.load_music("inGame", "assets\\Music\\Gestral Beach - My Grandma Hits Harder!.mp3")
 audio_manager.load_music("pause", "assets\\Music\\Alicia.mp3")
 
@@ -121,7 +120,7 @@ audio_manager.load_music("pause", "assets\\Music\\Alicia.mp3")
 audio_manager.load_sfx("jump", "assets\\SFX\\frog-sound.mp3")
 audio_manager.load_sfx("hit_ground", "assets\\SFX\\Casserole.mp3")
 audio_manager.load_sfx("death", "assets\\SFX\\blblblbl.mp3")
-
+"""
 
 
 #%%################ PLAYER INITIALIZATION ####################
@@ -151,10 +150,12 @@ collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
+
+grass = Texture("Images\\grass.png", glob)
 #Setting a texture for all solids (to be better implemented with a "Tile" class, allowing to repeat a texture on a surface of any size, and also use a texture atlas)
 for coll in collections:
     coll.set_color((200, 200, 200))
-    coll.set_texture(ggg)
+    coll.set_texture(grass)
 
 #### TRIGGERS ####
 # (see game/game_actions/triggers.py for the functions (callbacks) called by the triggers)
