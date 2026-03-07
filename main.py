@@ -74,7 +74,7 @@ FPS = 60
 
 #%%############### Initializing the game ##############
 #######################################################
-game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, "**/" + join(resource_path("assets"), "Fonts\\FRm6x11.ttf"))
+game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, "**/" + join(resource_path("assets"), "Fonts\\Gm6x11.ttf"))
 
 game.set_icon(resource_path(os.path.join("assets", "Images", "icon.jpg")))
 
@@ -200,7 +200,7 @@ me = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 #%%################ UI setup ####################
 ################################################
 
-font_FR = "**/" + join(assets_path, "Fonts\\FRm6x11.ttf")
+font_FR = "**/" + join(assets_path, "Fonts\\Gm6x11.ttf")
 dialog = Dialog(font_FR)
 dialog.add_character("Galaxaris", icon)
 dialog.add_character("You", me)
@@ -220,7 +220,7 @@ text = Text((0,0), 20, "Game Menu", font_FR)
 resume_button = Button((0,50), (100, 40), "Resume", font_FR)
 restart_button = Button((0,100), (100, 40), "Restart", font_FR)
 quit_button = Button((0,150), (100, 40), "Quit", font_FR)
-debug_button = Button((RENDER_WIDTH-220,50), (100, 40), font_FR)
+debug_button = Button((RENDER_WIDTH-220,50), (100, 40), "Debug", font_FR)
 quit_button.set_callback(lambda e: game.stop())
 resume_button.set_callback(lambda e: (scene.UI.hide("menu"), audio_manager.play_music("inGame")))
 restart_button.set_callback(lambda e: (player.kill(), scene.UI.hide("menu"), audio_manager.play_music("inGame")))
