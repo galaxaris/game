@@ -118,6 +118,10 @@ t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods
 
 #Loads music
 audio_manager = game.audio_manager
+"""
+For now, no music for peace of mind of our dear Raphix
+"""
+
 #audio_manager.load_music("inGame", join(assets_path, "Music\\Gestral Beach - My Grandma Hits Harder!.mp3"))
 #audio_manager.load_music("pause", join(assets_path, "Music\\Alicia.mp3"))
 
