@@ -21,7 +21,7 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
     ## => try/except for loading function, "pink" texture as fallback
     ### TODO: create a 'TextureManager' to manage and stock game textures; texture atlases (=> sprites) and animations
         ## => TODO: define a standard for texture atlases & anims (associated .json files?)
-    ### TODO: create a 'SoundManager' to manage and stock game SFX and music
+    ### TODO: create an 'AudioManager' to manage and stock game SFX and music
     ### TODO: create a 'UIManager' to define specific game UI elements and keep an overall style (fonts, colors...)
 
 
@@ -220,7 +220,7 @@ text = Text((0,0), 20, "Game Menu", font_FR)
 resume_button = Button((0,50), (100, 40), "Resume", font_FR)
 restart_button = Button((0,100), (100, 40), "Restart", font_FR)
 quit_button = Button((0,150), (100, 40), "Quit", font_FR)
-debug_button = Button((RENDER_WIDTH-220,50), (100, 40), font_FR)
+debug_button = Button((RENDER_WIDTH-220,50), (100, 40), "Debug", font_FR)
 quit_button.set_callback(lambda e: game.stop())
 resume_button.set_callback(lambda e: (scene.UI.hide("menu"), audio_manager.play_music("inGame")))
 restart_button.set_callback(lambda e: (player.kill(), scene.UI.hide("menu"), audio_manager.play_music("inGame")))
