@@ -20,7 +20,7 @@ def print_alert_msg(msg):
 
 def summon_stairs1(collections, game_height, gameLength=200, blockDim = (50, 10)):
 
-    print("Summoning stairs... - To be activated only once!")
+    #print("Summoning stairs... - To be activated only once!")
     y=451
     for x in range(1100, 2000, 100):
         step = Solid((x, y), (30, 10))

@@ -21,7 +21,7 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
     ## => try/except for loading function, "pink" texture as fallback
     ### TODO: create a 'TextureManager' to manage and stock game textures; texture atlases (=> sprites) and animations
         ## => TODO: define a standard for texture atlases & anims (associated .json files?)
-    ### TODO: create a 'SoundManager' to manage and stock game SFX and music
+    ### TODO: create an 'AudioManager' to manage and stock game SFX and music
     ### TODO: create a 'UIManager' to define specific game UI elements and keep an overall style (fonts, colors...)
 
 
@@ -58,6 +58,7 @@ from api.environment.Solid import Solid
 from api.utils import State, GlobalVariables, Debug
 from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
 from api.environment.Trigger import Trigger, Trigger_KillBox
+from api.utils.RessourcePath import resource_path
 
 ### Game modules ###
 from game.game_actions.triggers import *
@@ -73,12 +74,13 @@ FPS = 60
 
 #%%############### Initializing the game ##############
 #######################################################
-game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS)
+game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, "**/" + join(resource_path("assets"), "Fonts\\FRm6x11.ttf"))
 
-game.set_icon(join("assets", "Images", "icon.jpg"))
+game.set_icon(resource_path(os.path.join("assets", "Images", "icon.jpg")))
 
 ### DEBUG MODE ###
 
+#Enables debug mode by default
 game.enable_debug()
 
 #Toggles fullscreen
@@ -89,7 +91,8 @@ game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1")
 #######################################################
 
 #Init the resource manager
-glob = Resource(ResourceType.GLOBAL, "assets")
+assets_path = resource_path("assets")
+glob = Resource(ResourceType.GLOBAL, assets_path)
 
 #Loads animations
 run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 70)
@@ -110,17 +113,16 @@ t_p2 = Texture("Images\\Background\\Parallax\\Forest\\0.70x parallax-demon-woods
 t_p3 = Texture("Images\\Background\\Parallax\\Forest\\0.5x parallax-demon-woods-far-trees.png", glob)
 t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods-bg.png", glob)
 
-
+#Loads music
 audio_manager = game.audio_manager
-"""#Loads music
-audio_manager.load_music("inGame", "assets\\Music\\Gestral Beach - My Grandma Hits Harder!.mp3")
-audio_manager.load_music("pause", "assets\\Music\\Alicia.mp3")
+#audio_manager.load_music("inGame", join(assets_path, "Music\\Gestral Beach - My Grandma Hits Harder!.mp3"))
+#audio_manager.load_music("pause", join(assets_path, "Music\\Alicia.mp3"))
 
 #Loads SFX
-audio_manager.load_sfx("jump", "assets\\SFX\\frog-sound.mp3")
-audio_manager.load_sfx("hit_ground", "assets\\SFX\\Casserole.mp3")
-audio_manager.load_sfx("death", "assets\\SFX\\blblblbl.mp3")
-"""
+#audio_manager.load_sfx("jump", join(assets_path, "SFX\\frog-sound.mp3"))
+#audio_manager.load_sfx("hit_ground", join(assets_path, "SFX\\Casserole.mp3"))
+#audio_manager.load_sfx("death", join(assets_path, "SFX\\blblblbl.mp3"))
+
 
 
 #%%################ PLAYER INITIALIZATION ####################
@@ -198,7 +200,8 @@ me = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 #%%################ UI setup ####################
 ################################################
 
-dialog = Dialog("**/assets/Fonts/FRm6x11.ttf")
+font_FR = "**/" + join(assets_path, "Fonts\\FRm6x11.ttf")
+dialog = Dialog(font_FR)
 dialog.add_character("Galaxaris", icon)
 dialog.add_character("You", me)
 dialog.add_message("Galaxaris", "Hello there, I'm Galaxaris !")
@@ -212,15 +215,15 @@ info_box.set_texture(icon)
 collections += [info_box]
 
 game_menu = Modal((50, 50), (RENDER_WIDTH-100, RENDER_HEIGHT-100), (0, 0, 0))
-text = Text((0,0), 20, "Game Menu", "**/assets/Fonts/FRm6x11.ttf")
+text = Text((0,0), 20, "Game Menu", font_FR)
 
-resume_button = Button((0,50), (100, 40), "Resume", "**/assets/Fonts/FRm6x11.ttf")
-restart_button = Button((0,100), (100, 40), "Restart", "**/assets/Fonts/FRm6x11.ttf")
-quit_button = Button((0,150), (100, 40), "Quit", "**/assets/Fonts/FRm6x11.ttf")
-debug_button = Button((RENDER_WIDTH-220,50), (100, 40), "Debug", "**/assets/Fonts/FRm6x11.ttf")
+resume_button = Button((0,50), (100, 40), "Resume", font_FR)
+restart_button = Button((0,100), (100, 40), "Restart", font_FR)
+quit_button = Button((0,150), (100, 40), "Quit", font_FR)
+debug_button = Button((RENDER_WIDTH-220,50), (100, 40), "Debug", font_FR)
 quit_button.set_callback(lambda e: game.stop())
-resume_button.set_callback(lambda e: scene.UI.hide("menu"))
-restart_button.set_callback(lambda e: player.kill() or scene.UI.hide("menu"))
+resume_button.set_callback(lambda e: (scene.UI.hide("menu"), audio_manager.play_music("inGame")))
+restart_button.set_callback(lambda e: (player.kill(), scene.UI.hide("menu"), audio_manager.play_music("inGame")))
 debug_button.set_callback(lambda e: game.enable_debug())
 game_menu.add_element(text)
 game_menu.add_element(resume_button)
@@ -284,13 +287,13 @@ def loop():
     if not "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
-            print("Opening menu: menu")
+            #print("Opening menu: menu")
             scene.UI.show("menu")
             audio_manager.play_music("pause")
     elif "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
-            print("Closing menu: menu")
+            #print("Closing menu: menu")
             scene.UI.hide("menu")
             audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
