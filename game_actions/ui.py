@@ -63,7 +63,7 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
     menu_button((0,100), (100, 40), "Restart", lambda e: (player.kill(), scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
     menu_button((0,150), (100, 40), "Quit", lambda e: game.stop(), menu, FONT_FR, color_set=COLOR_SET_DANGER)
     menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.enable_debug(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
-    menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_mute_unmute(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
+    menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_audio(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
 
     GlobalVariables.set_variable("current_menu", menu) #To be able to access the menu in the callback of the mute button
     return menu
@@ -74,7 +74,7 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
 
 #%%############### UI CALLBACKS ##########################
 ##########################################################
-def toggle_mute_unmute():
+def toggle_audio():
     audio_manager = GlobalVariables.get_variable("audio_manager")
     #Gets the button in menu.elements to change its text accordingly
     menu = GlobalVariables.get_variable("current_menu")
@@ -84,13 +84,11 @@ def toggle_mute_unmute():
             mute_button = element
             break
 
-    if audio_manager.music_volume > 0: #Condition suffisante car sfx et musique sont mis à 0 ou 1 en mm temps (pour le moment)
-        audio_manager.set_music_volume(0)
-        audio_manager.set_sfx_volume(0)
+    if audio_manager.is_muted:
+        audio_manager.toggle_audio() #Unmute
         if mute_button:
             mute_button.set_text("Mute")
     else:
-        audio_manager.set_music_volume(1)
-        audio_manager.set_sfx_volume(1)
+        audio_manager.toggle_audio() #Mute
         if mute_button:
             mute_button.set_text("Unmute")
