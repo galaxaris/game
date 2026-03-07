@@ -39,8 +39,7 @@ def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal,
 def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, player: Player, game: Game):
 
     #Global variables:
-    ASSETS_PATH = GlobalVariables.get_variable("assets_path")
-    FONT_FR = "**/" + join(ASSETS_PATH, "Fonts\\FRm6x11.ttf")
+    FONT_FR = GlobalVariables.get_variable("default_font")
 
     ## Menu panel
     menu = Modal((50, 50), (screen_w-100, screen_h-100), (0, 0, 0))

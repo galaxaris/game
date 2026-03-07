@@ -76,7 +76,8 @@ FPS = 60
 #%%############### Initializing the game ##############
 #######################################################
 assets_path = resource_path("assets")
-font_FR = "**/" + join(assets_path, "Fonts\\FRm6x11.ttf")
+font_FR = "**/" + join(assets_path, "Fonts\\Gm6x11.ttf")
+GlobalVariables.set_variable("default_font", font_FR)
 game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, debug_font=font_FR)
 
 game.set_icon(resource_path(os.path.join("assets", "Images", "icon.jpg")))
@@ -204,7 +205,7 @@ me = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 ################################################
 
 
-GlobalVariables.set_variable("default_font", font_FR)
+
 dialog = Dialog(font_FR)
 dialog.add_character("Galaxaris", icon)
 dialog.add_character("You", me)
