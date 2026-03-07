@@ -62,6 +62,7 @@ from api.utils.RessourcePath import resource_path
 
 ### Game modules ###
 from game.game_actions.triggers import *
+from game.game_actions.ui import menu_in_game
 
 
 #%%############### GLOBAL VARIABLES ###################
@@ -209,7 +210,7 @@ dialog.add_character("Galaxaris", icon)
 dialog.add_character("You", me)
 dialog.add_message("Galaxaris", "Hello there, I'm Galaxaris !")
 dialog.add_message("You", "And I'm me, nice to meet you !")
-dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game engine made in Python with Pygame. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel sapien eget nunc commodo efficitur. Sed ac nisl a enim efficitur efficitur.")
+dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game engine made in Python with Pygame. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel sapien eget nunc commodo efficitur. (T'as vu je sais parler Latin XD)")
 
 scene.UI.add("test", dialog)
 
@@ -217,24 +218,9 @@ info_box = TriggerInteract((110, 568), (32, 32), ["player"], [lambda obj: scene.
 info_box.set_texture(icon)
 collections += [info_box]
 
-game_menu = Modal((50, 50), (RENDER_WIDTH-100, RENDER_HEIGHT-100), (0, 0, 0))
-text = Text((0,0), 20, "Game Menu", font_FR)
-
-resume_button = Button((0,50), (100, 40), "Resume", font_FR)
-restart_button = Button((0,100), (100, 40), "Restart", font_FR)
-quit_button = Button((0,150), (100, 40), "Quit", font_FR)
-debug_button = Button((RENDER_WIDTH-220,50), (100, 40), "Debug", font_FR)
-quit_button.set_callback(lambda e: game.stop())
-resume_button.set_callback(lambda e: (scene.UI.hide("menu"), audio_manager.play_music("inGame")))
-restart_button.set_callback(lambda e: (player.kill(), scene.UI.hide("menu"), audio_manager.play_music("inGame")))
-debug_button.set_callback(lambda e: game.enable_debug())
-game_menu.add_element(text)
-game_menu.add_element(resume_button)
-game_menu.add_element(restart_button)
-game_menu.add_element(quit_button)
-game_menu.add_element(debug_button, 1)
-
-scene.UI.add("menu", game_menu)
+### MENU INGAME
+menu = menu_in_game(scene, "menu", RENDER_WIDTH, RENDER_HEIGHT, player, game)
+scene.UI.add("menu", menu)
 
 #%%################# MUSIC SETUP ########################
 #########################################################
@@ -300,15 +286,11 @@ def loop():
             scene.UI.hide("menu")
             audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
-
 def main():
     """
     Main loop starting the game
     """
     game.run(loop)
-
-
-
 
 
 #%%################ RUNNING THE GAME #########################
