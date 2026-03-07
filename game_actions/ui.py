@@ -26,6 +26,11 @@ COLOR_SET_SETTINGS = ((0, 0, 0), (0, 104, 204), (105, 162, 214), (0, 62, 117))
 COLOR_SET_DANGER = ((0, 0, 0), (181, 0, 0), (237, 100, 100), (94, 4, 4))
 COLOR_SET_DEBUG = ((0, 0, 0), (161, 2, 131), (214, 107, 193), (94, 6, 78))
 
+
+#%%### UI CREATION FUNCTIONS ####
+#################################
+
+### TODO: implement later in the JSON BDD
 def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal, FONT_FR: str, column_index: int = 0, color_set: tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]] = COLOR_SET_CLASSIC):
     """
     Game utility function to create a button with predefined style and add it to a menu.
@@ -65,6 +70,10 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
     ## Add menu to scene UI
     #scene.UI.add(menu, menu_name)
     
+
+
+#%%############### UI CALLBACKS ##########################
+##########################################################
 def toggle_mute_unmute():
     audio_manager = GlobalVariables.get_variable("audio_manager")
     #Gets the button in menu.elements to change its text accordingly

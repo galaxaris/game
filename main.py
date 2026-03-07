@@ -226,13 +226,14 @@ scene.UI.add("menu", menu)
 
 #%%################# MUSIC SETUP ########################
 #########################################################
-audio_manager.play_music("inGame") #Play the main theme in loop
-
 """
-For now, no music for peace of mind of our dear Raphix. Can be changed with the button mute/unmute in the menu
+For now, no music or SFX for peace of mind of our dear Raphix. Can be changed with the button mute/unmute in the menu
 """
 audio_manager.set_sfx_volume(0)
 audio_manager.set_music_volume(0)
+
+audio_manager.play_music("inGame") #Play the main theme in loop
+
 
 #%%################# NEW SCENE TEST ########################
 ############################################################
