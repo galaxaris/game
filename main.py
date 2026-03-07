@@ -57,7 +57,7 @@ from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Solid import Solid
 from api.utils import State, GlobalVariables, Debug
 from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
-from api.environment.Trigger import Trigger, Trigger_KillBox
+from api.environment.Trigger import Trigger, TriggerInteract
 from api.utils.RessourcePath import resource_path
 
 ### Game modules ###
@@ -74,7 +74,9 @@ FPS = 60
 
 #%%############### Initializing the game ##############
 #######################################################
-game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, "**/" + join(resource_path("assets"), "Fonts\\FRm6x11.ttf"))
+assets_path = resource_path("assets")
+font_FR = "**/" + join(assets_path, "Fonts\\FRm6x11.ttf")
+game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, debug_font=font_FR)
 
 game.set_icon(resource_path(os.path.join("assets", "Images", "icon.jpg")))
 
@@ -91,7 +93,7 @@ game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1")
 #######################################################
 
 #Init the resource manager
-assets_path = resource_path("assets")
+
 glob = Resource(ResourceType.GLOBAL, assets_path)
 
 #Loads animations
@@ -200,7 +202,8 @@ me = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 #%%################ UI setup ####################
 ################################################
 
-font_FR = "**/" + join(assets_path, "Fonts\\FRm6x11.ttf")
+
+GlobalVariables.set_variable("default_font", font_FR)
 dialog = Dialog(font_FR)
 dialog.add_character("Galaxaris", icon)
 dialog.add_character("You", me)
@@ -210,7 +213,7 @@ dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game eng
 
 scene.UI.add("test", dialog)
 
-info_box = Trigger((110, 568), (32, 32), ["player"], [lambda obj: scene.UI.show("test")])
+info_box = TriggerInteract((110, 568), (32, 32), ["player"], [lambda obj: scene.UI.show("test")])
 info_box.set_texture(icon)
 collections += [info_box]
 

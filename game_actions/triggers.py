@@ -5,14 +5,14 @@ All callbacks for triggers used & defined in the game
 import pygame as pg
 import random as rd
 from api.environment.Solid import Solid
-from api.environment.Trigger import Trigger, Trigger_KillBox
+from api.environment.Trigger import Trigger, TriggerKillBox
 from api.utils.GlobalVariables import global_vars as GV
 
 def create_killBox(collections, lenght, game, game_heigth):
     """
     Adds a killbox of specified lenght, 400px behind the back of screen
     """
-    collections += [Trigger_KillBox((0, game_heigth+400), (lenght*1000, 100), ["player"], once=False, sfx="death")]
+    collections += [TriggerKillBox((0, game_heigth+400), (lenght*1000, 100), ["player"], once=False, sfx="death")]
 
 
 def print_alert_msg(msg):
