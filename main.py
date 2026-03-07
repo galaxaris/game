@@ -119,17 +119,14 @@ t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods
 
 #Loads music
 audio_manager = game.audio_manager
-"""
-For now, no music for peace of mind of our dear Raphix
-"""
 
-#audio_manager.load_music("inGame", join(assets_path, "Music\\Gestral Beach - My Grandma Hits Harder!.mp3"))
-#audio_manager.load_music("pause", join(assets_path, "Music\\Alicia.mp3"))
-#
-##Loads SFX
-#audio_manager.load_sfx("jump", join(assets_path, "SFX\\frog-sound.mp3"))
-#audio_manager.load_sfx("hit_ground", join(assets_path, "SFX\\Casserole.mp3"))
-#audio_manager.load_sfx("death", join(assets_path, "SFX\\blblblbl.mp3"))
+audio_manager.load_music("inGame", join(assets_path, "Music\\Gestral Beach - My Grandma Hits Harder!.mp3"))
+audio_manager.load_music("pause", join(assets_path, "Music\\Alicia.mp3"))
+
+#Loads SFX
+audio_manager.load_sfx("jump", join(assets_path, "SFX\\frog-sound.mp3"))
+audio_manager.load_sfx("hit_ground", join(assets_path, "SFX\\Casserole.mp3"))
+audio_manager.load_sfx("death", join(assets_path, "SFX\\blblblbl.mp3"))
 
 
 
@@ -230,6 +227,12 @@ scene.UI.add("menu", menu)
 #%%################# MUSIC SETUP ########################
 #########################################################
 audio_manager.play_music("inGame") #Play the main theme in loop
+
+"""
+For now, no music for peace of mind of our dear Raphix. Can be changed with the button mute/unmute in the menu
+"""
+audio_manager.set_sfx_volume(0)
+audio_manager.set_music_volume(0)
 
 #%%################# NEW SCENE TEST ########################
 ############################################################
