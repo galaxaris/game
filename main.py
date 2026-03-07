@@ -125,8 +125,8 @@ For now, no music for peace of mind of our dear Raphix
 
 #audio_manager.load_music("inGame", join(assets_path, "Music\\Gestral Beach - My Grandma Hits Harder!.mp3"))
 #audio_manager.load_music("pause", join(assets_path, "Music\\Alicia.mp3"))
-
-#Loads SFX
+#
+##Loads SFX
 #audio_manager.load_sfx("jump", join(assets_path, "SFX\\frog-sound.mp3"))
 #audio_manager.load_sfx("hit_ground", join(assets_path, "SFX\\Casserole.mp3"))
 #audio_manager.load_sfx("death", join(assets_path, "SFX\\blblblbl.mp3"))

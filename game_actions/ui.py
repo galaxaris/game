@@ -19,8 +19,13 @@ from api.Game import Game
 
 from api.utils import GlobalVariables
 
+#Global variables
+COLOR_SET_CLASSIC = ((0, 0, 0), (255, 255, 255), (188, 188, 188), (163, 163, 163))
+COLOR_SET_COMMON = ((0, 0, 0), (3, 161, 45), (90, 204, 121), (9, 117, 42))
+COLOR_SET_DANGER = ((0, 0, 0), (181, 0, 0), (237, 100, 100), (94, 4, 4))
+COLOR_SET_DEBUG = ((0, 0, 0), (161, 2, 131), (214, 107, 193), (94, 6, 78))
 
-def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal, FONT_FR: str, column_index: int = 0, color_set: tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]] = ((0, 0, 0), (255, 255, 255), (188, 188, 188))):
+def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal, FONT_FR: str, column_index: int = 0, color_set: tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]] = COLOR_SET_CLASSIC):
     """
     Game utility function to create a button with predefined style and add it to a menu.
 
@@ -30,9 +35,9 @@ def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal,
     :param callback: Button callback function.
     :param menu: Menu to which the button will be added.
     :param column_index: Menu column index for button placement (default: 0).
-    :param color_set: Tuple of three colors for the button (text, background, hover) (default: black, white, gray).
+    :param color_set: Tuple of four colors for the button (text, background, hover, focus) (default: black, white, gray, darker gray).
     """
-    button = Button(pos, size, text, color_set[0], color_set[1], color_set[2], FONT_FR)
+    button = Button(pos, size, text, color_set, FONT_FR)
     button.set_callback(callback)
     menu.add_element(button, column_index)
 
@@ -47,10 +52,11 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
     menu.add_element(text, x=0)
 
     ## Buttons
-    menu_button((0,50), (100, 40), "Resume", lambda e: (scene.UI.hide(menu_name), GlobalVariables.get_variable("audio_manager").play_music("inGame")), menu, FONT_FR, color_set=((255, 255, 255), (3, 161, 45), (90, 204, 121)))
-    menu_button((0,100), (100, 40), "Restart", lambda e: (player.kill(), scene.UI.hide(menu_name), GlobalVariables.get_variable("audio_manager").play_music("inGame")), menu, FONT_FR, color_set=((255, 255, 255), (3, 161, 45), (90, 204, 121)))
-    menu_button((0,150), (100, 40), "Quit", lambda e: game.stop(), menu, FONT_FR, color_set=((255, 255, 255), (181, 0, 0), (237, 100, 100)))
-    menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.enable_debug(), menu, FONT_FR, column_index=1, color_set=((255, 255, 255), (161, 2, 131), (214, 107, 193)))
+    menu_button((0,50), (100, 40), "Resume", lambda e: (scene.UI.hide(menu_name), GlobalVariables.get_variable("audio_manager").play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+    menu_button((0,100), (100, 40), "Restart", lambda e: (player.kill(), scene.UI.hide(menu_name), GlobalVariables.get_variable("audio_manager").play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+    menu_button((0,150), (100, 40), "Quit", lambda e: game.stop(), menu, FONT_FR, color_set=COLOR_SET_DANGER)
+    menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.enable_debug(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
+    #menu_button((screen_w-220,100), (100, 40), "Mute/Unmute", lambda e: (scene.UI.hide(menu_name), GlobalVariables.get_variable("audio_manager").play_music("main_menu"), scene.load_scene("main_menu")), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DANGER)
 
     return menu
     ## Add menu to scene UI
