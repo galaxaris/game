@@ -98,7 +98,7 @@ class Omicronde:
         # Init the resource manager
         self.glob = Resource(ResourceType.GLOBAL, self.assets_path)
 
-        self.game.set_icon(resource_path(os.path.join("assets", "Images", "icon.png")))
+        self.game.set_icon(resource_path(join("assets", "Images", "icon.png")))
 
         # Load animations
         run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", self.glob), 12, 70)
