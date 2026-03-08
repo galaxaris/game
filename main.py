@@ -319,7 +319,7 @@ if __name__ == "__main__":
         import traceback
 
         error = traceback.format_exc()
-        print_error(f"[bold red]{error}[/bold red]")
+        print_error(f"[bold red]{error}[/bold red]", width=100)
 
         print_warning("CMD is self closing in 10 seconds...")
 
