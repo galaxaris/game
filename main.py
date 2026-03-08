@@ -142,7 +142,7 @@ audio_manager.load_sfx("death", join(assets_path, "SFX\\blblblbl.mp3"))
 
 #%%################ PLAYER INITIALIZATION ####################
 ##############################################################
-player = Player((310,410), (50, 50), sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death"})
+player = Player((310,410), (48,48), sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death"})
 player.set_gravity(0.5)
 
 player.bind_animations({
