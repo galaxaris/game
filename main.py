@@ -40,16 +40,12 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ### API ###
 from api.Game import Game
 
-from api.UI.Button import Button
+
 from api.UI.Dialog import Dialog
-from api.UI.Modal import Modal
-from api.UI.Text import Text
-from api.UI.TextBox import TextBox
+
 
 from api.assets.Animation import Animation
 from api.assets.Resource import Resource, ResourceType
-from api.assets.Texture import Texture
-from api.assets.AudioManager import AudioManager
 
 from api.engine.Scene import Scene
 
@@ -58,12 +54,11 @@ from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Trigger import Trigger, TriggerInteract
-from api.environment.Solid import Solid
 
-from api.utils import State, GlobalVariables, Debug
-from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
+
+from api.utils import GlobalVariables
+from api.utils.Inputs import get_once_inputs, prevent_input
 from api.utils.RessourcePath import resource_path
-from api.utils.Console import *
 
 ### Game modules ####
 from game.game_actions.triggers import *
