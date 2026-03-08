@@ -310,7 +310,7 @@ try:
                 prevent_input("pause")
                 scene.UI.hide("menu")
                 audio_manager.play_music("inGame") #Resume the main theme when closing the menu
-    e
+
     def main():
         """
         Main loop starting the game
