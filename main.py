@@ -59,6 +59,7 @@ from api.utils import State, GlobalVariables, Debug
 from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
 from api.environment.Trigger import Trigger, TriggerInteract
 from api.utils.RessourcePath import resource_path
+from api.utils.Console import *
 
 ### Game modules ###
 from game.game_actions.triggers import *
@@ -116,7 +117,8 @@ jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", glob)
 
 #Textures
-ggg = Texture("Images\\Background\\tiles\\ggg.png",glob)
+grass_texture = Texture("Images\\Terrain\\grass.png", glob)
+checkpoint_texture = Texture("Images\\Terrain\\beach_sand.png", glob)
 
 #Loads background
 blue_tile = Texture("Images\\Background\\Tiles\\Blue.png", glob)
@@ -167,12 +169,10 @@ collections += [Solid((0,y), (100, 100)) for y in range(200, 700, 100)]
 collections += [Solid((250, 550), (200, 20))]
 collections += [Solid((550, 500), (500, 50))]
 
-
-grass = Texture("Images\\grass.png", glob)
 #Setting a texture for all solids (to be better implemented with a "Tile" class, allowing to repeat a texture on a surface of any size, and also use a texture atlas)
 for coll in collections:
     coll.set_color((200, 200, 200))
-    coll.set_texture(grass)
+    coll.set_texture(grass_texture)
 
 #### TRIGGERS ####
 # (see game/game_actions/triggers.py for the functions (callbacks) called by the triggers)
@@ -183,11 +183,11 @@ for coll in collections:
 
 ### Predefined triggers
 ### Creates a killBox that kills the player when falling too much (y > HEIGHT)
-create_killBox(collections, 50, game, HEIGHT)
+create_killBox(collections, 50, HEIGHT)
 
 ### Custom triggers
-collections += [Trigger((700, 400), (100, 100), ["player"], [lambda obj: print_alert_msg("Trigger that can be actived each time triggered!")])]
-collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(collections, HEIGHT)], once=True)]
+collections += [Trigger((700, 400), (100, 100), ["player"], [lambda obj: print_info("Trigger that can be actived each time triggered!")])]
+collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(collections, HEIGHT, grass_texture, checkpoint_texture)], once=True)]
 
 
 #%%################ CAMERA SETUP ####################
@@ -294,13 +294,11 @@ def loop():
     if not "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
-            #print("Opening menu: menu")
             scene.UI.show("menu")
             audio_manager.play_music("pause")
     elif "menu" in scene.UI.enabled_elements:
         if get_once_inputs()["pause"]:
             prevent_input("pause")
-            #print("Closing menu: menu")
             scene.UI.hide("menu")
             audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
