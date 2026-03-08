@@ -33,7 +33,7 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 ### Libs ###
 import os
 from os.path import join
-import pygame as pg
+import time
 
 #### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
 #=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue 
@@ -64,6 +64,15 @@ from api.utils.RessourcePath import resource_path
 from game.game_actions.triggers import *
 from game.game_actions.ui import menu_in_game
 
+#%%############## CLOSE SPLASH SCREEN #################
+#######################################################
+try:
+    import pyi_splash
+    time.sleep(5)
+    pyi_splash.close()
+except ImportError:
+    # we are not in an exe file
+    pass
 
 #%%############### GLOBAL VARIABLES ###################
 #######################################################
@@ -80,8 +89,6 @@ font_FR = "**/" + join(assets_path, "Fonts\\Gm6x11.ttf")
 GlobalVariables.set_variable("default_font", font_FR)
 game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, debug_font=font_FR)
 
-game.set_icon(resource_path(os.path.join("assets", "Images", "icon.jpg")))
-
 ### DEBUG MODE ###
 
 #Enables debug mode by default
@@ -97,6 +104,9 @@ game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1")
 #Init the resource manager
 
 glob = Resource(ResourceType.GLOBAL, assets_path)
+
+icon = Texture("Images\\icon.png", glob)
+game.set_icon(resource_path(os.path.join("assets", "Images", "icon.png")))
 
 #Loads animations
 run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", glob), 12, 70)
@@ -200,7 +210,7 @@ p_bg = ParallaxBackground((RENDER_WIDTH, RENDER_HEIGHT), [
 bg = Background(blue_tile,True,(RENDER_WIDTH, RENDER_HEIGHT))
 scene = game.scene
 
-icon = Texture("Images\\icon.jpg", glob)
+
 me = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 #%%################ UI setup ####################
 ################################################
