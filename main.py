@@ -300,7 +300,7 @@ if __name__ == "__main__":
         app = Omicronde()
         app.launch()
 
-    except Exception(BaseException):
+    except Exception:
         #%%############## CLOSE PG WINDOW #####################
         #######################################################
         try:
