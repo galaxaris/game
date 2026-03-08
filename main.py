@@ -172,7 +172,7 @@ class Omicronde:
 
         ### Custom triggers
         self.collections += [Trigger((700, 400), (100, 100), ["player"],[lambda obj: print_info("Trigger that can be actived each time triggered!")])]
-        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.collections, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
+        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.scene, player_face_texture, sign_texture, sign_texture, self.collections, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
 
         #%%################ CAMERA SETUP ####################
         #####################################################
