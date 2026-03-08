@@ -89,6 +89,8 @@ font_FR = "**/" + join(assets_path, "Fonts\\Gm6x11.ttf")
 GlobalVariables.set_variable("default_font", font_FR)
 game = Game((WIDTH, HEIGHT), (RENDER_WIDTH, RENDER_HEIGHT), NAME, pg.RESIZABLE | pg.SCALED, FPS, debug_font=font_FR)
 
+GlobalVariables.set_variable("render_size", (RENDER_WIDTH, RENDER_HEIGHT))
+
 ### DEBUG MODE ###
 
 #Enables debug mode by default
