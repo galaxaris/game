@@ -62,7 +62,7 @@ from api.utils.RessourcePath import resource_path
 
 ### Game modules ###
 from game.game_actions.triggers import *
-from game.game_actions.ui import menu_in_game
+from game.game_actions.ui import menu_in_game, toggle_audio
 
 
 #%%############### GLOBAL VARIABLES ###################
@@ -229,8 +229,7 @@ scene.UI.add("menu", menu)
 """
 For now, no music or SFX for peace of mind of our dear Raphix. Can be changed with the button mute/unmute in the menu
 """
-audio_manager.set_sfx_volume(0)
-audio_manager.set_music_volume(0)
+toggle_audio() #Mute the music by default, can be changed with the button in the menu
 
 audio_manager.play_music("inGame") #Play the main theme in loop
 
