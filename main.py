@@ -203,10 +203,6 @@ try:
     game.scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
     game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*20, RENDER_HEIGHT-100))
 
-    GlobalVariables.set_variable("offset", game.scene.camera.offset)
-
-    GlobalVariables.set_variable("camera_limit_topleft", game.scene.camera.limit_topleft)
-    GlobalVariables.set_variable("camera_limit_bottomright", game.scene.camera.limit_bottomright)
 
     #%%################ BACKGROUND SETUP ####################
     ########################################################
@@ -318,6 +314,8 @@ try:
         """
         game.run(loop)
 
+    #%%############# ON START ###################
+    print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\n If you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
     #%%################ RUNNING THE GAME #########################
     ##############################################################
@@ -331,15 +329,19 @@ except :
     except:
         pass
 
-    import time
-    end_time = time.time() + 15
+    from api.utils.Console import *
 
-    print("CMD is self closing in : ", end="", flush=True)
+    print_error("[bold red]=== FATAL ERROR ===[/bold red]\nAn unexpected error occurred while running the game. Please check the error message above and try to fix it. If you need help, don't hesitate to contact us with the error message and the steps to reproduce it. We will be happy to help you!")
+    import traceback
+    error = traceback.format_exc()
+    print_error(f"[bold red]{error}[/bold red]")
 
-    while time.time() < end_time:
-        remaining = int(end_time - time.time())
-        print(f"{remaining} ", end="", flush=True)
-        time.sleep(1)
 
-    print("Goodbye !")
+    print_warning("CMD is self closing in 10 seconds...")
+
+    print("")
+    print_countdown(10)
+    print("")
+
+    print_info("Goodbye !")
 
