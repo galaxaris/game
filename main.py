@@ -197,6 +197,9 @@ collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_st
 #To center the player. Thus the camera follows the player when moving, while keeping it centered on the screen.
 game.scene.camera.set_offset((RENDER_WIDTH//2 - player.size.x,RENDER_HEIGHT//2 - player.size.y))
 game.scene.camera.set_limits((100, -RENDER_HEIGHT-100), (RENDER_WIDTH*20, RENDER_HEIGHT-100))
+GlobalVariables.set_variable("offset", game.scene.camera.offset)
+GlobalVariables.set_variable("camera_limit_topleft", game.scene.camera.limit_topleft)
+GlobalVariables.set_variable("camera_limit_bottomright", game.scene.camera.limit_bottomright)
 
 #%%################ BACKGROUND SETUP ####################
 ########################################################
