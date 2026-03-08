@@ -40,12 +40,16 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ### API ###
 from api.Game import Game
 
-
+from api.UI.Button import Button
 from api.UI.Dialog import Dialog
-
+from api.UI.Modal import Modal
+from api.UI.Text import Text
+from api.UI.TextBox import TextBox
 
 from api.assets.Animation import Animation
 from api.assets.Resource import Resource, ResourceType
+from api.assets.Texture import Texture
+from api.assets.AudioManager import AudioManager
 
 from api.engine.Scene import Scene
 
@@ -54,11 +58,12 @@ from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Trigger import Trigger, TriggerInteract
+from api.environment.Solid import Solid
 
-
-from api.utils import GlobalVariables
-from api.utils.Inputs import get_once_inputs, prevent_input
+from api.utils import State, GlobalVariables, Debug
+from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
 from api.utils.RessourcePath import resource_path
+from api.utils.Console import *
 
 ### Game modules ####
 from game.game_actions.triggers import *
@@ -106,9 +111,6 @@ class Omicronde:
         icon_texture = Texture("Images\\icon.png", self.glob)
         grass_texture = Texture("Images\\Terrain\\grass.png", self.glob)
         checkpoint_texture = Texture("Images\\Terrain\\beach_sand.png", self.glob)
-
-        me = Texture("Images\\Player\\NinjaFrog\\jump.png", self.glob)
-        pnj = Texture("Images\\Player\\MaskDude\\jump.png", self.glob)
         sign_texture = Texture("Images\\sign.png", self.glob)
         player_face_texture = Texture("Images\\Player\\NinjaFrog\\jump.png", self.glob)
 
@@ -119,6 +121,7 @@ class Omicronde:
         t_p1 = Texture("Images\\Background\\Parallax\\Forest\\0.9x parallax-demon-woods-close-trees.png", self.glob)
         t_p2 = Texture("Images\\Background\\Parallax\\Forest\\0.70x parallax-demon-woods-mid-trees.png", self.glob)
         t_p3 = Texture("Images\\Background\\Parallax\\Forest\\0.5x parallax-demon-woods-far-trees.png", self.glob)
+        t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods-bg.png", self.glob)
 
         # Loads music
         self.audio_manager = self.game.audio_manager
@@ -168,9 +171,8 @@ class Omicronde:
         create_killBox(self.collections, 50, self.HEIGHT)
 
         ### Custom triggers
-        collections += [Trigger((700, 400), (100, 100), ["player"], [lambda obj: print_info("Trigger that can be actived each time triggered!")])]
-        collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(self.scene, self.player, pnj, info_box, collections, self.HEIGHT, grass_texture, checkpoint_texture)], once=True)]
-
+        self.collections += [Trigger((700, 400), (100, 100), ["player"],[lambda obj: print_info("Trigger that can be actived each time triggered!")])]
+        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.collections, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
 
         #%%################ CAMERA SETUP ####################
         #####################################################
@@ -193,19 +195,16 @@ class Omicronde:
 
         b_bg = Background(blue_tile, True, (self.RENDER_WIDTH, self.RENDER_HEIGHT))
 
-
-    #%%################ UI setup ####################
-    ################################################
         #%%################ UI setup ###################
         ################################################
 
-
-        dialog = Dialog(font_FR)
-        dialog.add_character("Galaxaris", icon)
-        dialog.add_character("You", me)
+        dialog = Dialog(self.font_G)
+        dialog.add_character("Galaxaris", icon_texture)
+        dialog.add_character("You", player_face_texture)
         dialog.add_message("Galaxaris", "Hello there, I'm Galaxaris !")
         dialog.add_message("You", "And I'm me, nice to meet you !")
-        dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game engine made in Python with Pygame. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel sapien eget nunc commodo efficitur. (T'as vu je sais parler Latin XD)")
+        dialog.add_message("Galaxaris",
+                           "This is a demo of the Omicronde API, a game engine made in Python with Pygame. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel sapien eget nunc commodo efficitur. (T'as vu je sais parler Latin XD)")
 
         self.scene.UI.add("test", dialog)
 
@@ -320,7 +319,7 @@ if __name__ == "__main__":
         import traceback
 
         error = traceback.format_exc()
-        print_error(f"[bold red]{error}[/bold red]", width=100)
+        print_error(f"[bold red]{error}[/bold red]")
 
         print_warning("CMD is self closing in 10 seconds...")
 
