@@ -119,7 +119,7 @@ jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
 fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", glob)
 
 #Textures
-grass_texture = Texture("Images\\Terrain\\grass.png", glob)
+grass_texture = Texture("Images\\grass2.png", glob)
 checkpoint_texture = Texture("Images\\Terrain\\beach_sand.png", glob)
 
 #Loads background
@@ -146,7 +146,7 @@ audio_manager.load_sfx("death", join(assets_path, "SFX\\blblblbl.mp3"))
 
 #%%################ PLAYER INITIALIZATION ####################
 ##############################################################
-player = Player((310,410), (48,48), sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death"})
+player = Player((310,410), (32,32))
 player.set_gravity(0.5)
 
 player.bind_animations({
@@ -157,6 +157,8 @@ player.bind_animations({
     "fall": fall_anim,
 
 })
+
+player.set_sfx_list({"jump": "jump", "hit_ground": "hit_ground", "death": "death"})
 
 #%%################ ENVIRONMENT SETUP ####################
 ##########################################################
@@ -236,7 +238,7 @@ dialog.add_message("Galaxaris", "This is a demo of the Omicronde API, a game eng
 scene.UI.add("test", dialog)
 
 info_box = TriggerInteract((110, 568), (32, 32), ["player"], [lambda obj: scene.UI.show("test")])
-info_box.set_texture(icon)
+info_box.set_texture(icon, True)
 collections += [info_box]
 
 ### MENU INGAME
