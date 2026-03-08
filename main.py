@@ -123,6 +123,9 @@ try:
     grass_texture = Texture("Images\\Terrain\\grass.png", glob)
     checkpoint_texture = Texture("Images\\Terrain\\beach_sand.png", glob)
 
+    me = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
+    pnj = Texture("Images\\Player\\MaskDude\\jump.png", glob)
+
     #Loads background
     blue_tile = Texture("Images\\Background\\Tiles\\Blue.png", glob)
 
@@ -192,7 +195,7 @@ try:
 
     ### Custom triggers
     collections += [Trigger((700, 400), (100, 100), ["player"], [lambda obj: print_info("Trigger that can be actived each time triggered!")])]
-    collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(collections, HEIGHT, grass_texture, checkpoint_texture)], once=True)]
+    collections += [Trigger((832, 550), (32, 32), ["player"], [lambda obj: summon_stairs1(scene, me, pnj, info_box, collections, HEIGHT, grass_texture, checkpoint_texture)], once=True)]
 
 
     #%%################ CAMERA SETUP ####################
@@ -217,10 +220,8 @@ try:
     scene = game.scene
 
 
-    me = Texture("Images\\Player\\NinjaFrog\\jump.png", glob)
     #%%################ UI setup ####################
     ################################################
-
 
 
     dialog = Dialog(font_FR)
@@ -334,7 +335,7 @@ except :
     print_error("[bold red]=== FATAL ERROR ===[/bold red]\nAn unexpected error occurred while running the game. Please check the error message above and try to fix it. If you need help, don't hesitate to contact us with the error message and the steps to reproduce it. We will be happy to help you!")
     import traceback
     error = traceback.format_exc()
-    print_error(f"[bold red]{error}[/bold red]")
+    print_error(f"[bold red]{error}[/bold red]", width=100)
 
 
     print_warning("CMD is self closing in 10 seconds...")
