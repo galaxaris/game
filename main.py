@@ -109,6 +109,7 @@ try:
     glob = Resource(ResourceType.GLOBAL, assets_path)
 
     icon = Texture("Images\\icon.png", glob)
+    sign = Texture("Images\\sign.png", glob)
     game.set_icon(resource_path(os.path.join("assets", "Images", "icon.png")))
 
     #Loads animations
@@ -236,7 +237,7 @@ try:
     scene.UI.add("test", dialog)
 
     info_box = TriggerInteract((110, 568), (32, 32), ["player"], [lambda obj: scene.UI.show("test")])
-    info_box.set_texture(icon)
+    info_box.set_texture(sign)
     collections += [info_box]
 
     ### MENU INGAME
