@@ -268,10 +268,15 @@ def debug_info():
     game.register_debug_entity(player)
 
 
+#%%############# ON START ###################
+print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\n If you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
+
+
 #%%################ MAIN LOOP ####################
 ##################################################
-
 def loop():
+
+
     game.scene.default_surface.fill((0,0,0,0))
  
 
