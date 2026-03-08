@@ -1,0 +1,13 @@
+--ASSETS USED FOR THE PROJECT--
+
+-FONTS-
+font m6x11 and m6x11plus by Daniel Linssen, "free to use with attribution": https://managore.itch.io/m6x11 
+logo font retronoid by Darrell Flood, "free to use for personal use": https://www.dafont.com/retronoid.font
+
+-ICONS-
+play button icon by icons8, free to use if mentioned: https://icons8.com/icon/12965/right-button
+pause button icon by icons8, free to use if mentioned: https://icons8.com/icon/110292/pause-squared
+replay button icon by icons8, free to use if mentioned: https://icons8.com/icon/63815/replay
+
+-LOGO-
+earth icon generated with pixel-planet-generator by Deep-Fold, free to use: https://deep-fold.itch.io/pixel-planet-generator
