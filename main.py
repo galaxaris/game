@@ -62,7 +62,7 @@ from api.environment.Solid import Solid
 
 from api.utils import State, GlobalVariables, Debug
 from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
-from api.utils.RessourcePath import resource_path
+from api.utils.ResourcePath import resource_path
 from api.utils.Console import *
 
 ### Game modules ####

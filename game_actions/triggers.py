@@ -11,7 +11,7 @@ from api.assets.Texture import Texture
 from api.environment.Solid import Solid
 from api.environment.Trigger import Trigger, TriggerKillBox, TriggerInteract
 from api.UI.Dialog import Dialog
-from api.utils.RessourcePath import resource_path
+from api.utils.ResourcePath import resource_path
 from api.utils.Console import *
 from api.utils.GlobalVariables import global_vars as GV
 
