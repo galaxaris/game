@@ -71,14 +71,14 @@ from game.game_actions.ui import menu_in_game, toggle_audio
 
 class Omicronde:
     def __init__(self):
-        # %%############### GLOBAL VARIABLES ###################
+        #%%############### GLOBAL VARIABLES ###################
         #######################################################
         self.RENDER_WIDTH, self.RENDER_HEIGHT = 640, 360
         self.WIDTH, self.HEIGHT = 1280, 720
         self.NAME = "Omicronde"
         self.FPS = 60
 
-        # %%############### Initializing the game ##############
+        #%%############### Initializing the game ##############
         #######################################################
         self.assets_path = resource_path("assets")
         self.font_G = "**/" + join(self.assets_path, "Fonts\\Gm6x11.ttf")
@@ -92,7 +92,7 @@ class Omicronde:
         self.game.enable_debug() # Enables debug mode by default
         self.game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1") # Toggles fullscreen
 
-        # %%################ LOADING ASSETS ####################
+        #%%################ LOADING ASSETS ####################
         #######################################################
 
         # Init the resource manager
@@ -142,7 +142,7 @@ class Omicronde:
         self.player.set_sfx_list(sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death"})
         self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim})
 
-        # %%################ ENVIRONMENT SETUP ####################
+        #%%################ ENVIRONMENT SETUP ####################
         ##########################################################
 
         # TODO: to be implemented in a JSON BDD (when we will have a level system, with the editor)
@@ -182,7 +182,7 @@ class Omicronde:
         self.scene.camera.set_offset((self.RENDER_WIDTH // 2 - self.player.size.x, self.RENDER_HEIGHT // 2 - self.player.size.y))
         self.scene.camera.set_limits((100, -self.RENDER_HEIGHT - 100), (self.RENDER_WIDTH * 20, self.RENDER_HEIGHT - 100))
 
-        #%%################ BACKGROUND SETUP ####################
+        #%%################ BACKGROUND SETUP ###################
         ########################################################
 
         ### Wonderful parallax background
@@ -195,7 +195,7 @@ class Omicronde:
 
         b_bg = Background(blue_tile, True, (self.RENDER_WIDTH, self.RENDER_HEIGHT))
 
-        #%%################ UI setup ####################
+        #%%################ UI setup ###################
         ################################################
 
         dialog = Dialog(self.font_G)
@@ -278,11 +278,10 @@ class Omicronde:
     def launch(self):
         self.game.run(self.loop)
 
-#%%############# ON START ###################
+#%%############# ON START #############################
 print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\n If you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
-#%%################ MAIN #########################
-##############################################################
+#%%################ MAIN ##############################
 if __name__ == "__main__":
     try:
         #%%############## CLOSE SPLASH SCREEN #################
@@ -296,26 +295,31 @@ if __name__ == "__main__":
             # we are not in an exe file
             pass
 
-        #%%############## LAUNCH THE GAME #################
+        #%%############## LAUNCH THE GAME #####################
         #######################################################
         app = Omicronde()
         app.launch()
 
     except Exception(BaseException):
+        #%%############## CLOSE PG WINDOW #####################
+        #######################################################
         try:
             import pygame as pg
-            pg.quit() #we don't want a failed window to float around
+
+            pg.quit()
 
         except ImportError:
             pass
 
+        #%%############## CLOSE CMD ###########################
+        #######################################################
         from api.utils.Console import *
 
         print_error("[bold red]=== FATAL ERROR ===[/bold red]\nAn unexpected error occurred while running the game. Please check the error message above and try to fix it. If you need help, don't hesitate to contact us with the error message and the steps to reproduce it. We will be happy to help you!")
         import traceback
+
         error = traceback.format_exc()
         print_error(f"[bold red]{error}[/bold red]")
-
 
         print_warning("CMD is self closing in 10 seconds...")
 
