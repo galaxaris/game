@@ -239,18 +239,34 @@ class Omicronde:
         self.new_scene.set_background(b_bg)
         self.new_scene.camera.set_offset((self.RENDER_WIDTH // 2 - self.player.size.x, self.RENDER_HEIGHT // 2 - self.player.size.y))
 
-
+        self.scene.add(self.player, "#player")
     def loop(self):
         self.scene.default_surface.fill((0,0,0,0))
         self.scene.set_layer(1, "#object")
         self.scene.set_layer(2, "#player")
+        self.scene.set_layer(3, "#projectile")
 
         self.debug_info()
+
+        projectiles = GlobalVariables.get_variable("projectiles")
+        length = len(projectiles)- 1
+        for i in range(length, -1, -1):
+            print(projectiles[i].to_kill)
+            if not projectiles[i].to_kill:
+                self.scene.add(projectiles[i], "#projectile")
+
+
+            else:
+                self.scene.remove(projectiles[i], "#projectile")
+                projectiles.remove(projectiles[i])
+
+
+
 
         for colls in self.collections:
             self.scene.add(colls, "#object")
 
-        self.scene.add(self.player, "#player")
+        #self.scene.add(self.player, "#player")
         self.scene.add(self.entity, "#object")
         self.entity.vel.x = 2
         self.scene.camera.focus(self.player)
