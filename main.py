@@ -33,6 +33,7 @@ import os
 from os.path import join
 import time
 
+from api.GameObject import GameObject
 from api.entity.Entity import Entity
 
 #### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
@@ -139,10 +140,15 @@ class Omicronde:
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
+        self.entity = Entity((310, 410), (48, 48))
 
         self.player.set_gravity(9.81)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death", "death2": "death2"})
         self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim})
+
+        self.entity.set_gravity(9.81)
+        self.entity.set_texture(blue_tile)
+        self.entity.add_tag('player')
 
         #%%################ ENVIRONMENT SETUP ####################
         ##########################################################
@@ -233,6 +239,7 @@ class Omicronde:
         self.new_scene.set_background(b_bg)
         self.new_scene.camera.set_offset((self.RENDER_WIDTH // 2 - self.player.size.x, self.RENDER_HEIGHT // 2 - self.player.size.y))
 
+
     def loop(self):
         self.scene.default_surface.fill((0,0,0,0))
         self.scene.set_layer(1, "#object")
@@ -244,6 +251,8 @@ class Omicronde:
             self.scene.add(colls, "#object")
 
         self.scene.add(self.player, "#player")
+        self.scene.add(self.entity, "#object")
+        self.entity.vel.x = 2
         self.scene.camera.focus(self.player)
 
         self.new_scene.add(self.player, "#player")
