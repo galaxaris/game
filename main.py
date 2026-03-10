@@ -139,8 +139,8 @@ class Omicronde:
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
-        self.entity = Entity((310, 410), (48, 48))
-        self.player.set_gravity(0.5)
+
+        self.player.set_gravity(9.81)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death", "death2": "death2"})
         self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim})
 
