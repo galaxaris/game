@@ -54,7 +54,7 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
     audio_manager = GlobalVariables.get_variable("audio_manager")
 
     ## Menu panel
-    menu = Modal((50, 50), (screen_w-100, screen_h-100), (0, 0, 0))
+    menu = Modal((50, 50), (screen_w-100, screen_h-100),  (0, 0, 0, 200))
     text = Text((0,0), 20, "Game Menu", FONT_FR, (3, 161, 45))
     menu.add_element(text, x=0)
 

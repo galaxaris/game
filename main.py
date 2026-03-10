@@ -33,6 +33,8 @@ import os
 from os.path import join
 import time
 
+from api.entity.Entity import Entity
+
 #### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
 #=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -87,7 +89,6 @@ class Omicronde:
         self.scene = self.game.scene
 
         GlobalVariables.set_variable("render_size", (self.RENDER_WIDTH, self.RENDER_HEIGHT))
-
         ### DEBUG MODE ###
         self.game.enable_debug() # Enables debug mode by default
         self.game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1") # Toggles fullscreen
@@ -138,7 +139,7 @@ class Omicronde:
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
-
+        self.entity = Entity((310, 410), (48, 48))
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death", "death2": "death2"})
         self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim})
@@ -234,8 +235,6 @@ class Omicronde:
 
     def loop(self):
         self.scene.default_surface.fill((0,0,0,0))
-
-
         self.scene.set_layer(1, "#object")
         self.scene.set_layer(2, "#player")
 
