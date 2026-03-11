@@ -22,7 +22,7 @@ def create_killBox(collections, lenght, game_heigth):
     """
     Adds a killbox of specified lenght, 400px behind the back of screen
     """
-    collections += [TriggerKillBox((0, game_heigth+400), (lenght*1000, 100), ["player"], once=False, sfx=["death", "death2"])]
+    collections += [TriggerKillBox((-1000, game_heigth+400), (lenght*1000, 100), ["player", "projectile"], once=False, sfx=["death", "death2"])]
 
 def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Texture, collections, game_height, texture_common: Texture, texture_checkpoint: Texture, rdLength=20, blockDim = (50, 10),
                     dialog_font: str = ("**/" + join(ASSETS_PATH, "Fonts\\Gm6x11.ttf"))):
