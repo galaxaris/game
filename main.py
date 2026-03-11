@@ -132,9 +132,10 @@ class Omicronde:
 
         # Loads SFX
         self.audio_manager.load_sfx("jump", join(self.assets_path, "SFX\\frog-sound.mp3"))
-        self.audio_manager.load_sfx("hit_ground", join(self.assets_path, "SFX\\Casserole.mp3"))
+        #self.audio_manager.load_sfx("hit_ground", join(self.assets_path, "SFX\\Casserole.mp3"))
         self.audio_manager.load_sfx("death", join(self.assets_path, "SFX\\blblblbl.mp3"))
         self.audio_manager.load_sfx("death2", join(self.assets_path, "SFX\\LEGO R2D2 death.mp3"))
+        self.audio_manager.load_sfx("fire", join(self.assets_path, "SFX\\piou1.mp3"))
 
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
@@ -142,7 +143,7 @@ class Omicronde:
         self.entity = Entity((310, 410), (48, 48))
 
         self.player.set_gravity(9.81)
-        self.player.set_sfx_list(sfx_list={"jump": "jump", "hit_ground": "hit_ground", "death": "death", "death2": "death2"})
+        self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
         self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim})
 
         self.entity.set_gravity(9.81)
