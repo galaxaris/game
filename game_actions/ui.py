@@ -17,7 +17,7 @@ from api.engine.Scene import Scene
 from api.entity.Player import Player
 from api.Game import Game
 
-from api.utils import GlobalVariables
+from api.utils import Fonts
 
 #Global variables
 COLOR_SET_CLASSIC = ((0, 0, 0), (255, 255, 255), (188, 188, 188), (163, 163, 163))
@@ -50,8 +50,8 @@ def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal,
 def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, player: Player, game: Game):
 
     #Global variables:
-    FONT_FR = GlobalVariables.get_variable("default_font")
-    audio_manager = GlobalVariables.get_variable("audio_manager")
+    FONT_FR = Fonts.DEFAULT_FONT
+    audio_manager = game.audio_manager
 
     ## Menu panel
     menu = Modal((50, 50), (screen_w-100, screen_h-100),  (0, 0, 0, 200))
@@ -60,12 +60,11 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
 
     ## Buttons
     menu_button((0,50), (100, 40), "Resume", lambda e: (scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
-    menu_button((0,100), (100, 40), "Restart", lambda e: (player.kill(), scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+    menu_button((0,100), (100, 40), "Restart", lambda e: (player.respawn(), scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
     menu_button((0,150), (100, 40), "Quit", lambda e: game.stop(), menu, FONT_FR, color_set=COLOR_SET_DANGER)
     menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.enable_debug(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
-    menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_audio(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
+    menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_audio(audio_manager, menu), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
 
-    GlobalVariables.set_variable("current_menu", menu) #To be able to access the menu in the callback of the mute button
     return menu
     ## Add menu to scene UI
     #scene.UI.add(menu, menu_name)
@@ -74,15 +73,16 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
 
 #%%############### UI CALLBACKS ##########################
 ##########################################################
-def toggle_audio():
-    audio_manager = GlobalVariables.get_variable("audio_manager")
+def toggle_audio(audio_manager = None, menu = None):
+    if not audio_manager:
+        return
     #Gets the button in menu.elements to change its text accordingly
-    menu = GlobalVariables.get_variable("current_menu")
     mute_button = None
-    for element in menu.elements:
-        if isinstance(element, Button) and (element.text == "Mute" or element.text == "Unmute"):
-            mute_button = element
-            break
+    if menu:
+        for element in menu.elements:
+            if isinstance(element, Button) and (element.text == "Mute" or element.text == "Unmute"):
+                mute_button = element
+                break
 
     if audio_manager.is_muted:
         audio_manager.toggle_audio() #Unmute

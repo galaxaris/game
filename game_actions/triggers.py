@@ -13,7 +13,7 @@ from api.environment.Trigger import Trigger, TriggerKillBox, TriggerInteract
 from api.UI.Dialog import Dialog
 from api.utils.ResourcePath import resource_path
 from api.utils.Console import *
-from api.utils.GlobalVariables import global_vars as GV
+
 
 ASSETS_PATH = resource_path("assets")
 

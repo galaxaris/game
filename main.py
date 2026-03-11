@@ -63,7 +63,7 @@ from api.environment.Parallax import ParallaxLayer, ParallaxBackground
 from api.environment.Trigger import Trigger, TriggerInteract
 from api.environment.Solid import Solid
 
-from api.utils import State, GlobalVariables, Debug
+from api.utils import Debug, Fonts
 from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
 from api.utils.ResourcePath import resource_path
 from api.utils.Console import *
@@ -85,11 +85,10 @@ class Omicronde:
         #######################################################
         self.assets_path = resource_path("assets")
         self.font_G = "**/" + join(self.assets_path, "Fonts\\Gm6x11.ttf")
-        GlobalVariables.set_variable("default_font", self.font_G)
+        Fonts.DEFAULT_FONT = self.font_G
         self.game = Game((self.WIDTH, self.HEIGHT), (self.RENDER_WIDTH, self.RENDER_HEIGHT), self.NAME, pg.RESIZABLE | pg.SCALED, self.FPS, debug_font=self.font_G)
         self.scene = self.game.scene
 
-        GlobalVariables.set_variable("render_size", (self.RENDER_WIDTH, self.RENDER_HEIGHT))
         ### DEBUG MODE ###
         self.game.enable_debug() # Enables debug mode by default
         self.game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1") # Toggles fullscreen
@@ -229,7 +228,7 @@ class Omicronde:
         """
         For now, no music or SFX for peace of mind of our dear Raphix. Can be changed with the button mute/unmute in the menu
         """
-        toggle_audio()  # Mute the music by default, can be changed with the button in the menu
+        toggle_audio(self.audio_manager)  # Mute the music by default, can be changed with the button in the menu
         self.audio_manager.play_music("inGame")  # Play the main theme in loop
 
         #%%################# NEW SCENE TEST ########################
@@ -249,25 +248,6 @@ class Omicronde:
 
         self.debug_info()
 
-        if self.player.equipped_weapon.is_aiming:
-            cam_pos = GlobalVariables.get_variable("cam_pos")
-            self.player_screen_pos = self.player.pos - cam_pos
-
-            surface = pg.Surface((self.RENDER_WIDTH, self.RENDER_HEIGHT), pg.SRCALPHA).convert_alpha()
-            self.player.equipped_weapon.trajectory.draw(surface, offset=self.player.pos, offset2=self.player_screen_pos)
-            if "_trajectory" in self.scene.layer_surfaces:
-                self.scene.layer_surfaces["_trajectory"] = surface
-            #self.scene.add_surface(surface, "_trajectory")
-
-        projectiles = GlobalVariables.get_variable("projectiles")
-        length = len(projectiles)- 1
-        for i in range(length, -1, -1):
-            if not projectiles[i].to_kill:
-                self.scene.add(projectiles[i], "#projectile")
-
-            else:
-                self.scene.remove(projectiles[i], "#projectile")
-                projectiles.remove(projectiles[i])
 
         for colls in self.collections:
             self.scene.add(colls, "#object")
@@ -283,7 +263,7 @@ class Omicronde:
         inputs = pg.key.get_pressed()
 
         if inputs[pg.K_o]:
-            self.player.kill()
+            self.player.respawn()
 
         if inputs[pg.K_p]:
             self.game.scene = self.new_scene
