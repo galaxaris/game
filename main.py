@@ -244,24 +244,30 @@ class Omicronde:
         self.scene.default_surface.fill((0,0,0,0))
         self.scene.set_layer(1, "#object")
         self.scene.set_layer(2, "#player")
-        self.scene.set_layer(3, "#projectile")
+        self.scene.set_layer(3, "_trajectory")
+        self.scene.set_layer(4, "#projectile")
 
         self.debug_info()
+
+        if self.player.equipped_weapon.is_aiming:
+            cam_pos = GlobalVariables.get_variable("cam_pos")
+            self.player_screen_pos = self.player.pos - cam_pos
+
+            surface = pg.Surface((self.RENDER_WIDTH, self.RENDER_HEIGHT), pg.SRCALPHA).convert_alpha()
+            self.player.equipped_weapon.trajectory.draw(surface, offset=self.player.pos, offset2=self.player_screen_pos)
+            if "_trajectory" in self.scene.layer_surfaces:
+                self.scene.layer_surfaces["_trajectory"] = surface
+            #self.scene.add_surface(surface, "_trajectory")
 
         projectiles = GlobalVariables.get_variable("projectiles")
         length = len(projectiles)- 1
         for i in range(length, -1, -1):
-            print(projectiles[i].to_kill)
             if not projectiles[i].to_kill:
                 self.scene.add(projectiles[i], "#projectile")
-
 
             else:
                 self.scene.remove(projectiles[i], "#projectile")
                 projectiles.remove(projectiles[i])
-
-
-
 
         for colls in self.collections:
             self.scene.add(colls, "#object")
