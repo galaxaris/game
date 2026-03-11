@@ -78,4 +78,4 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
     info_box.set_texture(info_box_texture)
     collections += [info_box]
 
-    collections += [Trigger((1350 + 40 + blockDim[0]*2 + blockDim[0]*(rdLength+13) + blockDim[0], game_height - 300 - blockDim[1]*(randomNum) -30), (32, 32), ["player"], [summon_stairs2], once=True)]
+    collections += [Trigger((1350 + 140 + blockDim[0]*2 + blockDim[0]*(rdLength+13) + blockDim[0], game_height - 300 - blockDim[1]*(randomNum) -30), (32, 32), ["player"], [summon_stairs2], once=True)]

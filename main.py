@@ -232,6 +232,15 @@ class Omicronde:
         info_box.set_texture(sign_texture)
         self.collections += [info_box]
 
+
+        dialog2 = Dialog(self.font_G)
+        dialog2.add_character("Sign", sign_texture)
+        dialog2.add_message("Sign", ">>> This is the Way >>>")
+        self.scene.UI.add("sign", dialog2)
+        info_box2 = TriggerInteract((694, 568), (32, 32), ["player"], [lambda obj: self.scene.UI.show("sign")])
+        info_box2.set_texture(sign_texture)
+        self.collections+= [info_box2]
+
         ### MENU INGAME
         menu = menu_in_game(self.scene, "menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.player, self.game)
         self.scene.UI.add("menu", menu)
@@ -311,7 +320,7 @@ class Omicronde:
         self.game.run(self.loop)
 
 #%%############# ON START #############################
-print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\n If you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
+print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\nIf you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
 #%%################ MAIN ##############################
 if __name__ == "__main__":

@@ -13,11 +13,13 @@ from api.UI.Dialog import Dialog
 from api.UI.Modal import Modal
 from api.UI.Text import Text
 from api.UI.TextBox import TextBox
+from api.assets import AudioManager
 from api.engine.Scene import Scene
 from api.entity.Player import Player
 from api.Game import Game
 
 from api.utils import Fonts
+from api.utils.Console import *
 
 #Global variables
 COLOR_SET_CLASSIC = ((0, 0, 0), (255, 255, 255), (188, 188, 188), (163, 163, 163))
@@ -73,7 +75,7 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
 
 #%%############### UI CALLBACKS ##########################
 ##########################################################
-def toggle_audio(audio_manager = None, menu = None):
+def toggle_audio(audio_manager: AudioManager = None, menu = None):
     if not audio_manager:
         return
     #Gets the button in menu.elements to change its text accordingly
@@ -83,6 +85,12 @@ def toggle_audio(audio_manager = None, menu = None):
             if isinstance(element, Button) and (element.text == "Mute" or element.text == "Unmute"):
                 mute_button = element
                 break
+            else:
+                ...
+                #print_warning("Mute button not found in menu elements.")
+    else:
+        ...
+        #print_warning("Menu not found.")
 
     if audio_manager.is_muted:
         audio_manager.toggle_audio() #Unmute
