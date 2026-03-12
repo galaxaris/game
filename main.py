@@ -300,6 +300,7 @@ if __name__ == "__main__":
     try:
         #%%############## CLOSE SPLASH SCREEN #################
         #######################################################
+        in_an_exe = True
         try:
             import pyi_splash
 
@@ -307,7 +308,7 @@ if __name__ == "__main__":
             pyi_splash.close()
         except ImportError:
             # we are not in an exe file
-            pass
+            in_an_exe = False
 
         #%%############## LAUNCH THE GAME #####################
         #######################################################
@@ -335,10 +336,10 @@ if __name__ == "__main__":
         error = traceback.format_exc()
         print_error(f"[bold red]{error}[/bold red]", width=100)
 
-        print_warning("CMD is self closing in 10 seconds...")
-
-        print("")
-        print_countdown(10)
-        print("")
+        if in_an_exe:
+            print_warning("CMD is self closing in 10 seconds...")
+            print("")
+            print_countdown(10)
+            print("")
 
         print_info("Goodbye !")
