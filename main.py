@@ -73,7 +73,7 @@ from api.utils.Console import *
 
 ### Game modules ####
 from game.game_actions.triggers import *
-from game.game_actions.ui import menu_in_game, toggle_audio
+from game.game_actions.ui import menu_in_game, main_menu, toggle_audio
 
 class Omicronde:
     def __init__(self):
@@ -81,7 +81,7 @@ class Omicronde:
         #######################################################
         self.RENDER_WIDTH, self.RENDER_HEIGHT = 640, 360
         self.WIDTH, self.HEIGHT = 1280, 720
-        self.NAME = "Omicronde"
+        self.NAME = "Robot Recovery"
         self.FPS = 60
 
         #%%############### Initializing the game ##############
@@ -93,7 +93,7 @@ class Omicronde:
         self.scene = self.game.scene
 
         ### DEBUG MODE ###
-        self.game.enable_debug() # Enables debug mode by default
+        #self.game.enable_debug() # Enables debug mode by default
         self.game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1") # Toggles fullscreen
 
         #%%################ LOADING ASSETS ####################
@@ -105,12 +105,12 @@ class Omicronde:
         self.game.set_icon(resource_path(join("assets", "Images", "icon.png")))
 
         # Load animations
-        run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", self.glob), 12, 70)
-        run_fast_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run.png", self.glob), 12, 50)
-        idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle.png", self.glob), 11, 100)
-        jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", self.glob)
-        fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", self.glob)
-        hit_anim = Animation(Texture("Images\\Player\\NinjaFrog\\hit.png", self.glob), 7, 50)
+        run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run_scaled.png", self.glob), 12, 70)
+        run_fast_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run_scaled.png", self.glob), 12, 50)
+        idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle_scaled.png", self.glob), 11, 100)
+        jump_anim = Texture("Images\\Player\\NinjaFrog\\jump_scaled.png", self.glob)
+        fall_anim = Texture("Images\\Player\\NinjaFrog\\fall_scaled.png", self.glob)
+        hit_anim = Animation(Texture("Images\\Player\\NinjaFrog\\hit_scaled.png", self.glob), 7, 50)
 
         # Textures
         icon_texture = Texture("Images\\icon.png", self.glob)
@@ -120,7 +120,7 @@ class Omicronde:
         player_face_texture = Texture("Images\\Player\\NinjaFrog\\jump.png", self.glob)
 
         # Loads background
-        blue_tile = Texture("Images\\Background\\Tiles\\Blue.png", self.glob)
+        space_background = Texture("Images\\Background\\Background_space.png", self.glob)
 
         # Loads parallax layers
         t_p1 = Texture("Images\\Background\\Parallax\\Forest\\0.9x parallax-demon-woods-close-trees.png", self.glob)
@@ -131,20 +131,21 @@ class Omicronde:
         # Loads music
         self.audio_manager = self.game.audio_manager
 
-        self.audio_manager.load_music("inGame", join(self.assets_path, "Music\\Gestral Beach - My Grandma Hits Harder!.mp3"))
+        self.audio_manager.load_music("titleScreen", join(self.assets_path, "Music\\The_Legend_of_Zelda_Ocarina_of_Time_OST_N64_Title_Screen_Track_1.mp3"))
+        self.audio_manager.load_music("inGame", join(self.assets_path, "Music\\Original_Super_Mario_Bros_Soundtrack_Full.mp3"))
         self.audio_manager.load_music("pause", join(self.assets_path, "Music\\Alicia.mp3"))
 
         # Loads SFX
         self.audio_manager.load_sfx("jump", join(self.assets_path, "SFX\\frog-sound.mp3"))
         #self.audio_manager.load_sfx("hit_ground", join(self.assets_path, "SFX\\Casserole.mp3"))
-        self.audio_manager.load_sfx("death", join(self.assets_path, "SFX\\blblblbl.mp3"))
-        self.audio_manager.load_sfx("death2", join(self.assets_path, "SFX\\LEGO R2D2 death.mp3"))
+        self.audio_manager.load_sfx("death", join(self.assets_path, "SFX\\Mario died _(.mp3"))
+        self.audio_manager.load_sfx("death2", join(self.assets_path, "SFX\\Mario died _(.mp3"))
         self.audio_manager.load_sfx("fire", join(self.assets_path, "SFX\\piou1.mp3"))
 
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
-        self.entity = Enemy((610, 150), (32, 32))
+        self.entity = Enemy((610, 150), (48, 48))
 
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
@@ -160,7 +161,7 @@ class Omicronde:
         self.scene.UI.show("player_heart")
 
         self.entity.set_gravity(1)
-        self.entity.set_animation(Animation(Texture("Images\\Player\\little robot\\idle_robot.png", self.glob), 11, 50))
+        self.entity.set_animation(Animation(Texture("Images\\Player\\little robot\\idle_robot_scaled.png", self.glob), 11, 50))
         self.entity.add_tag('player')
 
         #%%################ ENVIRONMENT SETUP ####################
@@ -214,7 +215,19 @@ class Omicronde:
         ], (75, 105, 52))
         self.scene.set_background(p_bg)
 
-        b_bg = Background(blue_tile, True, (self.RENDER_WIDTH, self.RENDER_HEIGHT))
+        b_bg = Background(space_background, False, (self.RENDER_WIDTH, self.RENDER_HEIGHT))
+
+        #%%################# MAIN MENU SCENE ########################
+        ############################################################
+
+        self.menu_scene = Scene((self.RENDER_WIDTH, self.RENDER_HEIGHT))
+        self.menu_scene.set_background(b_bg)
+        self.menu_scene.camera.set_offset((self.RENDER_WIDTH // 2 - self.player.size.x, self.RENDER_HEIGHT // 2 - self.player.size.y))
+
+        self.scene.add(self.player, "#player")
+        self.scene.add(self.entity, "#enemies")
+
+        self.game.scene = self.menu_scene
 
         #%%################ UI setup ###################
         ################################################
@@ -242,29 +255,22 @@ class Omicronde:
         info_box2.set_texture(sign_texture)
         self.collections+= [info_box2]
 
-        ### MENU INGAME
-        menu = menu_in_game(self.scene, "menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.player, self.game)
+        ### MENU
+        menu = menu_in_game(self.menu_scene, self.scene, "menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.player, self.game)
         self.scene.UI.add("menu", menu)
+
+        menu2 = main_menu(self.menu_scene, self.scene, "main_menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.game)
+        self.menu_scene.UI.add("main_menu", menu2)
+        self.menu_scene.UI.show("main_menu")
+        self.audio_manager.play_music("titleScreen")
 
         #%%################# MUSIC SETUP ########################
         #########################################################
         """
         For now, no music or SFX for peace of mind of our dear Raphix. Can be changed with the button mute/unmute in the menu
         """
-        toggle_audio(self.audio_manager)  # Mute the music by default, can be changed with the button in the menu
-        self.audio_manager.play_music("inGame")  # Play the main theme in loop
-
-        #%%################# NEW SCENE TEST ########################
-        ############################################################
-
-        self.new_scene = Scene((self.RENDER_WIDTH, self.RENDER_HEIGHT))
-        self.new_scene.set_background(b_bg)
-        self.new_scene.camera.set_offset((self.RENDER_WIDTH // 2 - self.player.size.x, self.RENDER_HEIGHT // 2 - self.player.size.y))
-
-        self.scene.add(self.player, "#player")
-        self.scene.add(self.entity, "#enemies")
-
-        self.new_scene.add(self.player, "#player")
+        #toggle_audio(self.audio_manager)  # Mute the music by default, can be changed with the button in the menu
+        #self.audio_manager.play_music("inGame")  # Play the main theme in loop
 
     def loop(self):
         self.scene.default_surface.fill((0,0,0,0))
@@ -290,7 +296,6 @@ class Omicronde:
         #self.scene.add(self.player, "#player")
 
         self.scene.camera.focus(self.player)
-        self.new_scene.camera.focus(self.player)
 
         inputs = pg.key.get_pressed()
 
@@ -298,7 +303,7 @@ class Omicronde:
             self.player.respawn()
 
         if inputs[pg.K_p]:
-            self.game.scene = self.new_scene
+            self.game.scene = self.menu_scene
 
         if inputs[pg.K_m]:
             self.game.scene = self.scene

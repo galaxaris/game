@@ -49,7 +49,7 @@ def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal,
     button.set_callback(callback)
     menu.add_element(button, column_index)
 
-def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, player: Player, game: Game):
+def menu_in_game(scene: Scene, menu_scene: Scene, menu_name: str, screen_w: int, screen_h: int, player: Player, game: Game):
 
     #Global variables:
     FONT_FR = Fonts.DEFAULT_FONT
@@ -63,18 +63,44 @@ def menu_in_game(scene: Scene, menu_name: str, screen_w: int, screen_h: int, pla
     ## Buttons
     menu_button((0,50), (100, 40), "Resume", lambda e: (scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
     menu_button((0,100), (100, 40), "Restart", lambda e: (player.respawn(), scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
-    menu_button((0,150), (100, 40), "Quit", lambda e: game.stop(), menu, FONT_FR, color_set=COLOR_SET_DANGER)
+    menu_button((0,150), (100, 40), "Title Screen", lambda e: goto_title_scene(menu_scene, scene, menu_name, game), menu, FONT_FR, color_set=COLOR_SET_DANGER)
     menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.enable_debug(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
     menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_audio(audio_manager, menu), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
+    menu_button((screen_w-220,150), (100, 40), "Quit", lambda e: game.stop(), menu, FONT_FR, color_set=COLOR_SET_DANGER)
 
     return menu
     ## Add menu to scene UI
     #scene.UI.add(menu, menu_name)
-    
 
+def main_menu(menu_scene: Scene, game_scene: Scene, menu_name: str, screen_w: int, screen_h: int, game: Game):
+
+    #Global variables:
+    FONT_FR = Fonts.DEFAULT_FONT
+
+    ## Menu panel
+    menu = Modal(((screen_w-screen_w*0.33)/2, (screen_h-screen_h*0.28)/2), (screen_w*0.33, screen_h*0.28),  (0, 0, 0, 200))
+    text = Text((0,0), 32, "Robot Recovery", FONT_FR, (160, 161, 10))
+    menu.add_element(text, x=0)
+
+    ## Buttons
+    menu_button((45,45), (100, 40), "Play", lambda e: start_game_scene(menu_scene, game_scene, menu_name, game), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+
+    return menu
+    ## Add menu to scene UI
+    #scene.UI.add(menu, menu_name)
 
 #%%############### UI CALLBACKS ##########################
 ##########################################################
+def start_game_scene(menu_scene: Scene, game_scene: Scene, menu_name, game: Game):
+    audio_manager = game.audio_manager
+    audio_manager.play_music("inGame")
+    game.scene = game_scene
+
+def goto_title_scene(menu_scene: Scene, game_scene: Scene, menu_name, game: Game):
+    audio_manager = game.audio_manager
+    audio_manager.play_music("titleScreen")
+    game.scene = menu_scene
+
 def toggle_audio(audio_manager: AudioManager = None, menu = None):
     if not audio_manager:
         return
