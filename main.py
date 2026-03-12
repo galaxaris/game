@@ -145,7 +145,7 @@ class Omicronde:
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
-        self.entity = Enemy((610, 150), (32, 32))
+        self.entity = Enemy((610, 350), (32, 32), mode="chase", range=200)
 
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
@@ -300,6 +300,13 @@ class Omicronde:
 
         if inputs[pg.K_p]:
             self.game.scene = self.new_scene
+
+        def change_ennemy(event):
+            if event.key == pg.K_i:
+                self.entity.mode = "patrol" if self.entity.mode == "chase" else "chase"
+
+        self.game.bind(pg.KEYDOWN, change_ennemy)
+
 
         if inputs[pg.K_m]:
             self.game.scene = self.scene
