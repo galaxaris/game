@@ -89,7 +89,8 @@ class Omicronde:
         self.assets_path = resource_path("assets")
         self.font_G = "**/" + join(self.assets_path, "Fonts\\Gm6x11.ttf")
         Fonts.DEFAULT_FONT = self.font_G
-        self.game = Game((self.WIDTH, self.HEIGHT), (self.RENDER_WIDTH, self.RENDER_HEIGHT), self.NAME, pg.RESIZABLE | pg.SCALED, self.FPS, debug_font=self.font_G)
+        Debug.debug_font = self.font_G
+        self.game = Game((self.WIDTH, self.HEIGHT), (self.RENDER_WIDTH, self.RENDER_HEIGHT), self.NAME, pg.RESIZABLE | pg.SCALED, self.FPS)
         self.scene = self.game.scene
 
         ### DEBUG MODE ###
@@ -321,7 +322,7 @@ class Omicronde:
                 self.audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
     def debug_info(self):
-        self.game.register_debug_entity(self.player)
+        Debug.register_debug_entity(self.game, self.player)
 
     def launch(self):
         self.game.run(self.loop)
