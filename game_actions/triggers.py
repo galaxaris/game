@@ -22,10 +22,13 @@ def create_killBox(collections, lenght, game_heigth):
     """
     Adds a killbox of specified lenght, 400px behind the back of screen
     """
+    
     collections += [TriggerKillBox((-1000, game_heigth+400), (lenght*1000, 100), ["player", "projectile"], once=False, sfx=["death", "death2"])]
 
-def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Texture, collections, game_height, texture_common: Texture, texture_checkpoint: Texture, rdLength=20, blockDim = (50, 10),
+def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Texture, game_height, texture_common: Texture, texture_checkpoint: Texture, rdLength=20, blockDim = (50, 10),
                     dialog_font: str = ("**/" + join(ASSETS_PATH, "Fonts\\Gm6x11.ttf"))):
+
+    collections = []
 
     print_info("Summoning stairs... - To be activated only once!")
     y=451
@@ -64,7 +67,8 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
     scene.UI.add("Checkpoint", dialog)
 
     #Adds a trigger to continue the stairs
-    def summon_stairs2(rdLength=rdLength, collections=collections, texture=texture_checkpoint):
+    def summon_stairs2(rdLength=rdLength, texture=texture_checkpoint):
+        collections = []
         print_info("Summoning stairs part 2... - To be activated only once!")
         y=game_height - 300 - blockDim[1]*(randomNum)
         for x in range(3300, 3600, 10):
@@ -74,8 +78,15 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
             collections += [step]
             y-=30
 
+        for obj in collections:
+            scene.add(obj, "#object")
+
     info_box = TriggerInteract((1350 +blockDim[0]*2 + blockDim[0]*(rdLength+13) + blockDim[0], game_height - 300 - blockDim[1]*(randomNum) -30), (32, 32), ["player"], [lambda obj: scene.UI.show("Checkpoint")])
     info_box.set_texture(info_box_texture)
     collections += [info_box]
 
-    collections += [Trigger((1350 + 40 + blockDim[0]*2 + blockDim[0]*(rdLength+13) + blockDim[0], game_height - 300 - blockDim[1]*(randomNum) -30), (32, 32), ["player"], [summon_stairs2], once=True)]
+    collections += [Trigger((1350 + 140 + blockDim[0]*2 + blockDim[0]*(rdLength+13) + blockDim[0], game_height - 300 - blockDim[1]*(randomNum) -30), (32, 32), ["player"], [summon_stairs2], once=True)]
+
+    #Mandatory to add the new gameObjects (e.g. from triggers)
+    for obj in collections:
+        scene.add(obj, "#object")

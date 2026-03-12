@@ -34,6 +34,9 @@ from os.path import join
 import time
 
 from api.GameObject import GameObject
+from api.UI.GameUI import UIElement
+from api.UI.ProgressBar import ProgressBar
+from api.entity.Enemy import Enemy
 from api.entity.Entity import Entity
 
 #### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
@@ -107,6 +110,7 @@ class Omicronde:
         idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle.png", self.glob), 11, 100)
         jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", self.glob)
         fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", self.glob)
+        hit_anim = Animation(Texture("Images\\Player\\NinjaFrog\\hit.png", self.glob), 7, 50)
 
         # Textures
         icon_texture = Texture("Images\\icon.png", self.glob)
@@ -140,14 +144,23 @@ class Omicronde:
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
-        self.entity = Entity((310, 410), (48, 48))
+        self.entity = Enemy((610, 150), (32, 32))
 
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
-        self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim})
+        self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim, "hit": hit_anim})
+
+        self.player_ui_health = ProgressBar((30, 10), (100, 10), (100, 100, 100), "green", 100)
+        self.heart = Texture("Images\\heart.png", self.glob)
+        self.player_ui_heart = UIElement((8, 8), (16, 16))
+        self.player_ui_heart.set_texture(self.heart, True)
+        self.scene.UI.add("player_health", self.player_ui_health)
+        self.scene.UI.add("player_heart", self.player_ui_heart)
+        self.scene.UI.show("player_health")
+        self.scene.UI.show("player_heart")
 
         self.entity.set_gravity(1)
-        self.entity.set_texture(blue_tile)
+        self.entity.set_animation(Animation(Texture("Images\\Player\\little robot\\idle_robot.png", self.glob), 11, 50))
         self.entity.add_tag('player')
 
         #%%################ ENVIRONMENT SETUP ####################
@@ -180,7 +193,7 @@ class Omicronde:
 
         ### Custom triggers
         self.collections += [Trigger((700, 400), (100, 100), ["player"],[lambda obj: print_info("Trigger that can be actived each time triggered!")])]
-        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.scene, player_face_texture, sign_texture, sign_texture, self.collections, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
+        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.scene, player_face_texture, sign_texture, sign_texture, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
 
         #%%################ CAMERA SETUP ####################
         #####################################################
@@ -220,6 +233,15 @@ class Omicronde:
         info_box.set_texture(sign_texture)
         self.collections += [info_box]
 
+
+        dialog2 = Dialog(self.font_G)
+        dialog2.add_character("Sign", sign_texture)
+        dialog2.add_message("Sign", ">>> This is the Way >>>")
+        self.scene.UI.add("sign", dialog2)
+        info_box2 = TriggerInteract((694, 568), (32, 32), ["player"], [lambda obj: self.scene.UI.show("sign")])
+        info_box2.set_texture(sign_texture)
+        self.collections+= [info_box2]
+
         ### MENU INGAME
         menu = menu_in_game(self.scene, "menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.player, self.game)
         self.scene.UI.add("menu", menu)
@@ -240,27 +262,34 @@ class Omicronde:
         self.new_scene.camera.set_offset((self.RENDER_WIDTH // 2 - self.player.size.x, self.RENDER_HEIGHT // 2 - self.player.size.y))
 
         self.scene.add(self.player, "#player")
-        self.scene.add(self.entity, "#object")
+        self.scene.add(self.entity, "#enemies")
+
+        self.new_scene.add(self.player, "#player")
 
     def loop(self):
         self.scene.default_surface.fill((0,0,0,0))
         self.scene.set_layer(1, "#object")
         self.scene.set_layer(2, "#player")
-        self.scene.set_layer(3, "_trajectory")
-        self.scene.set_layer(4, "#projectile")
+        self.scene.set_layer(3, "#enemies")
+        self.scene.set_layer(4, "_trajectory")
+        self.scene.set_layer(5, "#projectile")
+
+        self.player_ui_health.set_progress(self.player.health)
+        if self.player.health > 60:
+            self.player_ui_health.set_color("green")
+        elif self.player.health > 30:
+            self.player_ui_health.set_color("yellow")
+        else:
+            self.player_ui_health.set_color("red")
 
         self.debug_info()
-
 
         for colls in self.collections:
             self.scene.add(colls, "#object")
 
         #self.scene.add(self.player, "#player")
 
-        self.entity.vel.x = 2
         self.scene.camera.focus(self.player)
-
-        self.new_scene.add(self.player, "#player")
         self.new_scene.camera.focus(self.player)
 
         inputs = pg.key.get_pressed()
@@ -293,7 +322,7 @@ class Omicronde:
         self.game.run(self.loop)
 
 #%%############# ON START #############################
-print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\n If you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
+print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\nIf you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
 #%%################ MAIN ##############################
 if __name__ == "__main__":
