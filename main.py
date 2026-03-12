@@ -94,7 +94,7 @@ class Omicronde:
         self.scene = self.game.scene
 
         ### DEBUG MODE ###
-        self.game.enable_debug() # Enables debug mode by default
+        #self.game.enable_debug() # Enables debug mode by default
         self.game.toggle_fullscreen(os.environ.get("NO_FULLSCREEN") != "1") # Toggles fullscreen
 
         #%%################ LOADING ASSETS ####################
