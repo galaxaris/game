@@ -63,7 +63,7 @@ def menu_in_game(scene: Scene, menu_scene: Scene, menu_name: str, screen_w: int,
     ## Buttons
     menu_button((0,50), (100, 40), "Resume", lambda e: (scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
     menu_button((0,100), (100, 40), "Restart", lambda e: (player.respawn(), scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
-    menu_button((0,150), (100, 40), "Title Screen", lambda e: goto_title_scene(menu_scene, scene, menu_name, game), menu, FONT_FR, color_set=COLOR_SET_DANGER)
+    menu_button((0,150), (100, 40), "Title Screen", lambda e: goto_title_scene(menu_scene, game), menu, FONT_FR, color_set=COLOR_SET_DANGER)
     menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.enable_debug(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
     menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_audio(audio_manager, menu), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
     menu_button((screen_w-220,150), (100, 40), "Quit", lambda e: game.stop(), menu, FONT_FR, color_set=COLOR_SET_DANGER)
@@ -83,7 +83,7 @@ def main_menu(menu_scene: Scene, game_scene: Scene, menu_name: str, screen_w: in
     menu.add_element(text, x=0)
 
     ## Buttons
-    menu_button((45,45), (100, 40), "Play", lambda e: start_game_scene(menu_scene, game_scene, menu_name, game), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+    menu_button((45,45), (100, 40), "Play", lambda e: start_game_scene(game_scene, game), menu, FONT_FR, color_set=COLOR_SET_COMMON)
 
     return menu
     ## Add menu to scene UI
@@ -91,12 +91,12 @@ def main_menu(menu_scene: Scene, game_scene: Scene, menu_name: str, screen_w: in
 
 #%%############### UI CALLBACKS ##########################
 ##########################################################
-def start_game_scene(menu_scene: Scene, game_scene: Scene, menu_name, game: Game):
+def start_game_scene(game_scene: Scene, game: Game):
     audio_manager = game.audio_manager
     audio_manager.play_music("inGame")
     game.scene = game_scene
 
-def goto_title_scene(menu_scene: Scene, game_scene: Scene, menu_name, game: Game):
+def goto_title_scene(menu_scene: Scene, game: Game):
     audio_manager = game.audio_manager
     audio_manager.play_music("titleScreen")
     game.scene = menu_scene

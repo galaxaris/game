@@ -257,7 +257,7 @@ class Omicronde:
         self.collections+= [info_box2]
 
         ### MENU
-        menu = menu_in_game(self.menu_scene, self.scene, "menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.player, self.game)
+        menu = menu_in_game(self.scene, self.menu_scene, "menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.player, self.game)
         self.scene.UI.add("menu", menu)
 
         menu2 = main_menu(self.menu_scene, self.scene, "main_menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.game)
