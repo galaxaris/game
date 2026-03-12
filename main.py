@@ -143,7 +143,7 @@ class Omicronde:
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
-        self.entity = Enemy((610, 350), (32, 32))
+        self.entity = Enemy((610, 150), (32, 32))
 
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
@@ -192,7 +192,7 @@ class Omicronde:
 
         ### Custom triggers
         self.collections += [Trigger((700, 400), (100, 100), ["player"],[lambda obj: print_info("Trigger that can be actived each time triggered!")])]
-        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.scene, player_face_texture, sign_texture, sign_texture, self.collections, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
+        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.scene, player_face_texture, sign_texture, sign_texture, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
 
         #%%################ CAMERA SETUP ####################
         #####################################################
@@ -262,6 +262,8 @@ class Omicronde:
 
         self.scene.add(self.player, "#player")
         self.scene.add(self.entity, "#enemies")
+
+        #DO NOT put this in the loop to increase game performances
         for colls in self.collections:
             self.scene.add(colls, "#object")
         self.new_scene.add(self.player, "#player")
