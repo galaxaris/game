@@ -11,3 +11,6 @@ replay button icon by icons8, free to use if mentioned: https://icons8.com/icon/
 
 -LOGO-
 earth icon generated with pixel-planet-generator by Deep-Fold, free to use: https://deep-fold.itch.io/pixel-planet-generator
+
+-BACKGROUNDS-
+title screen space background by Virusystem, free to use: https://virusystem.itch.io/background-space
