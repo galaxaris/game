@@ -110,6 +110,7 @@ class Omicronde:
         idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle.png", self.glob), 11, 100)
         jump_anim = Texture("Images\\Player\\NinjaFrog\\jump.png", self.glob)
         fall_anim = Texture("Images\\Player\\NinjaFrog\\fall.png", self.glob)
+        hit_anim = Animation(Texture("Images\\Player\\NinjaFrog\\hit.png", self.glob), 7, 50)
 
         # Textures
         icon_texture = Texture("Images\\icon.png", self.glob)
@@ -147,7 +148,7 @@ class Omicronde:
 
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
-        self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim})
+        self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim, "hit": hit_anim})
 
         self.player_ui_health = ProgressBar((30, 10), (100, 10), (100, 100, 100), "green", 100)
         self.heart = Texture("Images\\heart.png", self.glob)
@@ -262,8 +263,7 @@ class Omicronde:
 
         self.scene.add(self.player, "#player")
         self.scene.add(self.entity, "#enemies")
-        for colls in self.collections:
-            self.scene.add(colls, "#object")
+
         self.new_scene.add(self.player, "#player")
 
     def loop(self):
@@ -284,6 +284,8 @@ class Omicronde:
 
         self.debug_info()
 
+        for colls in self.collections:
+            self.scene.add(colls, "#object")
 
         #self.scene.add(self.player, "#player")
 
