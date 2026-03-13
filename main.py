@@ -146,7 +146,7 @@ class Omicronde:
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
-        self.entity = Enemy((610, 350), (32, 32), mode="chase", range=200)
+        self.entity = Enemy((610, 350), (48, 48), mode="chase", range=200)
 
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
