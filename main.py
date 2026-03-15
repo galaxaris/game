@@ -39,6 +39,7 @@ from api.UI.ProgressBar import ProgressBar
 from api.entity.Boss import Boss
 from api.entity.Enemy import Enemy
 from api.entity.Entity import Entity
+from api.environment.Trap import Trap
 
 #### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
 #=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue
@@ -209,6 +210,13 @@ class Omicronde:
         ### Custom triggers
         self.collections += [Trigger((700, 400), (100, 100), ["player"],[lambda obj: print_info("Trigger that can be actived each time triggered!")])]
         self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.scene, player_face_texture, sign_texture, sign_texture, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
+
+        trap = Trap((950, 550), (32, 32), "player", 10, cooldown=3000)
+        trap.bind_textures({
+            "idle": Texture("Images\\Background\\Tiles\\ggg.png", self.glob),
+            "active": Texture("Images\\Background\\Tiles\\blue.png", self.glob)
+        })
+        self.scene.add(trap, "#object")
 
         #%%################ CAMERA SETUP ####################
         #####################################################
