@@ -36,6 +36,7 @@ import time
 from api.GameObject import GameObject
 from api.UI.GameUI import UIElement
 from api.UI.ProgressBar import ProgressBar
+from api.entity.Boss import Boss
 from api.entity.Enemy import Enemy
 from api.entity.Entity import Entity
 
@@ -143,10 +144,23 @@ class Omicronde:
         self.audio_manager.load_sfx("death2", join(self.assets_path, "SFX\\Mario died _(.mp3"))
         self.audio_manager.load_sfx("fire", join(self.assets_path, "SFX\\piou1.mp3"))
 
+
+        #REMOVEME : remove audio
+
+        self.audio_manager.set_music_volume(0)
+
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
-        self.entity = Enemy((610, 350), (48, 48), mode="chase", range=200)
+        self.entity = Enemy((650, 350), (48, 48), mode="idle", range=300)
+
+        self.boss = Boss((700, 350), (64, 64))
+
+        boss_texture = Animation(Texture("Images\\Player\\MaskDude\\idle.png", self.glob), 11, 100)
+        self.boss.set_animation(boss_texture)
+        self.boss.set_gravity(0.5)
+
+
 
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
@@ -163,7 +177,6 @@ class Omicronde:
 
         self.entity.set_gravity(1)
         self.entity.set_animation(Animation(Texture("Images\\Player\\little robot\\idle_robot_scaled.png", self.glob), 11, 50))
-        self.entity.add_tag('player')
 
         #%%################ ENVIRONMENT SETUP ####################
         ##########################################################
@@ -227,6 +240,7 @@ class Omicronde:
 
         self.scene.add(self.player, "#player")
         self.scene.add(self.entity, "#enemies")
+        self.scene.add(self.boss, "#enemies")
 
         self.game.scene = self.menu_scene
 
@@ -330,6 +344,7 @@ class Omicronde:
 
     def debug_info(self):
         Debug.register_debug_entity(self.game, self.player)
+        Debug.register_debug_entity(self.game, self.entity)
 
     def launch(self):
         self.game.run(self.loop)
