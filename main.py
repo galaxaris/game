@@ -34,6 +34,7 @@ from os.path import join
 import time
 
 from api.GameObject import GameObject
+from api.UI.Choice import Choice
 from api.UI.GameUI import UIElement
 from api.UI.ProgressBar import ProgressBar
 from api.entity.Boss import Boss
@@ -148,7 +149,7 @@ class Omicronde:
 
         #REMOVEME : remove audio
 
-        self.audio_manager.set_music_volume(0)
+        self.audio_manager.toggle_audio()
 
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
@@ -255,6 +256,12 @@ class Omicronde:
         #%%################ UI setup ###################
         ################################################
 
+        choice = Choice(self.font_G, "What do you choose ?", "Left or right ?", texture=player_face_texture)
+        choice.add_choice("Go left", "left", callback=lambda e: print_info("You chose left !"))
+        choice.add_choice("Go right", "right")
+
+
+
         dialog = Dialog(self.font_G)
         dialog.add_character("Galaxaris", icon_texture)
         dialog.add_character("You", player_face_texture)
@@ -262,6 +269,14 @@ class Omicronde:
         dialog.add_message("You", "And I'm me, nice to meet you !")
         dialog.add_message("Galaxaris",
                            "This is a demo of the Omicronde API, a game engine made in Python with Pygame. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel sapien eget nunc commodo efficitur. (T'as vu je sais parler Latin XD)")
+        dialog.add_choice("You", choice)
+        dialog.add_message("Galaxaris", "You go left", "left")
+        dialog.add_stop()
+        dialog.add_message("Galaxaris", "You go right", "right")
+        dialog.add_message("Galaxaris", "Or you can choose !")
+        dialog.add_choice("You", choice)
+        dialog.add_stop()
+
 
         self.scene.UI.add("test", dialog)
 
@@ -273,10 +288,14 @@ class Omicronde:
         dialog2 = Dialog(self.font_G)
         dialog2.add_character("Sign", sign_texture)
         dialog2.add_message("Sign", ">>> This is the Way >>>")
+
         self.scene.UI.add("sign", dialog2)
         info_box2 = TriggerInteract((694, 568), (32, 32), ["player"], [lambda obj: self.scene.UI.show("sign")])
         info_box2.set_texture(sign_texture)
         self.collections+= [info_box2]
+
+
+
 
         ### MENU
         menu = menu_in_game(self.scene, self.menu_scene, "menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.player, self.game)
