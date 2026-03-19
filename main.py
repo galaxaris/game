@@ -154,6 +154,7 @@ class Omicronde:
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
         self.player = Player((310, 410), (48, 48))
+        #TODO: Review Ennemy Turret
         self.entity = Enemy((650, 350), (48, 48), mode="idle", range=300)
 
         self.boss = Boss((700, 350), (64, 64))
@@ -256,28 +257,65 @@ class Omicronde:
         #%%################ UI setup ###################
         ################################################
 
-        choice = Choice(self.font_G, "What do you choose ?", "Left or right ?", texture=player_face_texture)
-        choice.add_choice("Go left", "left", callback=lambda e: print_info("You chose left !"))
-        choice.add_choice("Go right", "right")
-
-
-
         dialog = Dialog(self.font_G)
-        dialog.add_character("Galaxaris", icon_texture)
-        dialog.add_character("You", player_face_texture)
-        dialog.add_message("Galaxaris", "Hello there, I'm Galaxaris !")
-        dialog.add_message("You", "And I'm me, nice to meet you !")
-        dialog.add_message("Galaxaris",
-                           "This is a demo of the Omicronde API, a game engine made in Python with Pygame. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel sapien eget nunc commodo efficitur. (T'as vu je sais parler Latin XD)")
-        dialog.add_choice("You", choice)
-        dialog.add_message("Galaxaris", "You go left", "left")
-        dialog.add_stop()
-        dialog.add_message("Galaxaris", "You go right", "right")
-        dialog.add_message("Galaxaris", "Or you can choose !")
-        dialog.add_choice("You", choice)
-        dialog.add_stop()
 
+        dialog.setup({
+            "characters": [
+                {"name": "Galaxaris", "texture": icon_texture},
+                {"name": "You", "texture": player_face_texture}
+            ],
+            "messages": [
+                # --- INTRODUCTION ---
+                ("Galaxaris", "Ah, te voilà enfin réveillé ! Je commençais à m'inquiéter."),
+                ("You", "Où... Où suis-je ? Et qui êtes-vous ?"),
+                ("Galaxaris", "Je suis Galaxaris, le gardien de l'Omicronde. Bienvenue dans notre moteur de jeu !"),
 
+                # --- PREMIER CHOIX (Test d'embranchement simple) ---
+                ("Galaxaris", "Dis-moi, comment te sens-tu après ce voyage trans-dimensionnel ?", [
+                    ("Un peu étourdi...", "feel_dizzy", lambda e: print_info("Statut: Étourdi")),
+                    ("Prêt pour l'aventure !", "feel_ready", lambda e: print_info("Statut: Prêt"))
+                ], "intro_choice"),
+
+                # Branche 1 : Étourdi
+                ("Galaxaris", "C'est normal, le passage en Python secoue un peu au début. Prends ton temps.",
+                 "feel_dizzy"),
+                ("GOTO", "main_hub"),
+
+                # Branche 2 : Prêt
+                ("Galaxaris", "Parfait ! J'aime cet enthousiasme ! Le code source a besoin de héros comme toi.",
+                 "feel_ready"),
+                ("GOTO", "main_hub"),
+
+                # --- HUB CENTRAL (Test de boucle et choix multiples) ---
+                ("Galaxaris", "Maintenant, que veux-tu tester dans cette démonstration de l'API ?", [
+                    ("Le système de combat", "test_combat", lambda e: print_info("Choix: Combat")),
+                    ("L'exploration spatiale", "test_explore", lambda e: print_info("Choix: Exploration")),
+                    ("Rien, je veux quitter le dialogue", "end_dialog", lambda e: print_info("Choix: Quitter"))
+                ], "main_hub"),
+
+                # Option A : Combat
+                ("Galaxaris",
+                 "Excellent choix. Le système de collision de Pygame est redoutable. Fais attention à tes points de vie !",
+                 "test_combat"),
+                ("You", "Je suis armé de ma fidèle épée en pixels, je ne crains rien !"),
+                ("GOTO", "main_hub"),  # Retour au choix principal
+
+                # Option B : Exploration
+                ("Galaxaris", "L'univers est vaste ! Nous avons des tuiles infinies générées de manière procédurale.",
+                 "test_explore"),
+                ("You", "J'espère qu'il y a des easter eggs cachés dans le décor..."),
+                ("GOTO", "main_hub"),  # Retour au choix principal
+
+                # Option C : Quitter
+                ("Galaxaris",
+                 "Très bien, je te laisse te balader. Appuie sur la touche d'interaction si tu as besoin d'aide !",
+                 "end_dialog"),
+                ("You", "Merci Galaxaris, à plus tard !"),
+
+                # --- FIN DU DIALOGUE ---
+                ("STOP")
+            ]
+        })
         self.scene.UI.add("test", dialog)
 
         info_box = TriggerInteract((110, 568), (32, 32), ["player"], [lambda obj: self.scene.UI.show("test")])
