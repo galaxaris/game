@@ -355,8 +355,8 @@ class Omicronde:
 
         #%%################# EVENT MANAGER SETUP ########################
         #################################################################
-        game_event_manager = self.game.event_manager
-        game_event_manager.Instances.bindInstancesDict({
+        self.game_event_manager = self.game.event_manager
+        self.game_event_manager.Instances.bindInstancesDict({
             "game": self.game,
             "scene": self.scene,
             "player": self.player,
@@ -365,7 +365,14 @@ class Omicronde:
             "audio_manager": self.audio_manager
         })
 
-        game_event_manager.registerDefaultEventCollection() #Registers default events (see api/events/DefaultEventCollection.py)
+        self.game_event_manager.registerDefaultEventCollection() #Registers default events (see api/events/DefaultEventCollection.py)
+        
+        #Example of registering a custom event:
+        self.game_event_manager.registerEvent("custom_event", [lambda em: print_info("Custom event triggered!"), 
+            lambda em: self.audio_manager.play_music("pause"), lambda em: self.scene.UI.show("test")]) #Registers a custom event with multiple callbacks (see api/events/EventManager.py for more info on registering events)
+
+        #Example of triggering an event:
+        #self.game_event_manager.triggerEvent("custom_event")
 
     #%%################ GAME LOOP ########################
     ######################################################
@@ -412,6 +419,10 @@ class Omicronde:
 
         if inputs[pg.K_m]:
             self.game.scene = self.scene
+
+        if inputs[pg.K_n]:
+            self.game_event_manager.triggerEvent("player_jump")
+            self.game_event_manager.triggerEvent("custom_event")
 
         if not "menu" in self.scene.UI.enabled_elements:
             if get_once_inputs()["pause"]:
