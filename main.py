@@ -352,6 +352,24 @@ class Omicronde:
         #toggle_audio(self.audio_manager)  # Mute the music by default, can be changed with the button in the menu
         #self.audio_manager.play_music("inGame")  # Play the main theme in loop
 
+
+        #%%################# EVENT MANAGER SETUP ########################
+        #################################################################
+        game_event_manager = self.game.event_manager
+        game_event_manager.Instances.bindInstancesDict({
+            "game": self.game,
+            "scene": self.scene,
+            "player": self.player,
+            "entity": self.entity,
+            "menu_scene": self.menu_scene,
+            "audio_manager": self.audio_manager
+        })
+
+        game_event_manager.registerDefaultEventCollection() #Registers default events (see api/events/DefaultEventCollection.py)
+
+    #%%################ GAME LOOP ########################
+    ######################################################
+
     def loop(self):
         self.scene.default_surface.fill((0,0,0,0))
         self.scene.set_layer(1, "#object")
@@ -415,9 +433,11 @@ class Omicronde:
         self.game.run(self.loop)
 
 #%%############# ON START #############################
+#######################################################
 print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\nIf you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
 #%%################ MAIN ##############################
+#######################################################
 if __name__ == "__main__":
     try:
         #%%############## CLOSE SPLASH SCREEN #################
