@@ -70,7 +70,7 @@ from api.environment.Trigger import Trigger, TriggerInteract
 from api.environment.Solid import Solid
 
 from api.utils import Debug, Fonts
-from api.utils.Inputs import get_inputs, get_once_inputs, prevent_input
+from api.utils.InputManager import get_inputs, get_once_inputs, prevent_input
 from api.utils.ResourcePath import resource_path
 from api.utils.Console import *
 
@@ -365,7 +365,7 @@ class Omicronde:
             "audio_manager": self.audio_manager
         })
 
-        self.game_event_manager.registerDefaultEventCollection() #Registers default events (see api/events/DefaultEventCollection.py)
+        #self.game_event_manager.registerDefaultEventCollection() #Registers default events (see api/events/DefaultEventCollection.py)
         
         #Example of registering a custom event:
         self.game_event_manager.registerEvent("custom_event", [lambda em: print_info("Custom event triggered!"), 
@@ -374,6 +374,7 @@ class Omicronde:
         #Example of triggering an event:
         #self.game_event_manager.triggerEvent("custom_event")
 
+        print_info(f"Registered events:\n\n {self.game_event_manager.getRegisteredEvents()}")
     #%%################ GAME LOOP ########################
     ######################################################
 
