@@ -371,10 +371,12 @@ class Omicronde:
         self.game_event_manager.registerEvent("custom_event", [lambda em: print_info("Custom event triggered!"), 
             lambda em: self.audio_manager.play_music("pause"), lambda em: self.scene.UI.show("test")]) #Registers a custom event with multiple callbacks (see api/events/EventManager.py for more info on registering events)
 
+        print_info(f"Registered events:\n\n {self.game_event_manager.getRegisteredEvents()}")
+
         #Example of triggering an event:
         #self.game_event_manager.triggerEvent("custom_event")
+        self.game_event_manager.triggerEvent("test_error_instance")
 
-        print_info(f"Registered events:\n\n {self.game_event_manager.getRegisteredEvents()}")
     #%%################ GAME LOOP ########################
     ######################################################
 
