@@ -434,6 +434,7 @@ class Omicronde:
         if inputs[pg.K_b]:
             get_held_inputs()
 
+        #TODO: To be implemented once in GameUI or EventManager
         if not "menu" in self.scene.UI.enabled_elements:
             if onKeyUp("pause"):
                 self.scene.UI.show("menu")
