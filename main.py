@@ -411,27 +411,25 @@ class Omicronde:
 
         inputs = pg.key.get_pressed()
 
-        if inputs[pg.K_o]:
+        if onKeyDown(pg.K_o):
             self.player.respawn()
 
-        if inputs[pg.K_p]:
+        if onKeyDown(pg.K_p):
             self.game.scene = self.menu_scene
 
-        def change_ennemy(event):
-            if event.key == pg.K_i:
-                self.entity.mode = "patrol" if self.entity.mode == "chase" else "chase"
-
-        self.game.bind(pg.KEYDOWN, change_ennemy)
+        if onKeyDown(pg.K_i):
+            self.entity.mode = "patrol" if self.entity.mode == "chase" else "chase"
 
 
-        if inputs[pg.K_m]:
+        if onKeyDown(pg.K_m):
             self.game.scene = self.scene
 
-        if inputs[pg.K_n]:
+        #Tests EventManager + InputManager
+        if onKeyDown(pg.K_n):
             self.game_event_manager.triggerEvent("player_jump")
             self.game_event_manager.triggerEvent("custom_event")
 
-        if inputs[pg.K_b]:
+        if onKeyDown(pg.K_b):
             get_held_inputs()
 
         #TODO: To be implemented once in GameUI or EventManager
