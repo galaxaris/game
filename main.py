@@ -33,15 +33,6 @@ import os
 from os.path import join
 import time
 
-from api.GameObject import GameObject
-from api.UI.Choice import Choice
-from api.UI.GameUI import UIElement
-from api.UI.ProgressBar import ProgressBar
-from api.entity.Boss import Boss
-from api.entity.Enemy import Enemy
-from api.entity.Entity import Entity
-from api.environment.Trap import Trap
-
 #### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
 #=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -70,9 +61,18 @@ from api.environment.Trigger import Trigger, TriggerInteract
 from api.environment.Solid import Solid
 
 from api.utils import Debug, Fonts
-from api.utils.InputManager import get_inputs, get_once_inputs, prevent_input
+from api.utils.InputManager import get_inputs, get_once_inputs, prevent_input, get_held_inputs, onKeyDown, onKeyUp, onKeyPress
 from api.utils.ResourcePath import resource_path
 from api.utils.Console import *
+
+from api.GameObject import GameObject
+from api.UI.Choice import Choice
+from api.UI.GameUI import UIElement
+from api.UI.ProgressBar import ProgressBar
+from api.entity.Boss import Boss
+from api.entity.Enemy import Enemy
+from api.entity.Entity import Entity
+from api.environment.Trap import Trap
 
 ### Game modules ####
 from game.game_actions.triggers import *
@@ -371,11 +371,15 @@ class Omicronde:
         self.game_event_manager.registerEvent("custom_event", [lambda em: print_info("Custom event triggered!"), 
             lambda em: self.audio_manager.play_music("pause"), lambda em: self.scene.UI.show("test")]) #Registers a custom event with multiple callbacks (see api/events/EventManager.py for more info on registering events)
 
-        print_info(f"Registered events:\n\n {self.game_event_manager.getRegisteredEvents()}")
+        #print_info(f"Registered events:\n\n {self.game_event_manager.getRegisteredEvents()}")
 
         #Example of triggering an event:
         #self.game_event_manager.triggerEvent("custom_event")
-        self.game_event_manager.triggerEvent("test_error_instance")
+        #self.game_event_manager.triggerEvent("test_error_instance")
+
+        #%%################# INPUT MANAGER SETUP ########################
+        #################################################################
+        
 
     #%%################ GAME LOOP ########################
     ######################################################
@@ -427,15 +431,16 @@ class Omicronde:
             self.game_event_manager.triggerEvent("player_jump")
             self.game_event_manager.triggerEvent("custom_event")
 
+        if inputs[pg.K_b]:
+            get_held_inputs()
+
         if not "menu" in self.scene.UI.enabled_elements:
-            if get_once_inputs()["pause"]:
-                prevent_input("pause")
+            if onKeyUp("pause"):
                 self.scene.UI.show("menu")
                 self.audio_manager.play_music("pause")
 
         elif "menu" in self.scene.UI.enabled_elements:
-            if get_once_inputs()["pause"]:
-                prevent_input("pause")
+            if onKeyUp("pause"):
                 self.scene.UI.hide("menu")
                 self.audio_manager.play_music("inGame") #Resume the main theme when closing the menu
 
