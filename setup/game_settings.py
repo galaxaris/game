@@ -29,8 +29,6 @@ def init_game_settings(game_class, debug_mode: bool = False, mute: bool = False,
         "SCREEN_HEIGHT": 720,
         "FPS": 60,
         "WINDOW_TITLE": "Robot Recovery",
-        "ASSETS_PATH": resource_path("assets"),
-        "FONT_G": resource_path("assets/Fonts/Gm6x11.ttf"),
     }
 
     if override_settings:
@@ -45,10 +43,6 @@ def init_game_settings(game_class, debug_mode: bool = False, mute: bool = False,
 
     #%%############### Initializing the game ##############
     #######################################################
-    game_class.assets_path = settings["ASSETS_PATH"]
-    game_class.font_G = settings["FONT_G"]
-    Fonts.DEFAULT_FONT = game_class.font_G
-    Debug.debug_font = game_class.font_G
     game_class.game = Game(
         (game_class.WIDTH, game_class.HEIGHT), 
         (game_class.RENDER_WIDTH, game_class.RENDER_HEIGHT), 

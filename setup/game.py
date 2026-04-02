@@ -26,6 +26,12 @@ class Omicronde:
         #######################################################
 
         # Init the resource manager
+        self.assets_path = resource_path("assets")
+
+        self.font_G = "**/" + join(self.assets_path, "Fonts\\Gm6x11.ttf")
+        Fonts.DEFAULT_FONT = self.font_G
+        Debug.debug_font = self.font_G
+
         self.glob = Resource(ResourceType.GLOBAL, self.assets_path)
 
         self.game.set_icon(resource_path(join("assets", "Images", "icon.png")))
