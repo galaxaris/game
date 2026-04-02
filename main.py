@@ -11,10 +11,13 @@ v.Beta (in development)
 Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 
 """
+#### RUN THE GAME WITH "python -m game.main" FROM THE ROOT DIRECTORY OF THE PROJECT ####
 
-### TODO: levels to be implemented and loaded in a JSON BDD (using the editor) => GameObjects, triggers, UI, background, music, etc...
+
+### TODO: levels to be implemented and loaded in a JSON BDD (using the editor) => GameObjects, triggers, UI, background, music, dialogs, etc...
 
 ### TODO: create an 'InputManager' to centralize game input handling
+### TODO: create an 'EventManager' to centralize game events handling
 ### TODO: create a 'SceneManager' to manage multiple game scenes (menus, levels...) and transitions between them
 
 ### TODO: create a 'ResourceManager' to centralize the loading and stock of game assets
@@ -24,59 +27,11 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
     ### TODO: create an 'AudioManager' to manage and stock game SFX and music
     ### TODO: create a 'UIManager' to define specific game UI elements and keep an overall style (fonts, colors...)
 
+
 #%%################ IMPORTS ####################
 ################################################
-#### RUN THE GAME WITH "python -m game.main" FROM THE ROOT DIRECTORY OF THE PROJECT ####
 
-### Libs ###
-import os
-from os.path import join
-import time
-
-#### CHANGE WORK DIRECTORY TO THE GAME FOLDER ####
-#=> relative paths for assets loading is managed properly. Can be runned then from anywhere without issue
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-### API ###
-from api.Game import Game
-
-from api.UI.Button import Button
-from api.UI.Dialog import Dialog
-from api.UI.Modal import Modal
-from api.UI.Text import Text
-from api.UI.TextBox import TextBox
-
-from api.assets.Animation import Animation
-from api.assets.Resource import Resource, ResourceType
-from api.assets.Texture import Texture
-from api.assets.AudioManager import AudioManager
-
-from api.engine.Scene import Scene
-
-from api.entity.Player import Player
-
-from api.environment.Background import Background
-from api.environment.Parallax import ParallaxLayer, ParallaxBackground
-from api.environment.Trigger import Trigger, TriggerInteract
-from api.environment.Solid import Solid
-
-from api.utils import Debug, Fonts
-from api.utils.InputManager import get_inputs, get_once_inputs, prevent_input, get_held_inputs, onKeyDown, onKeyUp, onKeyPress
-from api.utils.ResourcePath import resource_path
-from api.utils.Console import *
-
-from api.GameObject import GameObject
-from api.UI.Choice import Choice
-from api.UI.GameUI import UIElement
-from api.UI.ProgressBar import ProgressBar
-from api.entity.Boss import Boss
-from api.entity.Enemy import Enemy
-from api.entity.Entity import Entity
-from api.environment.Trap import Trap
-
-### Game modules ####
-from game.game_actions.triggers import *
-from game.game_actions.ui import menu_in_game, main_menu, toggle_audio
+from game.setup.imports_collection import *
 
 class Omicronde:
     def __init__(self):
@@ -199,7 +154,7 @@ class Omicronde:
             coll.set_texture(grass_texture)
 
         #### TRIGGERS ####
-        # (see game/game_actions/triggers.py for the functions (callbacks) called by the triggers)
+        # (see game/scripts/triggers.py for the functions (callbacks) called by the triggers)
         # A trigger is an invisible area that executes a callback function when the targeted object enter it.
 
         ### NOTE ### to pass a callback, use "lambda" or "functools.partial". See the Trigger module for more info. Syntax is as follows:
@@ -424,8 +379,6 @@ class Omicronde:
 
         self.scene.camera.focus(self.player)
 
-        inputs = pg.key.get_pressed()
-
         if onKeyDown(pg.K_o):
             self.player.respawn()
 
@@ -445,9 +398,6 @@ class Omicronde:
             #self.game_event_manager.triggerEvent("custom_event")
             self.game_event_manager.triggerEvent("test_event_conditions")
             self.game_event_manager.triggerEvent("test_event_conditions2")
-
-        if onKeyDown(pg.K_b):
-            get_held_inputs()
 
         #TODO: To be implemented once in GameUI or EventManager
         if not "menu" in self.scene.UI.enabled_elements:

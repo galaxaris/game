@@ -21,6 +21,8 @@ from api.Game import Game
 from api.utils import Fonts
 from api.utils.Console import *
 
+from api.utils.InputManager import onKeyDown, onKeyUp, get_inputs, prevent_input
+
 #Global variables
 COLOR_SET_CLASSIC = ((0, 0, 0), (255, 255, 255), (188, 188, 188), (163, 163, 163))
 COLOR_SET_COMMON = ((0, 0, 0), (3, 161, 45), (90, 204, 121), (9, 117, 42))
@@ -126,3 +128,12 @@ def toggle_audio(audio_manager: AudioManager = None, menu = None):
         audio_manager.toggle_audio() #Mute
         if mute_button:
             mute_button.set_text("Unmute")
+
+
+def toggle_menu_inGame(scene: Scene, menu_name: str, menu_scene: Scene, game: Game):
+    if menu_name in scene.UI.enabled_elements and onKeyUp("pause"):
+        scene.UI.hide(menu_name)
+        game.audio_manager.play_music("inGame")
+    elif "menu" in scene.UI.enabled_elements and onKeyUp("pause"):
+        scene.UI.add(menu_scene.UI.elements[menu_name], menu_name)
+        game.audio_manager.play_music("menu")
