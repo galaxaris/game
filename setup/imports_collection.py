@@ -85,6 +85,13 @@ from api.utils.InputManager import (
     onKeyPress
 )
 
+#%%################## GAME SETUP ####################
+#####################################################
+from game.setup.game_settings import init_game_settings
+
+#Do not use Omicronde to avoid circular imports
+#from game.setup.game import Omicronde
+
 
 #%%################## GAME SCRIPTS ##################### 
 ########################################################

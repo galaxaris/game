@@ -2,17 +2,7 @@
 All callbacks for triggers used & defined in the game
 """
 
-import pygame as pg
-import random as rd
-from os.path import join
-
-from api.engine.Scene import Scene
-from api.assets.Texture import Texture
-from api.environment.Solid import Solid
-from api.environment.Trigger import Trigger, TriggerKillBox, TriggerInteract
-from api.UI.Dialog import Dialog
-from api.utils.ResourcePath import resource_path
-from api.utils.Console import *
+from game.setup.imports_collection import *
 
 
 ASSETS_PATH = resource_path("assets")

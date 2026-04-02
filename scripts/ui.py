@@ -3,25 +3,8 @@ Personnalized functions for creating predefined UIs
 Can be useful to predefine a certain AD for the game (colors, fonts, box styles, dialog styles, buttons, etc.)
 """
 
-#Libs
-import pygame as pg
-from os.path import join
+from game.setup.imports_collection import *
 
-#API
-from api.UI.Button import Button
-from api.UI.Dialog import Dialog
-from api.UI.Modal import Modal
-from api.UI.Text import Text
-from api.UI.TextBox import TextBox
-from api.assets import AudioManager
-from api.engine.Scene import Scene
-from api.entity.Player import Player
-from api.Game import Game
-
-from api.utils import Fonts
-from api.utils.Console import *
-
-from api.utils.InputManager import onKeyDown, onKeyUp, get_inputs, prevent_input
 
 #Global variables
 COLOR_SET_CLASSIC = ((0, 0, 0), (255, 255, 255), (188, 188, 188), (163, 163, 163))
