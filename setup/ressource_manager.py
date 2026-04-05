@@ -56,7 +56,7 @@ def load_resources(glob: Resource, audio_manager: AudioManager, ressources_dic: 
                 if isinstance(subvalue, str):
                     ressources_dic[key][subkey] = subvalue.replace('/', '\\')
 
-    print_info(f"Loading game assets...\nAssets store content:\n{ressources_dic}\n")
+    #print_info(f"Loading game assets...\nAssets store content:\n{ressources_dic}\n")
 
     for key, value in ressources_dic.items():
         loaded_ressources[key] = {}
@@ -118,9 +118,10 @@ def load_resources(glob: Resource, audio_manager: AudioManager, ressources_dic: 
             try: 
                 for r_key, r_val in value.items():
                     loaded_ressources[key][r_key] = "**/" + join(assets_path, f"Fonts\\{r_val}")
-                    print_info(f"Loading font '{r_key}' from path '{loaded_ressources[key][r_key]}'...", 400)
+                    #print_info(f"Loading font '{r_key}' from path '{loaded_ressources[key][r_key]}'...", 400)
             except AttributeError:
                 _format_error(key, value)
 
+    print_success(f"Game assets loaded successfully from '{assets_path}'!")
 
     return loaded_ressources

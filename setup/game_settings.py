@@ -29,6 +29,7 @@ def init_game_settings(game_class, debug_mode: bool = False, mute: bool = False,
         "SCREEN_HEIGHT": 720,
         "FPS": 60,
         "WINDOW_TITLE": "Robot Recovery",
+        "GRAVITY": 0.5,
     }
 
     if override_settings:
@@ -40,7 +41,8 @@ def init_game_settings(game_class, debug_mode: bool = False, mute: bool = False,
     game_class.WIDTH, game_class.HEIGHT = settings["SCREEN_WIDTH"], settings["SCREEN_HEIGHT"]
     game_class.NAME = settings["WINDOW_TITLE"]
     game_class.FPS = settings["FPS"]
-
+    game_class.GRAVITY = settings["GRAVITY"]
+    
     #%%############### Initializing the game ##############
     #######################################################
     game_class.game = Game(

@@ -10,12 +10,15 @@ class Omicronde:
     HEIGHT: int
     NAME: str
     FPS: int
+    GRAVITY: float
 
     assets_path: str
     font_G: str
 
     game: Game
     scene: Scene
+
+    player: Player
 
     def __init__(self):
         #%%################ GAME SETTINGS ####################
@@ -24,8 +27,6 @@ class Omicronde:
 
         #%%################ LOADING ASSETS ####################
         #######################################################
-
-
         self.audio_manager = self.game.audio_manager
 
         # Init the resource manager
@@ -38,12 +39,13 @@ class Omicronde:
 
         self.game.set_icon(self.RESSOURCES["textures"]["icon"])
 
-        #REMOVEME : remove audio
-        #self.audio_manager.toggle_audio()
-
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
-        self.player = Player((310, 410), (48, 48))
+        self.player = init_player(self)
+
+        #self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "fire": "fire"})
+        #self.player.bind_animations({"run": self.RESSOURCES["animations"]["run"], "run_fast": self.RESSOURCES["animations"]["run_fast"], "idle": self.RESSOURCES#["animations"]["idle"], "jump": self.RESSOURCES["textures"]["jump_anim"], "fall": self.RESSOURCES["textures"]["fall_anim"], "hit": self.RESSOURCES["animations"]#["hit"]})
+
         #TODO: Review Ennemy Turret
         self.entity = Enemy((650, 350), (48, 48), mode="idle", range=300)
 
@@ -51,13 +53,8 @@ class Omicronde:
 
         boss_texture = Animation(self.RESSOURCES["textures"]["boss"], 11, 100)
         self.boss.set_animation(boss_texture)
-        self.boss.set_gravity(0.5)
+        self.boss.set_gravity(self.GRAVITY)
 
-
-
-        self.player.set_gravity(0.5)
-        self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
-        self.player.bind_animations({"run": self.RESSOURCES["animations"]["run"], "run_fast": self.RESSOURCES["animations"]["run_fast"], "idle": self.RESSOURCES["animations"]["idle"], "jump": self.RESSOURCES["textures"]["jump_anim"], "fall": self.RESSOURCES["textures"]["fall_anim"], "hit": self.RESSOURCES["animations"]["hit"]})
 
         self.player_ui_health = ProgressBar((30, 10), (100, 10), (100, 100, 100), "green", 100)
         self.player_ui_heart = UIElement((8, 8), (16, 16))
@@ -67,7 +64,7 @@ class Omicronde:
         self.scene.UI.show("player_health")
         self.scene.UI.show("player_heart")
 
-        self.entity.set_gravity(1)
+        self.entity.set_gravity(self.GRAVITY)
         self.entity.set_animation(Animation(self.RESSOURCES["textures"]["enemy"], 11, 50))
 
         #%%################ ENVIRONMENT SETUP ####################
@@ -243,7 +240,7 @@ class Omicronde:
         """
         For now, no music or SFX for peace of mind of our dear Raphix. Can be changed with the button mute/unmute in the menu
         """
-        #toggle_audio(self.audio_manager)  # Mute the music by default, can be changed with the button in the menu
+        toggle_audio(self.audio_manager)  # Mute the music by default, can be changed with the button in the menu
         #self.audio_manager.play_music("inGame")  # Play the main theme in loop
 
 
