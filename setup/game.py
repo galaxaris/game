@@ -25,59 +25,21 @@ class Omicronde:
         #%%################ LOADING ASSETS ####################
         #######################################################
 
-        # Init the resource manager
-        self.assets_path = resource_path("assets")
 
-        self.font_G = "**/" + join(self.assets_path, "Fonts\\Gm6x11.ttf")
-        Fonts.DEFAULT_FONT = self.font_G
-        Debug.debug_font = self.font_G
-
-        self.glob = Resource(ResourceType.GLOBAL, self.assets_path)
-
-        self.game.set_icon(resource_path(join("assets", "Images", "icon.png")))
-
-        # Load animations
-        run_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run_scaled.png", self.glob), 12, 70)
-        run_fast_anim = Animation(Texture("Images\\Player\\NinjaFrog\\run_scaled.png", self.glob), 12, 50)
-        idle_anim = Animation(Texture("Images\\Player\\NinjaFrog\\idle_scaled.png", self.glob), 11, 100)
-        jump_anim = Texture("Images\\Player\\NinjaFrog\\jump_scaled.png", self.glob)
-        fall_anim = Texture("Images\\Player\\NinjaFrog\\fall_scaled.png", self.glob)
-        hit_anim = Animation(Texture("Images\\Player\\NinjaFrog\\hit_scaled.png", self.glob), 7, 50)
-
-        # Textures
-        icon_texture = Texture("Images\\icon.png", self.glob)
-        grass_texture = Texture("Images\\Terrain\\grass.png", self.glob)
-        checkpoint_texture = Texture("Images\\Terrain\\beach_sand.png", self.glob)
-        sign_texture = Texture("Images\\sign.png", self.glob)
-        player_face_texture = Texture("Images\\Player\\NinjaFrog\\jump.png", self.glob)
-
-        # Loads background
-        space_background = Texture("Images\\Background\\Background_space.png", self.glob)
-
-        # Loads parallax layers
-        t_p1 = Texture("Images\\Background\\Parallax\\Forest\\0.9x parallax-demon-woods-close-trees.png", self.glob)
-        t_p2 = Texture("Images\\Background\\Parallax\\Forest\\0.70x parallax-demon-woods-mid-trees.png", self.glob)
-        t_p3 = Texture("Images\\Background\\Parallax\\Forest\\0.5x parallax-demon-woods-far-trees.png", self.glob)
-        t_p4 = Texture("Images\\Background\\Parallax\\Forest\\0.25x parallax-demon-woods-bg.png", self.glob)
-
-        # Loads music
         self.audio_manager = self.game.audio_manager
 
-        self.audio_manager.load_music("titleScreen", join(self.assets_path, "Music\\The_Legend_of_Zelda_Ocarina_of_Time_OST_N64_Title_Screen_Track_1.mp3"))
-        self.audio_manager.load_music("inGame", join(self.assets_path, "Music\\Original_Super_Mario_Bros_Soundtrack_Full.mp3"))
-        self.audio_manager.load_music("pause", join(self.assets_path, "Music\\Alicia.mp3"))
+        # Init the resource manager
+        self.ASSETS_PATH = ASSETS_PATH
+        self.resource_manager = Resource(ResourceType.GLOBAL, self.ASSETS_PATH)
+        self.RESSOURCES = init_ressource_manager(self.resource_manager, self.audio_manager, self.ASSETS_PATH)
 
-        # Loads SFX
-        self.audio_manager.load_sfx("jump", join(self.assets_path, "SFX\\frog-sound.mp3"))
-        #self.audio_manager.load_sfx("hit_ground", join(self.assets_path, "SFX\\Casserole.mp3"))
-        self.audio_manager.load_sfx("death", join(self.assets_path, "SFX\\Mario died _(.mp3"))
-        self.audio_manager.load_sfx("death2", join(self.assets_path, "SFX\\Mario died _(.mp3"))
-        self.audio_manager.load_sfx("fire", join(self.assets_path, "SFX\\piou1.mp3"))
+        Fonts.DEFAULT_FONT = self.RESSOURCES["fonts"]["default"]
+        Debug.debug_font = self.RESSOURCES["fonts"]["debug"]
 
+        self.game.set_icon(self.RESSOURCES["textures"]["icon"])
 
         #REMOVEME : remove audio
-
-        self.audio_manager.toggle_audio()
+        #self.audio_manager.toggle_audio()
 
         #%%################ PLAYER INITIALIZATION ####################
         ##############################################################
@@ -87,7 +49,7 @@ class Omicronde:
 
         self.boss = Boss((700, 350), (64, 64))
 
-        boss_texture = Animation(Texture("Images\\Player\\MaskDude\\idle.png", self.glob), 11, 100)
+        boss_texture = Animation(self.RESSOURCES["textures"]["boss"], 11, 100)
         self.boss.set_animation(boss_texture)
         self.boss.set_gravity(0.5)
 
@@ -95,19 +57,18 @@ class Omicronde:
 
         self.player.set_gravity(0.5)
         self.player.set_sfx_list(sfx_list={"jump": "jump", "death": "death", "death2": "death2", "fire": "fire"})
-        self.player.bind_animations({"run": run_anim, "run_fast": run_fast_anim, "idle": idle_anim, "jump": jump_anim, "fall": fall_anim, "hit": hit_anim})
+        self.player.bind_animations({"run": self.RESSOURCES["animations"]["run"], "run_fast": self.RESSOURCES["animations"]["run_fast"], "idle": self.RESSOURCES["animations"]["idle"], "jump": self.RESSOURCES["textures"]["jump_anim"], "fall": self.RESSOURCES["textures"]["fall_anim"], "hit": self.RESSOURCES["animations"]["hit"]})
 
         self.player_ui_health = ProgressBar((30, 10), (100, 10), (100, 100, 100), "green", 100)
-        self.heart = Texture("Images\\heart.png", self.glob)
         self.player_ui_heart = UIElement((8, 8), (16, 16))
-        self.player_ui_heart.set_texture(self.heart, True)
+        self.player_ui_heart.set_texture(self.RESSOURCES["textures"]["health"], True)
         self.scene.UI.add("player_health", self.player_ui_health)
         self.scene.UI.add("player_heart", self.player_ui_heart)
         self.scene.UI.show("player_health")
         self.scene.UI.show("player_heart")
 
         self.entity.set_gravity(1)
-        self.entity.set_animation(Animation(Texture("Images\\Player\\little robot\\idle_robot_scaled.png", self.glob), 11, 50))
+        self.entity.set_animation(Animation(self.RESSOURCES["textures"]["enemy"], 11, 50))
 
         #%%################ ENVIRONMENT SETUP ####################
         ##########################################################
@@ -124,7 +85,7 @@ class Omicronde:
 
         for coll in self.collections:
             coll.set_color((200, 200, 200))
-            coll.set_texture(grass_texture)
+            coll.set_texture(self.RESSOURCES["textures"]["grass"])
 
         #### TRIGGERS ####
         # (see game/scripts/triggers.py for the functions (callbacks) called by the triggers)
@@ -138,13 +99,13 @@ class Omicronde:
         create_killBox(self.collections, 50, self.HEIGHT)
 
         ### Custom triggers
-        self.collections += [Trigger((700, 400), (100, 100), ["player"],[lambda obj: print_info("Trigger that can be actived each time triggered!")])]
-        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.scene, player_face_texture, sign_texture, sign_texture, self.HEIGHT, grass_texture, checkpoint_texture)],once=True)]
+        #self.collections += [Trigger((700, 400), (100, 100), ["player"],[lambda obj: print_info("Trigger that can be actived each time triggered!")])]
+        self.collections += [Trigger((832, 550), (32, 32), ["player"],[lambda obj: summon_stairs1(self.scene, self.RESSOURCES["textures"]["player"], self.RESSOURCES["textures"]["sign"], self.RESSOURCES["textures"]["sign"], self.HEIGHT, self.RESSOURCES["textures"]["grass"], self.RESSOURCES["textures"]["checkpoint_ground"], dialog_font=self.RESSOURCES["fonts"]["default"])],once=True)]
 
         trap = Trap((950, 550), (32, 32), "player", 10, cooldown=3000)
         trap.bind_textures({
-            "idle": Texture("Images\\Background\\Tiles\\ggg.png", self.glob),
-            "active": Texture("Images\\Background\\Tiles\\blue.png", self.glob)
+            "idle": self.RESSOURCES["textures"]["trap_idle"],
+            "active": self.RESSOURCES["textures"]["trap_active"]
         })
         self.scene.add(trap, "#object")
 
@@ -161,13 +122,13 @@ class Omicronde:
 
         ### Wonderful parallax background
         p_bg = ParallaxBackground((self.RENDER_WIDTH, self.RENDER_HEIGHT), [
-            ParallaxLayer(pg.Vector2(0.9, 0.45), t_p1),
-            ParallaxLayer(pg.Vector2(0.7, 0.35), t_p2),
-            ParallaxLayer(pg.Vector2(0.5, 0.25), t_p3),
+            ParallaxLayer(pg.Vector2(0.9, 0.45), self.RESSOURCES["textures"]["parallax1"]),
+            ParallaxLayer(pg.Vector2(0.7, 0.35), self.RESSOURCES["textures"]["parallax2"]),
+            ParallaxLayer(pg.Vector2(0.5, 0.25), self.RESSOURCES["textures"]["parallax3"]),
         ], (75, 105, 52))
         self.scene.set_background(p_bg)
 
-        b_bg = Background(space_background, False, (self.RENDER_WIDTH, self.RENDER_HEIGHT))
+        b_bg = Background(self.RESSOURCES["textures"]["menu_bg"], False, (self.RENDER_WIDTH, self.RENDER_HEIGHT))
 
         #%%################# MAIN MENU SCENE ########################
         ############################################################
@@ -185,12 +146,12 @@ class Omicronde:
         #%%################ UI setup ###################
         ################################################
 
-        dialog = Dialog(self.font_G)
+        dialog = Dialog(self.RESSOURCES["fonts"]["default"])
 
         dialog.setup({
             "characters": [
-                {"name": "Galaxaris", "texture": icon_texture},
-                {"name": "You", "texture": player_face_texture}
+                {"name": "Galaxaris", "texture": self.RESSOURCES["textures"]["icon"]},
+                {"name": "You", "texture": self.RESSOURCES["textures"]["player"]}
             ],
             "messages": [
                 # --- INTRODUCTION ---
@@ -247,21 +208,21 @@ class Omicronde:
         self.scene.UI.add("test", dialog)
 
         info_box = TriggerInteract((110, 568), (32, 32), ["player"], [lambda obj: self.scene.UI.show("test")])
-        info_box.set_texture(sign_texture)
+        info_box.set_texture(self.RESSOURCES["textures"]["sign"])
         self.collections += [info_box]
 
 
-        dialog2 = Dialog(self.font_G)
-        dialog2.add_character("Sign", sign_texture)
+        dialog2 = Dialog(self.RESSOURCES["fonts"]["default"])
+        dialog2.add_character("Sign", self.RESSOURCES["textures"]["sign"])
         dialog2.add_message("Sign", ">>> This is the Way >>>")
 
         self.scene.UI.add("sign", dialog2)
         info_box2 = TriggerInteract((694, 568), (32, 32), ["player"], [lambda obj: self.scene.UI.show("sign")])
-        info_box2.set_texture(sign_texture)
+        info_box2.set_texture(self.RESSOURCES["textures"]["sign"])
         self.collections+= [info_box2]
 
-        dialogWarnLife = Dialog(self.font_G)
-        dialogWarnLife.add_character("Warning", sign_texture)
+        dialogWarnLife = Dialog(self.RESSOURCES["fonts"]["default"])
+        dialogWarnLife.add_character("Warning", self.RESSOURCES["textures"]["sign"])
         dialogWarnLife.add_message("Warning", "Your life is low ! Be careful !")
         self.scene.UI.add("warn_life", dialogWarnLife)
 

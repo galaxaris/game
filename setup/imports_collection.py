@@ -45,7 +45,7 @@ from api.UI.ProgressBar import ProgressBar
 ########################################################
 
 from api.assets.Animation import Animation
-from api.assets.Resource import Resource, ResourceType
+from api.assets.ResourceManager import Resource, ResourceType
 from api.assets.Texture import Texture
 from api.assets.AudioManager import AudioManager
 
@@ -88,6 +88,7 @@ from api.utils.InputManager import (
 #%%################## GAME SETUP ####################
 #####################################################
 from game.setup.game_settings import init_game_settings
+from game.setup.ressource_manager import init_ressource_manager
 
 #Do not use Omicronde to avoid circular imports
 #from game.setup.game import Omicronde
@@ -98,3 +99,8 @@ from game.setup.game_settings import init_game_settings
 
 from game.scripts.triggers import *
 from game.scripts.ui import menu_in_game, main_menu, toggle_audio
+
+
+#%%################## GLOBAL VARIABLES ####################
+###########################################################
+ASSETS_PATH = resource_path("assets")

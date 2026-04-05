@@ -1,0 +1,45 @@
+{
+    "textures": {
+        "icon": "icon.png",
+        "grass": "Terrain/grass.png",
+        "checkpoint_ground": "Terrain/beach_sand.png",
+        "sign": "Objects/sign.png",
+
+        "player": "Player/NinjaFrog/jump.png",
+        "jump_anim": "Player/NinjaFrog/jump_scaled.png",
+        "fall_anim": "Player/NinjaFrog/fall_scaled.png",
+
+        "menu_bg": "UI/Background/Background_space.png",
+        "parallax1": "UI/Background/Parallax/Forest/0.9x parallax-demon-woods-close-trees.png",
+        "parallax2": "UI/Background/Parallax/Forest/0.70x parallax-demon-woods-mid-trees.png",
+        "parallax3": "UI/Background/Parallax/Forest/0.5x parallax-demon-woods-far-trees.png",
+        "parallax4": "UI/Background/Parallax/Forest/0.25x parallax-demon-woods-bg.png",
+
+        "boss": "Player/MaskDude/idle.png",
+        "enemy": "Player/little robot/idle_robot_scaled.png",
+        "health": "UI/heart.png",
+
+        "trap_idle": "Objects/ggg.png",
+        "trap_active": "UI/Background/Tiles/blue.png"
+    },
+    "animations": {
+        "run": ["Player/NinjaFrog/run_scaled.png", 12, 70],
+        "run_fast": ["Player/NinjaFrog/run_scaled.png", 12, 50],
+        "idle": ["Player/NinjaFrog/idle_scaled.png", 11, 100],
+        "hit": ["Player/NinjaFrog/hit_scaled.png", 7, 50]
+    },
+    "music": {
+        "titleScreen": "The_Legend_of_Zelda_Ocarina_of_Time_OST_N64_Title_Screen_Track_1.mp3",
+        "inGame": "Original_Super_Mario_Bros_Soundtrack_Full.mp3",
+        "pause": "Alicia.mp3"
+    },
+    "sfx": {
+        "jump": "frog-sound.mp3",
+        "death": "Mario died _(.mp3",
+        "fire": "piou1.mp3"
+    },
+    "fonts": {
+        "default": "Gm6x11.ttf",
+        "debug": "Gm6x11.ttf"
+    }
+}
