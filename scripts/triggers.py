@@ -2,20 +2,7 @@
 All callbacks for triggers used & defined in the game
 """
 
-import pygame as pg
-import random as rd
-from os.path import join
-
-from api.engine.Scene import Scene
-from api.assets.Texture import Texture
-from api.environment.Solid import Solid
-from api.environment.Trigger import Trigger, TriggerKillBox, TriggerInteract
-from api.UI.Dialog import Dialog
-from api.utils.ResourcePath import resource_path
-from api.utils.Console import *
-
-
-ASSETS_PATH = resource_path("assets")
+from game.setup.imports_collection import *
 
 
 def create_killBox(collections, lenght, game_heigth):
@@ -23,10 +10,10 @@ def create_killBox(collections, lenght, game_heigth):
     Adds a killbox of specified lenght, 400px behind the back of screen
     """
     
-    collections += [TriggerKillBox((-1000, game_heigth+400), (lenght*1000, 100), ["player", "projectile"], once=False, sfx=["death", "death2"])]
+    collections += [TriggerKillBox((-1000, game_heigth+400), (lenght*1000, 100), ["player", "projectile"], once=False, sfx=["death"])]
 
 def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Texture, game_height, texture_common: Texture, texture_checkpoint: Texture, rdLength=20, blockDim = (50, 10),
-                    dialog_font: str = ("**/" + join(ASSETS_PATH, "Fonts\\Gm6x11.ttf"))):
+                    dialog_font: str = Fonts.DEFAULT_FONT):
 
     collections = []
 

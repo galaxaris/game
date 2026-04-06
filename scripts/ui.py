@@ -3,23 +3,8 @@ Personnalized functions for creating predefined UIs
 Can be useful to predefine a certain AD for the game (colors, fonts, box styles, dialog styles, buttons, etc.)
 """
 
-#Libs
-import pygame as pg
-from os.path import join
+from game.setup.imports_collection import *
 
-#API
-from api.UI.Button import Button
-from api.UI.Dialog import Dialog
-from api.UI.Modal import Modal
-from api.UI.Text import Text
-from api.UI.TextBox import TextBox
-from api.assets import AudioManager
-from api.engine.Scene import Scene
-from api.entity.Player import Player
-from api.Game import Game
-
-from api.utils import Fonts
-from api.utils.Console import *
 
 #Global variables
 COLOR_SET_CLASSIC = ((0, 0, 0), (255, 255, 255), (188, 188, 188), (163, 163, 163))
@@ -126,3 +111,12 @@ def toggle_audio(audio_manager: AudioManager = None, menu = None):
         audio_manager.toggle_audio() #Mute
         if mute_button:
             mute_button.set_text("Unmute")
+
+
+def toggle_menu_inGame(scene: Scene, menu_name: str, menu_scene: Scene, game: Game):
+    if menu_name in scene.UI.enabled_elements and onKeyUp("pause"):
+        scene.UI.hide(menu_name)
+        game.audio_manager.play_music("inGame")
+    elif "menu" in scene.UI.enabled_elements and onKeyUp("pause"):
+        scene.UI.add(menu_scene.UI.elements[menu_name], menu_name)
+        game.audio_manager.play_music("menu")

@@ -1,0 +1,45 @@
+{
+    "position": [310, 410],
+    "size": [48, 48],
+    "direction": "right",
+
+    "gravity": 0.5,
+    "max_velocity": 2,
+    "acceleration": 0.5, 
+    "resistance": 0.2,
+    "force": 20,
+
+    "health": 100,
+    "damage_resistance": 0,
+    "damage_force": 10,
+
+    "weapons": {
+        "WaterPistol": {
+            "cooldown": 200,
+            "projectile_damage": 30
+        },
+        "EarthPistol": {
+            "cooldown": 10,
+            "projectile_damage": 15
+        },
+        "GrapplingPistol": {
+            "cooldown": 500,
+            "projectile_damage": 15
+        }
+    },
+
+    "sfx_list": {
+        "jump": "jump",
+        "death": "death",
+        "fire": "fire"
+    },
+
+    "animations": {
+        "run": "run",
+        "run_fast": "run_fast",
+        "idle": "idle",
+        "jump": "jump_anim",
+        "fall": "fall_anim",
+        "hit": "hit"
+    }
+}
