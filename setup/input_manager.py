@@ -8,7 +8,6 @@ from game.setup.imports_collection import *
 
 DEFAULT_INPUT_ACTIONS = INPUT_ACTIONS.copy()
 
-##Custom input settings using WASD instead of ZQSD
 ## PLEASE NOTE: let empty if you don't want to override default settings
 ## Do not add actions not present in `DEFAULT_INPUT_ACTIONS`.
 PERSON_INPUT_ACTIONS = {
@@ -17,6 +16,7 @@ PERSON_INPUT_ACTIONS = {
 
 
 """
+##Custom input settings using WASD instead of ZQSD
 PERSON_INPUT_ACTIONS = {
     "up": [pg.K_w, pg.K_UP], #If we want to switch from ZQSD to WASD
     "down": [pg.K_s, pg.K_DOWN],
