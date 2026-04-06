@@ -248,14 +248,8 @@ class Omicronde:
         #%%################# EVENT MANAGER SETUP ########################
         #################################################################
         self.game_event_manager = self.game.event_manager
-        self.game_event_manager.Instances.bindInstancesDict({
-            "game": self.game,
-            "scene": self.scene,
-            "player": self.player,
-            "entity": self.entity,
-            "menu_scene": self.menu_scene,
-            "audio_manager": self.audio_manager
-        })
+        init_event_manager(self)
+
 
         #self.game_event_manager.registerDefaultEventCollection() #Registers default events (see api/events/DefaultEventCollection.py)
         #=> to be used in Game loop
