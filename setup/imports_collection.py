@@ -90,6 +90,7 @@ from api.utils.InputManager import (
 from game.setup.game_settings import init_game_settings
 from game.setup.ressource_manager import init_ressource_manager
 from game.setup.player_settings import init_player
+from game.setup.input_manager import init_input_manager, load_input_settings, PERSON_INPUT_ACTIONS, DEFAULT_INPUT_ACTIONS
 
 #Do not use Omicronde to avoid circular imports
 #from game.setup.game import Omicronde

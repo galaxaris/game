@@ -24,6 +24,7 @@ class Omicronde:
         #%%################ GAME SETTINGS ####################
         ######################################################
         init_game_settings(self, debug_mode=False, mute=True)
+        init_input_manager()
 
         #%%################ LOADING ASSETS ####################
         #######################################################

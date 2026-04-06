@@ -66,7 +66,7 @@ def init_player(game) -> Player:
     
     settings = load_player_settings()
 
-    player = Player(list(settings["position"]), list(settings["size"]), settings["direction"], max_velocity=settings["max_velocity"], 
+    player = Player(tuple(settings["position"]), tuple(settings["size"]), settings["direction"], max_velocity=settings["max_velocity"], 
                     acceleration=settings["acceleration"], resistance=settings["resistance"], force=settings["force"],
                     health=settings["health"], damage_resistance=settings["damage_resistance"], damage_force=settings["damage_force"])
     
