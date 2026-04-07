@@ -10,6 +10,16 @@ from api.Game import Game
 from api.utils import Fonts, Debug
 from api.utils.ResourcePath import resource_path
 
+settings = {
+        "RENDER_WIDTH": 640,
+        "RENDER_HEIGHT": 360,
+        "SCREEN_WIDTH": 1280,
+        "SCREEN_HEIGHT": 720,
+        "FPS": 60,
+        "WINDOW_TITLE": "Robot Recovery",
+        "GRAVITY": 0.5,
+}
+
 #The "" around Omicronde is to avoid trying to import it before it's defined
 def init_game_settings(game_class, debug_mode: bool = False, mute: bool = False, override_settings: dict = None):
     """
@@ -21,16 +31,6 @@ def init_game_settings(game_class, debug_mode: bool = False, mute: bool = False,
     :param override_settings: A dictionary of settings to override the defaults (default: None).
     :return: A dictionary containing the initialized game settings.
     """
-
-    settings = {
-        "RENDER_WIDTH": 640,
-        "RENDER_HEIGHT": 360,
-        "SCREEN_WIDTH": 1280,
-        "SCREEN_HEIGHT": 720,
-        "FPS": 60,
-        "WINDOW_TITLE": "Robot Recovery",
-        "GRAVITY": 0.5,
-    }
 
     if override_settings:
         settings.update(override_settings)

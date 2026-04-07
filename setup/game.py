@@ -24,6 +24,7 @@ class Omicronde:
         #%%################ GAME SETTINGS ####################
         ######################################################
         init_game_settings(self, debug_mode=False, mute=True)
+        from game.scenes.map.Map import MapScene
         init_input_manager()
 
         #%%################ LOADING ASSETS ####################
