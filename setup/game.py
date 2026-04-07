@@ -219,14 +219,6 @@ class Omicronde:
         info_box2.set_texture(self.RESSOURCES["textures"]["sign"])
         self.collections+= [info_box2]
 
-        dialogWarnLife = Dialog(self.RESSOURCES["fonts"]["default"])
-        dialogWarnLife.add_character("Warning", self.RESSOURCES["textures"]["sign"])
-        dialogWarnLife.add_message("Warning", "Your life is low ! Be careful !")
-        self.scene.UI.add("warn_life", dialogWarnLife)
-
-
-
-
         ### MENU
         menu = menu_in_game(self.scene, self.menu_scene, "menu", self.RENDER_WIDTH, self.RENDER_HEIGHT, self.player, self.game)
         self.scene.UI.add("menu", menu)
@@ -249,29 +241,11 @@ class Omicronde:
         #################################################################
         self.game_event_manager = self.game.event_manager
         init_event_manager(self)
-
-
-        #self.game_event_manager.registerDefaultEventCollection() #Registers default events (see api/events/DefaultEventCollection.py)
-        #=> to be used in Game loop
         
-        #Example of registering a custom event:
-        self.game_event_manager.registerEvent("custom_event", [lambda em: print_info("Custom event triggered!"), 
-            lambda em: self.audio_manager.play_music("pause"), lambda em: self.scene.UI.show("test")], [False]) #Registers a custom event with multiple callbacks (see api/events/EventManager.py for more info on registering events)
-        
-        #Registering an event for testing callbacks conditions (will only be triggered if the current music playing is "inGame"), => plays the 'titleScreen' music then and shows the 'sign' dialog
-        self.game_event_manager.registerEvent("test_event_conditions", 
-            [lambda em: print_info("Test event with conditions triggered!"), lambda em: self.audio_manager.play_music("titleScreen"), 
-             lambda em: self.scene.UI.show("sign")], [lambda em: self.audio_manager.current_music() == "inGame"])
-        
-        #Test with variable state set as callbacks
-        self.game_event_manager.registerEvent("test_event_conditions2", 
-            [lambda em: print_info("Test event2 triggered!"), lambda em: self.audio_manager.play_sfx("fire"), 
-             lambda em: self.scene.UI.show("warn_life")], [lambda em: self.player.health < 50])
-        print_info(f"Registered events:\n\n {self.game_event_manager.getRegisteredEvents()}")
+        #NOTE: You can register custom events in `CustomEventsCollection`
 
         #Example of triggering an event:
         #self.game_event_manager.triggerEvent("custom_event")
-        #self.game_event_manager.triggerEvent("test_error_instance")
 
         #%%################# INPUT MANAGER SETUP ########################
         #################################################################
@@ -321,9 +295,7 @@ class Omicronde:
         #Tests EventManager + InputManager
         if onKeyDown(pg.K_n):
             #self.game_event_manager.triggerEvent("player_jump")
-            #self.game_event_manager.triggerEvent("custom_event")
-            self.game_event_manager.triggerEvent("test_event_conditions")
-            self.game_event_manager.triggerEvent("test_event_conditions2")
+            self.game_event_manager.triggerEvent("custom_event")
 
         #TODO: To be implemented once in GameUI or EventManager
         if not "menu" in self.scene.UI.enabled_elements:

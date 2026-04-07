@@ -2,6 +2,8 @@
 Grab your new events from the scripts you have defined in `scripts/` (particularly `scripts/event.py`)
 """
 
+from game.setup.imports_collection import *
+
 def get_custom_events(manager):
     """
 
@@ -15,7 +17,7 @@ def get_custom_events(manager):
     Structure:
 
     {
-        "event_name": ([lambda event: event.Instances.some_instance.some_method(), ...], [condition1, condition2, ...]) (optional)
+        "event_name": ([lambda event: event.Instances.some_instance.some_method(), ...], [condition1, condition2, ...]) (set to None if no conds)
         ...
     }
 
@@ -27,6 +29,9 @@ def get_custom_events(manager):
     return {
         #manager = the EventManager instance
         #e = the event (ex: mouse click) passed by triggerEvent
-        "custom_event": ([lambda e=None: print("Custom event triggered!")], None),
+        
+        #Example of a custom event with multiple callbacks and no conditions (set to None if no conditions)
+        "custom_event": ([lambda e=None: print_info("Custom event triggered!"), 
+            lambda e=None: manager.Instances.audio_manager.play_music("pause"), lambda e=None: manager.Instances.scene.UI.show("sign")], None), 
         #... add other custom events as needed
     }
