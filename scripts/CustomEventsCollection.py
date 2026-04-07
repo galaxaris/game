@@ -34,4 +34,5 @@ def get_custom_events(manager):
         "custom_event": ([lambda e=None: print_info("Custom event triggered!"), 
             lambda e=None: manager.Instances.audio_manager.play_music("pause"), lambda e=None: manager.Instances.scene.UI.show("sign")], None), 
         #... add other custom events as needed
+        "toggle_audio": ([lambda e=None: toggle_audio(manager.Instances.audio_manager, manager.Instances.scene.UI.get("menu"))], None),
     }

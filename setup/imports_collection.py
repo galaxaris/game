@@ -75,6 +75,7 @@ from api.environment.Trigger import Trigger, TriggerInteract, TriggerKillBox
 from api.utils import Debug, Fonts
 from api.utils.ResourcePath import resource_path
 from api.utils.Console import *
+from api.events.EventManager import EventManager
 from api.utils.InputManager import (
     get_inputs, 
     get_once_inputs, 
@@ -104,7 +105,7 @@ from game.scripts.triggers import *
 from game.scripts.events import *
 from game.scripts.levels import *
 #from game.scripts.combat import *
-from game.scripts.ui import menu_in_game, main_menu, toggle_audio
+from game.scripts.ui import menu_in_game, main_menu, toggle_audio, toggle_menu_inGame, update_player_health_UI
 
 
 #%%################## GLOBAL VARIABLES ####################

@@ -98,10 +98,10 @@ def toggle_audio(audio_manager: AudioManager = None, menu = None):
                 break
             else:
                 ...
-                #print_warning("Mute button not found in menu elements.")
+                print_warning("Mute button not found in menu elements.")
     else:
         ...
-        #print_warning("Menu not found.")
+        print_warning("Menu not found.")
 
     if audio_manager.is_muted:
         audio_manager.toggle_audio() #Unmute
@@ -114,9 +114,22 @@ def toggle_audio(audio_manager: AudioManager = None, menu = None):
 
 
 def toggle_menu_inGame(scene: Scene, menu_name: str, menu_scene: Scene, game: Game):
-    if menu_name in scene.UI.enabled_elements and onKeyUp("pause"):
-        scene.UI.hide(menu_name)
-        game.audio_manager.play_music("inGame")
-    elif "menu" in scene.UI.enabled_elements and onKeyUp("pause"):
-        scene.UI.add(menu_scene.UI.elements[menu_name], menu_name)
-        game.audio_manager.play_music("menu")
+    #TODO: To be implemented once in GameUI or EventManager
+    if not "menu" in game.scene.UI.enabled_elements:
+        if onKeyUp("pause"):
+            game.scene.UI.show("menu")
+            game.audio_manager.play_music("pause")
+
+    elif "menu" in game.scene.UI.enabled_elements:
+        if onKeyUp("pause"):
+            game.scene.UI.hide("menu")
+            game.audio_manager.play_music("inGame") #Resume the main theme when closing the menu
+
+def update_player_health_UI(player_ui_health: ProgressBar, player_health: int):
+    player_ui_health.set_progress(player_health)
+    if player_health > 60:
+        player_ui_health.set_color("green")
+    elif player_health > 30:
+        player_ui_health.set_color("yellow")
+    else:
+        player_ui_health.set_color("red")

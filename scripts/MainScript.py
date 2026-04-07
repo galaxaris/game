@@ -17,6 +17,7 @@ from game.setup.imports_collection import *
 def Start(game_instance):        
     game_instance.audio_manager.play_music("titleScreen")
     toggle_audio(game_instance.audio_manager)  # Mute the music by default, can be changed with the button in the menu
+    #EventManager.triggerEvent("toggle_audio") #Trigger the start_game event to initialize the first scene (main menu)
 
     print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\nIf you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
@@ -26,30 +27,25 @@ def Start(game_instance):
 ######################################################
 
 def Update(game_instance):
-    game_instance.scene.default_surface.fill((0,0,0,0))
-    game_instance.scene.set_layer(1, "#object")
-    game_instance.scene.set_layer(2, "#player")
-    game_instance.scene.set_layer(3, "#enemies")
-    game_instance.scene.set_layer(4, "_trajectory")
-    game_instance.scene.set_layer(5, "#projectile")
+    ### Refresh scene and layers order.
+    refresh_screen(game_instance)
 
-    game_instance.player_ui_health.set_progress(game_instance.player.health)
-    if game_instance.player.health > 60:
-        game_instance.player_ui_health.set_color("green")
-    elif game_instance.player.health > 30:
-        game_instance.player_ui_health.set_color("yellow")
-    else:
-        game_instance.player_ui_health.set_color("red")
-
+    ### Displays debug info if debug mode was enabled in the game settings or toggled later
     game_instance.debug_info()
 
+    ### Updates the player health UI
+    if game_instance.player and game_instance.player_ui_health:
+        update_player_health_UI(game_instance.player_ui_health, game_instance.player.health)
+
+    #### Update all GameObjects (stored in collections list)
     for colls in game_instance.collections:
         game_instance.scene.add(colls, "#object")
 
-    #game_instance.scene.add(game_instance.player, "#player")
-
+    #### Updates camera position
     game_instance.scene.camera.focus(game_instance.player)
 
+    ### Key inputs checking
+    ### There for debugging purposes only
     if onKeyDown(pg.K_o):
         game_instance.player.respawn()
 
@@ -59,7 +55,6 @@ def Update(game_instance):
     if onKeyDown(pg.K_i):
         game_instance.entity.mode = "patrol" if game_instance.entity.mode == "chase" else "chase"
 
-
     if onKeyDown(pg.K_m):
         game_instance.game.scene = game_instance.scene
 
@@ -68,13 +63,18 @@ def Update(game_instance):
         #game_instance.game_event_manager.triggerEvent("player_jump")
         game_instance.game_event_manager.triggerEvent("custom_event")
 
-    #TODO: To be implemented once in GameUI or EventManager
-    if not "menu" in game_instance.scene.UI.enabled_elements:
-        if onKeyUp("pause"):
-            game_instance.scene.UI.show("menu")
-            game_instance.audio_manager.play_music("pause")
+    toggle_menu_inGame(game_instance.scene, "menu", game_instance.menu_scene, game_instance)
 
-    elif "menu" in game_instance.scene.UI.enabled_elements:
-        if onKeyUp("pause"):
-            game_instance.scene.UI.hide("menu")
-            game_instance.audio_manager.play_music("inGame") #Resume the main theme when closing the menu
+
+#%%################# GAME SCRIPTS #####################
+#######################################################
+
+def refresh_screen(game_instance):
+    ### Refresh scene and layers order. Avoid modifying this part!
+    #You can add layers if needed
+    game_instance.scene.default_surface.fill((0,0,0,0))
+    game_instance.scene.set_layer(1, "#object")
+    game_instance.scene.set_layer(2, "#player")
+    game_instance.scene.set_layer(3, "#enemies")
+    game_instance.scene.set_layer(4, "_trajectory")
+    game_instance.scene.set_layer(5, "#projectile")
