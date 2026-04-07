@@ -81,6 +81,10 @@ class Omicronde:
         self.collections += [Solid((250, 550), (200, 20))] # First platform
         self.collections += [Solid((550, 500), (500, 50))] # Second platform
 
+        anchor_point = Solid((600, 300), (20, 20))
+        anchor_point.add_tag("anchor")
+        self.collections += [anchor_point]
+
         for coll in self.collections:
             coll.set_color((200, 200, 200))
             coll.set_texture(self.RESSOURCES["textures"]["grass"])
