@@ -5,8 +5,8 @@ This is the entry point of the Omicronde Game. Built using the Omicronde API.
 
 Authors: Galaxaris & Associates
 
-v.Beta (in development)
-- 03/03/2026
+v.0.1 (in development)
+- 07/04/2026
 
 Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 
@@ -15,17 +15,7 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 
 
 ### TODO: levels to be implemented and loaded in a JSON BDD (using the editor) => GameObjects, triggers, UI, background, music, dialogs, etc...
-
-### TODO: create an 'InputManager' to centralize game input handling
-### TODO: create an 'EventManager' to centralize game events handling
 ### TODO: create a 'SceneManager' to manage multiple game scenes (menus, levels...) and transitions between them
-
-### TODO: create a 'ResourceManager' to centralize the loading and stock of game assets
-    ## => try/except for loading function, "pink" texture as fallback
-    ### TODO: create a 'TextureManager' to manage and stock game textures; texture atlases (=> sprites) and animations
-        ## => TODO: define a standard for texture atlases & anims (associated .json files?)
-    ### TODO: create an 'AudioManager' to manage and stock game SFX and music
-    ### TODO: create a 'UIManager' to define specific game UI elements and keep an overall style (fonts, colors...)
 
 
 #%%################ IMPORTS ####################
@@ -33,9 +23,6 @@ Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 from game.setup.imports_collection import *
 from game.setup.game import Omicronde
 
-#%%############# ON START #############################
-#######################################################
-print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\nIf you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
 #%%################ MAIN ##############################
 #######################################################

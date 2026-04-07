@@ -13,12 +13,13 @@ def init_event_manager(game_instance):
     :param game_instance: The EventManager instance to be initialized.
     """
 
+    #Bind only general instances that are used & initialized at the game start. 
     game_instance.game_event_manager.Instances.bindInstancesDict({
             "game": game_instance.game,
             "scene": game_instance.scene,
             "player": game_instance.player,
-            "entity": game_instance.entity,
-            "menu_scene": game_instance.menu_scene,
+            #"entity": game_instance.entity, #Entity shouldn't be binded since it varies in each scene
+            #"menu_scene": game_instance.menu_scene, #Same. We can bind it after defining it, instead
             "audio_manager": game_instance.audio_manager,
             #... add as many other instances as needed
     })
