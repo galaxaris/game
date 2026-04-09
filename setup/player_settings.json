@@ -19,7 +19,7 @@
             "projectile_damage": 30
         },
         "EarthPistol": {
-            "cooldown": 10,
+            "cooldown": 0,
             "projectile_damage": 15
         },
         "GrapplingPistol": {
