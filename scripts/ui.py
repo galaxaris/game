@@ -98,10 +98,10 @@ def toggle_audio(audio_manager: AudioManager = None, menu = None):
                 break
             else:
                 ...
-                print_warning("Mute button not found in menu elements.")
+                #print_warning("Mute button not found in menu elements.")
     else:
         ...
-        print_warning("Menu not found.")
+        #print_warning("Menu not found.")
 
     if audio_manager.is_muted:
         audio_manager.toggle_audio() #Unmute
