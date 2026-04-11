@@ -2,9 +2,15 @@
 Personnalized functions for creating predefined UIs
 Can be useful to predefine a certain AD for the game (colors, fonts, box styles, dialog styles, buttons, etc.)
 """
-
-from game.setup.imports_collection import *
-
+from api.Game import Game
+from api.UI.Button import Button
+from api.UI.Modal import Modal
+from api.UI.ProgressBar import ProgressBar
+from api.UI.Text import Text
+from api.assets.AudioManager import AudioManager
+from api.engine.Scene import Scene
+from api.utils import Fonts
+from api.utils.InputManager import *
 
 #Global variables
 COLOR_SET_CLASSIC = ((0, 0, 0), (255, 255, 255), (188, 188, 188), (163, 163, 163))
@@ -12,7 +18,6 @@ COLOR_SET_COMMON = ((0, 0, 0), (3, 161, 45), (90, 204, 121), (9, 117, 42))
 COLOR_SET_SETTINGS = ((0, 0, 0), (0, 104, 204), (105, 162, 214), (0, 62, 117))
 COLOR_SET_DANGER = ((0, 0, 0), (181, 0, 0), (237, 100, 100), (94, 4, 4))
 COLOR_SET_DEBUG = ((0, 0, 0), (161, 2, 131), (214, 107, 193), (94, 6, 78))
-
 
 #%%### UI CREATION FUNCTIONS ####
 #################################
@@ -34,11 +39,18 @@ def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal,
     button.set_callback(callback)
     menu.add_element(button, column_index)
 
-def menu_in_game(scene: Scene, menu_scene: Scene, menu_name: str, screen_w: int, screen_h: int, player: Player, game: Game):
+def menu_in_game(game: Game, menu_name: str):
+
+    if(game.scene.name == "MainMenuScene"):
+        return None
 
     #Global variables:
     FONT_FR = Fonts.DEFAULT_FONT
     audio_manager = game.audio_manager
+
+    scene = game.scene
+    screen_w = scene.size.x
+    screen_h = scene.size.y
 
     ## Menu panel
     menu = Modal((50, 50), (screen_w-100, screen_h-100),  (0, 0, 0, 200))
@@ -47,20 +59,23 @@ def menu_in_game(scene: Scene, menu_scene: Scene, menu_name: str, screen_w: int,
 
     ## Buttons
     menu_button((0,50), (100, 40), "Resume", lambda e: (scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
-    menu_button((0,100), (100, 40), "Restart", lambda e: (player.respawn(), scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
-    menu_button((0,150), (100, 40), "Title Screen", lambda e: goto_title_scene(menu_scene, game), menu, FONT_FR, color_set=COLOR_SET_DANGER)
-    menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.enable_debug(), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
+    menu_button((0,100), (100, 40), "Restart", lambda e: (game.event_manager.triggerEvent("restart_level"), scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+    menu_button((0,150), (100, 40), "Title Screen", lambda e: game.event_manager.triggerEvent("goto_title_screen"), menu, FONT_FR, color_set=COLOR_SET_DANGER)
+    menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.event_manager.triggerEvent("enable_debug"), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
     menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_audio(audio_manager, menu), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
-    menu_button((screen_w-220,150), (100, 40), "Quit", lambda e: game.stop(), menu, FONT_FR, color_set=COLOR_SET_DANGER,  column_index=1)
+    menu_button((screen_w-220,150), (100, 40), "Quit", lambda e: game.event_manager.triggerEvent("QUIT"), menu, FONT_FR, color_set=COLOR_SET_DANGER,  column_index=1)
 
     return menu
     ## Add menu to scene UI
     #scene.UI.add(menu, menu_name)
 
-def main_menu(menu_scene: Scene, game_scene: Scene, menu_name: str, screen_w: int, screen_h: int, game: Game):
+def main_menu( game: Game, scene):
 
     #Global variables:
     FONT_FR = Fonts.DEFAULT_FONT
+
+    screen_w = scene.size.x
+    screen_h = scene.size.y
 
     ## Menu panel
     menu = Modal(((screen_w-screen_w*0.33)/2, (screen_h-screen_h*0.28)/2), (screen_w*0.33, screen_h*0.28),  (0, 0, 0, 200))
@@ -68,7 +83,7 @@ def main_menu(menu_scene: Scene, game_scene: Scene, menu_name: str, screen_w: in
     menu.add_element(text, x=0)
 
     ## Buttons
-    menu_button((45,45), (100, 40), "Play", lambda e: start_game_scene(game_scene, game), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+    menu_button((45,45), (100, 40), "Play", lambda e: game.event_manager.triggerEvent("start_game"), menu, FONT_FR, color_set=COLOR_SET_COMMON)
 
     return menu
     ## Add menu to scene UI
@@ -113,8 +128,10 @@ def toggle_audio(audio_manager: AudioManager = None, menu = None):
             mute_button.set_text("Unmute")
 
 
-def toggle_menu_inGame(scene: Scene, menu_name: str, menu_scene: Scene, game: Game):
-    #TODO: To be implemented once in GameUI or EventManager
+def toggle_menu_inGame(game: Game):
+    if game.scene and game.scene.name == "MainMenuScene":
+        return None
+
     if not "menu" in game.scene.UI.enabled_elements:
         if onKeyUp("pause"):
             game.scene.UI.show("menu")

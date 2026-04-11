@@ -11,17 +11,11 @@ v.0.1 (in development)
 Copyright (c) 2026 Galaxaris & Associates. All rights reserved.
 
 """
+import time
+import os
+
 #### RUN THE GAME WITH "python -m game.main" FROM THE ROOT DIRECTORY OF THE PROJECT ####
 
-
-### TODO: levels to be implemented and loaded in a JSON BDD (using the editor) => GameObjects, triggers, UI, background, music, dialogs, etc...
-### TODO: create a 'SceneManager' to manage multiple game scenes (menus, levels...) and transitions between them
-
-
-#%%################ IMPORTS ####################
-################################################
-from game.setup.imports_collection import *
-from game.setup.game import Omicronde
 
 
 #%%################ MAIN ##############################
@@ -42,8 +36,9 @@ if __name__ == "__main__":
 
         #%%############## LAUNCH THE GAME #####################
         #######################################################
-        app = Omicronde()
-        app.launch()
+
+        os.chdir(os.path.dirname(__file__))
+        from game.root import *
 
     except Exception:
         #%%############## CLOSE PG WINDOW #####################

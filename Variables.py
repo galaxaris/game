@@ -1,11 +1,21 @@
-{
+game_settings = {
+        "RENDER_WIDTH": 640,
+        "RENDER_HEIGHT": 360,
+        "SCREEN_WIDTH": 1280,
+        "SCREEN_HEIGHT": 720,
+        "FPS": 60,
+        "WINDOW_TITLE": "Robot Recovery",
+        "GRAVITY": 0.5,
+}
+
+player_settings = {
     "position": [310, 410],
     "size": [48, 48],
     "direction": "right",
 
     "gravity": 0.5,
     "max_velocity": 2,
-    "acceleration": 0.5, 
+    "acceleration": 0.5,
     "resistance": 0.2,
     "force": 20,
 
