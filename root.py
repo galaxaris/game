@@ -6,6 +6,7 @@
 from api.Game import Game
 from api.assets.ResourceManager import ResourceType, Resource
 from api.utils import Fonts, Debug
+from api.utils.Console import print_info
 from api.utils.ResourcePath import resource_path
 
 import pygame as pg
@@ -37,10 +38,11 @@ game.set_icon(game.RESSOURCES["textures"]["icon"])
 
 scene = game.scene # Alias
 
-from game.scripts.run import update
+from game.scripts.run import update, Start
 from game.scripts.events import *
 register_events(game)
 load_scene("MainMenuScene", game)
+Start()
 game.run(lambda: update(game))
 
 
