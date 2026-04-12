@@ -1,5 +1,8 @@
 from game.scenes import MainMenuScene, BaseScene, Level1Scene, Level2Scene, Level3Scene, BossLevelScene
 from game.scripts.ui import menu_in_game
+from api.utils.Console import print_info
+from api.utils.InputManager import onKeyDown, onKeyUp
+import pygame as pg
 
 scenes = {
     "MainMenuScene": MainMenuScene,
@@ -52,3 +55,17 @@ def update_scene(game):
     if current_scene_instance:
         game.scene = current_scene_instance.scene
         current_scene_instance.update(game)
+
+
+def switch_scene(game):
+    """
+    Switches to the next scene in the list of scenes. If the current scene is the last one, it loops back to the first scene.
+    """
+    list_scenes = list(scenes.keys())
+
+    current_scene_name = game.scene.name
+    if current_scene_name in list_scenes:
+        current_index = list_scenes.index(current_scene_name)
+        next_index = (current_index + 1) % len(list_scenes)
+        next_scene_name = list_scenes[next_index]
+        load_scene(next_scene_name, game)
