@@ -9,7 +9,7 @@ game_settings = {
 }
 
 player_settings = {
-    "position": [310, 410],
+    "position": [310, 110],
     "size": [48, 48],
     "direction": "right",
 
