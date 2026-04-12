@@ -55,8 +55,8 @@
         "you_run_fast": ["Player/You/run.png", 4, 75]
     },
     "music": {
-        "titleScreen": "La Teuf du Farfadet - cut.mp3",
-        "inGame": "Original_Super_Mario_Bros_Soundtrack_Full.mp3",
+        "titleScreen": "MainTheme.mp3",
+        "inGame": "Desert.mp3",
         "pause": "Alicia.mp3",
         "level2": "Idee3.mp3"
     },
