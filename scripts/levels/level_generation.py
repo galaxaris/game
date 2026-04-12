@@ -1,4 +1,6 @@
 from api.Game import Game
+from api.UI.GameUI import UIElement
+from api.UI.ProgressBar import ProgressBar
 from api.engine import Scene
 from api.environment.Parallax import ParallaxBackground, ParallaxLayer
 from api.environment.Trigger import TriggerKillBox
@@ -13,6 +15,25 @@ def init_level(game: Game, scene: Scene, player):
     scene.set_background(p_bg)
     scene.camera.set_offset((scene.size.x // 2 - player.size.x, scene.size.y // 2 - player.size.y))
     scene.camera.set_limits((100, -scene.size.y - 100), (scene.size.x * 20, scene.size.y - 100))
+
+    scene.this.player_ui_health = ProgressBar((30, 10), (100, 10), (100, 100, 100), "green", 100)
+    scene.this.player_ui_heart = UIElement((8, 8), (16, 16))
+    scene.this.player_ui_heart.set_texture(game.RESSOURCES["textures"]["health"], True)
+
+    scene.this.player_ui_ammo = ProgressBar((8, scene.size.y-158), (15, 150), (100, 100, 100), "aqua", 20, vertical=True)
+    scene.this.player_ui_ammo_icon = UIElement((4, scene.size.y-188), (24, 24))
+    scene.this.player_ui_ammo_icon.set_texture(game.RESSOURCES["textures"]["water_drop"], True)
+
+    scene.UI.add("player_health", scene.this.player_ui_health)
+    scene.UI.add("player_heart", scene.this.player_ui_heart)
+    scene.UI.show("player_health")
+    scene.UI.show("player_heart")
+
+    scene.UI.add("player_ammo", scene.this.player_ui_ammo)
+    scene.UI.add("player_ammo_icon", scene.this.player_ui_ammo_icon)
+    scene.UI.show("player_ammo")
+    scene.UI.show("player_ammo_icon")
+
     create_killBoxes(game, scene, player, 50)
     scene.camera.focus(player)
 
@@ -28,7 +49,7 @@ def get_parallax_background(name, game):
             ParallaxLayer(pg.Vector2(0.9, 0.45), game.RESSOURCES["textures"]["forest_layer3"]),
             ParallaxLayer(pg.Vector2(0.7, 0.35), game.RESSOURCES["textures"]["forest_layer2"]),
             ParallaxLayer(pg.Vector2(0.5, 0.25), game.RESSOURCES["textures"]["forest_layer1"]),
-        ], (75, 105, 52))
+        ], (34, 59, 62), (34, 59, 62), False)
     if name == "Level3Scene":
         p_bg = ParallaxBackground(game.render_size, [
             ParallaxLayer(pg.Vector2(0.9, 0.45), game.RESSOURCES["textures"]["desert_layer5"]),
@@ -36,12 +57,12 @@ def get_parallax_background(name, game):
             ParallaxLayer(pg.Vector2(0.7, 0.35), game.RESSOURCES["textures"]["desert_layer3"]),
             ParallaxLayer(pg.Vector2(0.5, 0.30), game.RESSOURCES["textures"]["desert_layer2"]),
             ParallaxLayer(pg.Vector2(0.3, 0.25), game.RESSOURCES["textures"]["desert_layer1"]),
-        ], (75, 105, 52))
+        ], (253, 248, 241), (138, 72, 54), True)
     if name == "BossLevelScene":
         p_bg = ParallaxBackground(game.render_size, [
             ParallaxLayer(pg.Vector2(0.9, 0.45), game.RESSOURCES["textures"]["industrial_layer1"]),
             ParallaxLayer(pg.Vector2(0.7, 0.35), game.RESSOURCES["textures"]["industrial_layer2"]),
             ParallaxLayer(pg.Vector2(0.5, 0.25), game.RESSOURCES["textures"]["industrial_layer3"]),
             ParallaxLayer(pg.Vector2(0.3, 0.15), game.RESSOURCES["textures"]["industrial_bg"]),
-        ], (75, 105, 52))
+        ], (25, 40, 31), (25, 40, 31), True)
     return p_bg

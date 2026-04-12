@@ -2,7 +2,6 @@ from api.Game import Game
 from api.engine.Scene import Scene
 from api.environment.Background import Background
 from api.utils import Debug
-from game.scripts.player_manager import init_player
 from game.scripts.ui import main_menu
 
 scene = None

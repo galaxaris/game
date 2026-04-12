@@ -1,16 +1,33 @@
 --ASSETS USED FOR THE PROJECT--
 
 -FONTS-
-font m6x11 and m6x11plus by Daniel Linssen, "free to use with attribution": https://managore.itch.io/m6x11 
-logo font retronoid by Darrell Flood, "free to use for personal use": https://www.dafont.com/retronoid.font
+font m6x11 and m6x11plus by Daniel Linssen, "free to use with attribution": https://managore.itch.io/m6x11
+galaxaris logo font retronoid by Darrell Flood, "free to use for personal use": https://www.dafont.com/retronoid.font
+
+-LOGO-
+earth icon generated with pixel-planet-generator by Deep-Fold, free to use: https://deep-fold.itch.io/pixel-planet-generator
+galaxaris logo by Axel
+
+-BACKGROUNDS-
+title screen space background by Virusystem, free to use: https://virusystem.itch.io/background-space
+parallax forest by aethrall, free to use: https://aethrall.itch.io/demon-woods-parallax-background
+    recolored by Axel
+parallax desert by LittleSmith, free to use: https://littlesmith.itch.io/post-apocalyptic-background
+parallax industrial by ansimuz, free to use: https://ansimuz.itch.io/industrial-parallax-background
+
+-TILESET-
+tileset forest by brullov, "This asset pack can be used in free and commercial projects. Do not redistribute/resell it.": https://brullov.itch.io/oak-woods
+    recolored by Axel
+fire animation by brullov, "This asset pack can be used in free and commercial projects. Do not redistribute/resell it.": https://brullov.itch.io/fire-animation
+
+-MUSIC-
+industrial ost by ansimuz, free to use: https://ansimuz.itch.io/industrial-parallax-background
+through the desert's moon by Raphaël
+title screen by Raphaël
+
+--ASSETS USED FOR THE EDITOR--
 
 -ICONS-
 play button icon by icons8, free to use if mentioned: https://icons8.com/icon/12965/right-button
 pause button icon by icons8, free to use if mentioned: https://icons8.com/icon/110292/pause-squared
 replay button icon by icons8, free to use if mentioned: https://icons8.com/icon/63815/replay
-
--LOGO-
-earth icon generated with pixel-planet-generator by Deep-Fold, free to use: https://deep-fold.itch.io/pixel-planet-generator
-
--BACKGROUNDS-
-title screen space background by Virusystem, free to use: https://virusystem.itch.io/background-space

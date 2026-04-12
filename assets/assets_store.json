@@ -28,6 +28,8 @@
         "industrial_layer2": "Background/Parallax/Industrial/layer2.png",
         "industrial_layer3": "Background/Parallax/Industrial/layer3.png",
 
+        "water_drop": "Objects/water_drop.png",
+
         "boss": "Player/MaskDude/idle.png",
         "enemy": "Player/little robot/idle_robot_scaled.png",
         "health": "UI/heart.png",
