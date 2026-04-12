@@ -11,7 +11,7 @@ scene = None
 def start(game: Game):
     global scene
     scene = Scene(game.render_size)
-    scene.name = "BossLevelScene"
+    scene.name = "Level1Scene"
     scene.this.player = init_player(game)
     init_level(game, scene, scene.this.player)
 

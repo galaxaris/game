@@ -10,7 +10,7 @@ def start(game: Game):
     global scene
     global player
     scene = Scene(game.render_size)
-    scene.name = "MainMenuScene"
+    scene.name = "BossLevelScene"
     player = init_player(game)
     scene.add(player, "#player")
 
