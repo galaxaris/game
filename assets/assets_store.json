@@ -10,10 +10,23 @@
         "fall_anim": "Player/NinjaFrog/fall_scaled.png",
 
         "menu_bg": "UI/Background/Background_space.png",
-        "parallax1": "UI/Background/Parallax/Forest/0.9x parallax-demon-woods-close-trees.png",
-        "parallax2": "UI/Background/Parallax/Forest/0.70x parallax-demon-woods-mid-trees.png",
-        "parallax3": "UI/Background/Parallax/Forest/0.5x parallax-demon-woods-far-trees.png",
-        "parallax4": "UI/Background/Parallax/Forest/0.25x parallax-demon-woods-bg.png",
+
+        "forest_bg": "Background/Parallax/Forest/bg.png",
+        "forest_layer1": "Background/Parallax/Forest/forest1.png",
+        "forest_layer2": "Background/Parallax/Forest/forest2.png",
+        "forest_layer3": "Background/Parallax/Forest/forest3.png",
+
+
+        "desert_layer1": "Background/Parallax/Desert/desert1.png",
+        "desert_layer2": "Background/Parallax/Desert/desert2.png",
+        "desert_layer3": "Background/Parallax/Desert/desert3.png",
+        "desert_layer4": "Background/Parallax/Desert/desert4.png",
+        "desert_layer5": "Background/Parallax/Desert/desert5.png",
+
+        "industrial_bg": "Background/Parallax/Industrial/bg.png",
+        "industrial_layer1": "Background/Parallax/Industrial/layer1.png",
+        "industrial_layer2": "Background/Parallax/Industrial/layer2.png",
+        "industrial_layer3": "Background/Parallax/Industrial/layer3.png",
 
         "boss": "Player/MaskDude/idle.png",
         "enemy": "Player/little robot/idle_robot_scaled.png",
