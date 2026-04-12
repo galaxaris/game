@@ -25,6 +25,9 @@ industrial ost by ansimuz, free to use: https://ansimuz.itch.io/industrial-paral
 through the desert's moon by Raphaël
 title screen by Raphaël
 
+-SFX-
+empty_weapon sfx made by BoostSound, free to use, link to his Youtube channel :www.youtube.com/@BoostSound.
+
 --ASSETS USED FOR THE EDITOR--
 
 -ICONS-

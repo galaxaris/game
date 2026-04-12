@@ -50,7 +50,8 @@
     "sfx": {
         "jump": "frog-sound.mp3",
         "death": "Mario died _(.mp3",
-        "fire": "piou1.mp3"
+        "fire": "piou1.mp3",
+        "empty_weapon": "empty_weapon.mp3"
     },
     "fonts": {
         "default": "Gm6x11.ttf",
