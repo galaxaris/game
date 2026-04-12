@@ -1,10 +1,15 @@
 {
     "textures": {
         "icon": "icon.png",
+
         "grass": "Terrain/grass.png",
         "checkpoint_ground": "Terrain/beach_sand.png",
         "wall": "Terrain/wall.png",
         "sign": "Objects/sign.png",
+
+        "tree_stump": "Terrain/tree_stump.png",
+        "moving_platform": "Terrain/moving_platform.png",
+        "bridge_plank": "Terrain/bridge_plank.png",
 
         "player": "Player/NinjaFrog/jump.png",
         "jump_anim": "Player/NinjaFrog/jump_scaled.png",
@@ -29,6 +34,10 @@
         "industrial_layer3": "Background/Parallax/Industrial/layer3.png",
 
         "water_drop": "Objects/water_drop.png",
+
+        "rain_collector": "Objects/rain_collector.png",
+        "switch_off": "Objects/switch_off.png",
+        "switch_on": "Objects/switch_on.png",
 
         "boss": "Player/MaskDude/idle.png",
         "enemy": "Player/little robot/idle_robot_scaled.png",
@@ -64,7 +73,10 @@
         "jump": "frog-sound.mp3",
         "death": "Mario died _(.mp3",
         "fire": "piou1.mp3",
-        "empty_weapon": "empty_weapon.mp3"
+        "empty_weapon": "empty_weapon.mp3",
+        "water_refill": "water_refill.mp3",
+        "checkpoint": "checkpoint_sfx.mp3",
+        "switch": "switch_click.mp3"
     },
     "fonts": {
         "default": "Gm6x11.ttf",
