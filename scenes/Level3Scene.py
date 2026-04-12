@@ -3,6 +3,7 @@ from api.engine.Scene import Scene
 from api.environment.Solid import Solid
 from api.utils import Debug
 from game.scripts.levels.level_generation import init_level
+from game.scripts.levels.level_ui import update_ammo_ui
 from game.scripts.player_manager import init_player
 
 scene = None
@@ -21,12 +22,16 @@ def start(game: Game):
     collections += [Solid((x, 300), (100, 100)) for x in
                          range(500, 1000, 100)]  # Floor, leaving a gap for the player to fall through
     collections += [Solid((0, y), (100, 100)) for y in range(200, 700, 100)]  # Wall at our left
-    collections += [Solid((250, 250), (200, 20))]  # First platform
-    collections += [Solid((550, 200), (500, 50))]  # Second platform
+    collections += [Solid((250, 350), (200, 20))]  # First platform
 
-    anchor_block = Solid((600, 100), (20, 20))
-    anchor_block.add_tag("anchor")
-    collections += [anchor_block]
+
+    anchor_block_1 = Solid((600,70), (50, 50))
+    anchor_block_1.add_tag("anchor")
+    collections += [anchor_block_1]
+
+    anchor_block_2 = Solid((800, 70), (50, 50))
+    anchor_block_2.add_tag("anchor")
+    collections += [anchor_block_2]
 
     for coll in collections:
         if not "anchor" in coll.tags:
