@@ -34,13 +34,23 @@
         "health": "UI/heart.png",
 
         "trap_idle": "Objects/ggg.png",
-        "trap_active": "UI/Background/Tiles/blue.png"
+        "trap_active": "UI/Background/Tiles/blue.png",
+
+        "melanie": "Portrait/melanie.jpeg",
+        "ai_icon": "Portrait/ai_icon.jpeg",
+        "player_base": "Portrait/portrait_base.jpeg",
+        "ship": "Background/ship.jpeg",
+        "desolated_earth": "Background/desolated_earth.jpeg"
+
     },
     "animations": {
         "run": ["Player/NinjaFrog/run_scaled.png", 12, 70],
         "run_fast": ["Player/NinjaFrog/run_scaled.png", 12, 50],
         "idle": ["Player/NinjaFrog/idle_scaled.png", 11, 100],
-        "hit": ["Player/NinjaFrog/hit_scaled.png", 7, 50]
+        "hit": ["Player/NinjaFrog/hit_scaled.png", 7, 50],
+        "you_idle": ["Player/You/idle.png", 4, 150],
+        "you_run": ["Player/You/run.png", 4, 150],
+        "you_run_fast": ["Player/You/run.png", 4, 75]
     },
     "music": {
         "titleScreen": "La Teuf du Farfadet - cut.mp3",
