@@ -14,8 +14,8 @@ def start(game: Game):
     global player
     scene = Scene(game.render_size)
     scene.name = "Level3Scene"
-    player = init_player(game)
-    init_level(game, scene, player)
+    scene.this.player = init_player(game)
+    init_level(game, scene, scene.this.player)
 
     collections = []
     collections += [Solid((x, 300), (100, 100)) for x in range(0, 400, 100)]  # Floor
@@ -41,7 +41,7 @@ def start(game: Game):
 
 
 def update(game: Game):
-    Debug.register_debug_entity(game, player)
+    Debug.register_debug_entity(game, scene.this.player)
     update_player_health_ui(scene.this.player_ui_health, scene.this.player.health)
     update_ammo_ui(scene.this.player_ui_ammo, scene.this.player.ammo)
 
