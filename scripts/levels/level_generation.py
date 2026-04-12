@@ -49,6 +49,7 @@ def get_parallax_background(name, game):
             ParallaxLayer(pg.Vector2(0.9, 0.45), game.RESSOURCES["textures"]["forest_layer3"]),
             ParallaxLayer(pg.Vector2(0.7, 0.35), game.RESSOURCES["textures"]["forest_layer2"]),
             ParallaxLayer(pg.Vector2(0.5, 0.25), game.RESSOURCES["textures"]["forest_layer1"]),
+            ParallaxLayer(pg.Vector2(0, 0.25), game.RESSOURCES["textures"]["forest_bg"]),
         ], (34, 59, 62), (34, 59, 62), False)
     if name == "Level3Scene":
         p_bg = ParallaxBackground(game.render_size, [
