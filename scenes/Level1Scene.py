@@ -2,22 +2,23 @@ from api.Game import Game
 from api.engine.Scene import Scene
 from api.utils import Debug
 from game.scripts.levels.level_generation import init_level
+from game.scripts.levels.level_ui import update_level_ui
 from game.scripts.player_manager import init_player
 
+
 scene = None
-player = None
 
 def start(game: Game):
     global scene
-    global player
     scene = Scene(game.render_size)
-    scene.name = "BossLevelScene"
-    player = init_player(game)
-    init_level(game, scene, player)
+    scene.name = "Level1Scene"
+    scene.this.player = init_player(game)
+    init_level(game, scene, scene.this.player)
 
 
 
 def update(game: Game):
-    Debug.register_debug_entity(game, player)
+    Debug.register_debug_entity(game, scene.this.player)
+    update_level_ui(scene.this.player_ui_health, scene.this.player.health)
 
 
