@@ -48,7 +48,7 @@ from game.scripts.levels.level2 import (
 )
 
 
-# ── Globals ───────────────────────────────────────────────────────────────────
+#%%# Globals ###################################################################
 scene = None
 player = None
 
@@ -57,13 +57,13 @@ player = None
 moving_platforms = []
 
 
-# ═════════════════════════════════════════════════════════════════════════════
+#%%#############################################################################
 def start(game: Game):
-# ═════════════════════════════════════════════════════════════════════════════
+##############################################################################
     global scene, player, moving_platforms
     moving_platforms = []
 
-    # ── Initialisation scène ─────────────────────────────────────────────
+    #%%## Init scène #############################################
     scene = Scene(game.render_size)
     scene.name = "Level2Scene"
     scene.this.player = init_player(game)
@@ -73,7 +73,7 @@ def start(game: Game):
 
     game.audio_manager.play_music("level2")
 
-    # ── EventManager : bind instances ────────────────────────────────────
+    #%%## EventManager : bind instances ####################################
     em = game.event_manager
     em.Instances.bindInstancesDict({
         "game":          game,
@@ -82,38 +82,34 @@ def start(game: Game):
         "audio_manager": game.audio_manager,
     })
 
-    collections = []     # objets ajoutés en bloc à la fin de start()
+    ### Dictionnaire qui contiendra tous les objets et seront ajoutés à la fin de start()
+    collections = []     
 
-    # ── Killbox universelle (chutes) ──────────────────────────────────────
-    killbox = TriggerKillBox(
-        pos=(0, 420), size=(3000, 60), target_tags=["player"], sfx="death"
-    )
-    scene.add(killbox, "#object")
 
-    # ── Mur gauche (barrière de départ) ──────────────────────────────────
+    ### Mur gauche (barrière de départ) 
     collections += [
         Solid((80, y), (20, 30)).set_texture(game.RESSOURCES["textures"]["wall"])
         for y in range(0, 430, 30)
     ]
 
 
-    # =========================================================================
-    # SECTION 1 — LISIÈRE DE LA FORÊT  (x : 100 → 500)
-    # =========================================================================
-    # Le joueur apparaît à [310, 110] et tombe sur le sol (y=300).
+    #%%########################################################################
+    #SECTION 1 — LISIÈRE DE LA FORÊT  (x : 100 → 500)
+    ###########################################################################
+    #Le joueur apparaît à [310, 110] et tombe sur le sol (y=300).
 
-    # Sol
+    #Sol
     collections += [
         Solid((x, 300), (80, 40)).set_texture(game.RESSOURCES["textures"]["grass"])
         for x in range(100, 500, 80)
     ]
 
-    # Plateformes troncs — montée progressive
+    #Plateformes troncs — montée progressive
     collections += [Solid((185, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     collections += [Solid((310, 225), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     collections += [Solid((415, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
-    # Ledge secret haute (y=168) — récompense l'exploration verticale
+    #Ledge secret haute (y=168) — récompense l'exploration verticale
     collections += [Solid((345, 168), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     rain_secret0 = TriggerInteract(
         (350, 136), (32, 32), ["player"],
@@ -122,7 +118,7 @@ def start(game: Game):
     rain_secret0.set_texture(game.RESSOURCES["textures"]["rain_collector"])
     collections += [rain_secret0]
 
-    # ── Panneau #1 : message écologique d'intro ───────────────────────────
+    #Panneau #1
     dialog_ecol1 = make_ecology_dialog(
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["sign"],
@@ -139,13 +135,13 @@ def start(game: Game):
     sign1.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign1]
 
-    # ── Ennemi #1 — patrouilleur de lisière ──────────────────────────────
+    # ## Ennemi #1 — patrouilleur de lisière ##############################
     enemy1 = Enemy((390, 252), (48, 48), mode="patrol", range=150)
     enemy1.set_gravity(game_settings["GRAVITY"])
     enemy1.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy1]
 
-    # ── Piège #1 ─────────────────────────────────────────────────────────
+    # ## Piège #1 #########################################################
     trap1 = Trap((280, 285), (32, 15), "player", 15, cooldown=2000)
     trap1.bind_textures({
         "idle":   game.RESSOURCES["textures"]["trap_idle"],
@@ -153,7 +149,7 @@ def start(game: Game):
     })
     scene.add(trap1, "#object")
 
-    # ── Collecteur de pluie #1 (près du bord du gap) ─────────────────────
+    # ## Collecteur de pluie #1 (près du bord du gap) #####################
     rain1 = TriggerInteract(
         (455, 268), (32, 32), ["player"],
         [lambda obj: refill_water(p, game)]
@@ -182,7 +178,7 @@ def start(game: Game):
     for sx, sy, sw, sh in stump_layout:
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
-    # ── Plateforme mobile #1 : horizontale (x : 640→800) ─────────────────
+    # ## Plateforme mobile #1 : horizontale (x : 640→800) #################
     mp1 = Solid((700, 220), (75, 15))
     mp1.set_texture(game.RESSOURCES["textures"]["moving_platform"])
     moving_platforms.append({
@@ -191,7 +187,7 @@ def start(game: Game):
     })
     scene.add(mp1, "#object")
 
-    # ── Plateforme mobile #2 : verticale (y : 175→265) ───────────────────
+    # ## Plateforme mobile #2 : verticale (y : 175→265) ###################
     mp2 = Solid((800, 195), (70, 15))
     mp2.set_texture(game.RESSOURCES["textures"]["moving_platform"])
     moving_platforms.append({
@@ -200,13 +196,13 @@ def start(game: Game):
     })
     scene.add(mp2, "#object")
 
-    # ── Ennemi #2 — gardien de la zone des troncs ─────────────────────────
+    # ## Ennemi #2 — gardien de la zone des troncs #########################
     enemy2 = Enemy((755, 200), (48, 48), mode="idle", range=200)
     enemy2.set_gravity(game_settings["GRAVITY"])
     enemy2.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy2]
 
-    # ── Piège #2 ─────────────────────────────────────────────────────────
+    # ## Piège #2 #########################################################
     trap2 = Trap((633, 250), (28, 15), "player", 20, cooldown=1500)
     trap2.bind_textures({
         "idle":   game.RESSOURCES["textures"]["trap_idle"],
@@ -214,7 +210,7 @@ def start(game: Game):
     })
     scene.add(trap2, "#object")
 
-    # ── Panneau #2 : biodiversité ─────────────────────────────────────────
+    # ## Panneau #2 : biodiversité #########################################
     dialog_ecol2 = make_ecology_dialog(
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["sign"],
@@ -253,7 +249,7 @@ def start(game: Game):
     )
     collections += [checkpoint1]
 
-    # ── Journal de bord #1 (narratif) ────────────────────────────────────
+    # ## Journal de bord #1 (narratif) ####################################
     dialog_story1 = make_story_dialog(
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["sign"],
@@ -273,7 +269,7 @@ def start(game: Game):
     sign_story1.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign_story1]
 
-    # ── Appel radio de Mélanie Cavill (zone trigger invisible) ───────────
+    # ## Appel radio de Mélanie Cavill (zone trigger invisible) ###########
     dialog_melanie = make_melanie_dialog(
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["melanie"],
@@ -316,19 +312,19 @@ def start(game: Game):
     rain_secret1.set_texture(game.RESSOURCES["textures"]["rain_collector"])
     collections += [rain_secret1]
 
-    # ── Ennemi #3 — patrouille sol ────────────────────────────────────────
+    # ## Ennemi #3 — patrouille sol ########################################
     enemy3 = Enemy((1255, 252), (48, 48), mode="patrol", range=210)
     enemy3.set_gravity(game_settings["GRAVITY"])
     enemy3.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy3]
 
-    # ── Ennemi #4 — élite sur plateforme haute (tier_high) ───────────────
+    # ## Ennemi #4 — élite sur plateforme haute (tier_high) ###############
     enemy4 = Enemy((1320, 107), (48, 48), mode="idle", range=120)
     enemy4.set_gravity(game_settings["GRAVITY"])
     enemy4.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy4]
 
-    # ── Piège #3 ─────────────────────────────────────────────────────────
+    # ## Piège #3 #########################################################
     trap3 = Trap((1400, 285), (32, 15), "player", 20, cooldown=2500)
     trap3.bind_textures({
         "idle":   game.RESSOURCES["textures"]["trap_idle"],
@@ -336,7 +332,7 @@ def start(game: Game):
     })
     scene.add(trap3, "#object")
 
-    # ── Interrupteur → déploie le pont sur le GAP #2 ─────────────────────
+    # ## Interrupteur → déploie le pont sur le GAP #2 #####################
     # Placé sur tier_mid (y=210), accessible depuis le sol ou le tier bas.
     switch_msg = Dialog(game.RESSOURCES["fonts"]["default"])
     switch_msg.add_character("Console d'urgence", game.RESSOURCES["textures"]["sign"])
@@ -355,7 +351,7 @@ def start(game: Game):
     switch1.set_texture(game.RESSOURCES["textures"]["switch_off"])
     collections += [switch1]
 
-    # ── Panneau #3 : sols vivants (écologie) ─────────────────────────────
+    # ## Panneau #3 : sols vivants (écologie) #############################
     dialog_ecol3 = make_ecology_dialog(
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["sign"],
@@ -373,7 +369,7 @@ def start(game: Game):
     sign3.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign3]
 
-    # ── Collecteur de pluie #2 (milieu de la forêt dense) ─────────────────
+    # ## Collecteur de pluie #2 (milieu de la forêt dense) #################
     rain2 = TriggerInteract(
         (1145, 178), (32, 32), ["player"],
         [lambda obj: refill_water(p, game)]
@@ -400,7 +396,7 @@ def start(game: Game):
     for sx, sy, sw, sh in jump_pads:
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
-    # ── Plateforme mobile #3 : rapide, aide à traverser ───────────────────
+    # ## Plateforme mobile #3 : rapide, aide à traverser ###################
     mp3 = Solid((1672, 232), (72, 15))
     mp3.set_texture(game.RESSOURCES["textures"]["moving_platform"])
     moving_platforms.append({
@@ -426,7 +422,7 @@ def start(game: Game):
     collections += [Solid((2135, 255), (85, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
     collections += [Solid((2245, 232), (95, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
 
-    # ── Plateforme mobile #4 : verticale rapide (dangereuse) ─────────────
+    # ## Plateforme mobile #4 : verticale rapide (dangereuse) #############
     mp4 = Solid((1922, 208), (82, 15))
     mp4.set_texture(game.RESSOURCES["textures"]["moving_platform"])
     moving_platforms.append({
@@ -435,13 +431,13 @@ def start(game: Game):
     })
     scene.add(mp4, "#object")
 
-    # ── Ennemi #5 — robot de garde (patrouille large) ─────────────────────
+    # ## Ennemi #5 — robot de garde (patrouille large) #####################
     enemy5 = Enemy((2005, 182), (48, 48), mode="patrol", range=260)
     enemy5.set_gravity(game_settings["GRAVITY"])
     enemy5.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy5]
 
-    # ── Piège #4 et #5 : gauntlet industriel ─────────────────────────────
+    # ## Piège #4 et #5 : gauntlet industriel #############################
     trap4 = Trap((1922, 285), (32, 15), "player", 20, cooldown=1200)
     trap4.bind_textures({
         "idle":   game.RESSOURCES["textures"]["trap_idle"],
@@ -456,7 +452,7 @@ def start(game: Game):
     })
     scene.add(trap5, "#object")
 
-    # ── Collecteur de pluie #3 (avant le boss) ───────────────────────────
+    # ## Collecteur de pluie #3 (avant le boss) ###########################
     rain3 = TriggerInteract(
         (2148, 223), (32, 32), ["player"],
         [lambda obj: refill_water(p, game)]
@@ -464,7 +460,7 @@ def start(game: Game):
     rain3.set_texture(game.RESSOURCES["textures"]["rain_collector"])
     collections += [rain3]
 
-    # ── Panneau #4 : camp CF-7 (narratif + écolo) ─────────────────────────
+    # ## Panneau #4 : camp CF-7 (narratif + écolo) #########################
     dialog_ecol4 = make_ecology_dialog(
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["sign"],
@@ -481,7 +477,7 @@ def start(game: Game):
     sign4.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign4]
 
-    # ── Journal de bord #2 (narratif) ────────────────────────────────────
+    # ## Journal de bord #2 (narratif) ####################################
     dialog_story2 = make_story_dialog(
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["sign"],
@@ -550,7 +546,7 @@ def start(game: Game):
     bigBoss.set_gravity(game_settings["GRAVITY"])
     collections += [bigBoss]
 
-    # ── Dialogue d'intro boss (déclenché en entrant dans l'arène) ─────────
+    # ## Dialogue d'intro boss (déclenché en entrant dans l'arène) #########
     dialog_boss = Dialog(game.RESSOURCES["fonts"]["default"])
     dialog_boss.add_character("Mélanie Cavill", game.RESSOURCES["textures"]["melanie"])
     dialog_boss.add_character("CF-7", game.RESSOURCES["textures"]["boss"])
@@ -574,21 +570,21 @@ def start(game: Game):
     collections += [boss_trigger]
 
 
-    # ── Ajout de tous les objets à la scène ──────────────────────────────
+    # ## Ajout de tous les objets à la scène ##############################
     for obj in collections:
         scene.add(obj, "#object")
 
 
-# ═════════════════════════════════════════════════════════════════════════════
+# #############################################################################
 def update(game: Game):
-# ═════════════════════════════════════════════════════════════════════════════
+# #############################################################################
     global moving_platforms
 
     Debug.register_debug_entity(game, scene.this.player)
     update_player_health_ui(scene.this.player_ui_health, scene.this.player.health)
     update_ammo_ui(scene.this.player_ui_ammo, scene.this.player.ammo)
 
-    # ── Animation des plateformes mobiles ────────────────────────────────
+    # ## Animation des plateformes mobiles ################################
     for mp in moving_platforms:
         s = mp["solid"]
         mp["_current"] += mp["speed"] * mp["direction"]
