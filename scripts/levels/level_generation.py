@@ -19,10 +19,20 @@ def init_level(game: Game, scene: Scene, player):
     scene.this.player_ui_health = ProgressBar((30, 10), (100, 10), (100, 100, 100), "green", 100)
     scene.this.player_ui_heart = UIElement((8, 8), (16, 16))
     scene.this.player_ui_heart.set_texture(game.RESSOURCES["textures"]["health"], True)
+
+    scene.this.player_ui_ammo = ProgressBar((8, scene.size.y-158), (15, 150), (100, 100, 100), "aqua", 20, vertical=True)
+    scene.this.player_ui_ammo_icon = UIElement((4, scene.size.y-188), (24, 24))
+    scene.this.player_ui_ammo_icon.set_texture(game.RESSOURCES["textures"]["water_drop"], True)
+
     scene.UI.add("player_health", scene.this.player_ui_health)
     scene.UI.add("player_heart", scene.this.player_ui_heart)
     scene.UI.show("player_health")
     scene.UI.show("player_heart")
+
+    scene.UI.add("player_ammo", scene.this.player_ui_ammo)
+    scene.UI.add("player_ammo_icon", scene.this.player_ui_ammo_icon)
+    scene.UI.show("player_ammo")
+    scene.UI.show("player_ammo_icon")
 
     create_killBoxes(game, scene, player, 50)
     scene.camera.focus(player)
