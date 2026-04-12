@@ -53,3 +53,8 @@ player_settings = {
         "hit": "hit"
     }
 }
+
+story = {
+    "has_started": False,
+    "current_chapter": 0,
+}
