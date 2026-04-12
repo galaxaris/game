@@ -124,23 +124,29 @@ def activate_switch(scene: Scene, game: Game, switch_id: str):
     if switch_id == "bridge1":
         bridge = []
         plank_w = 26
+        bridge_x_start, bridge_x_end = getattr(scene.this, "bridge1_range", (1562, 1640))
+        bridge_rows = getattr(scene.this, "bridge1_rows", (238, 288))
+        top_row_y, bottom_row_y = bridge_rows
 
         # Rangée basse — traversée au sol
-        for x in range(1562, 1642, plank_w):
-            plank = Solid((x, 288), (plank_w, 12))
+        for x in range(int(bridge_x_start), int(bridge_x_end), plank_w):
+            plank = Solid((x, int(bottom_row_y)), (plank_w, 12))
             plank.set_texture(game.RESSOURCES["textures"]["bridge_plank"])
             bridge.append(plank)
 
         # Rangée haute — raccourci depuis les plateformes élevées
-        for x in range(1562, 1642, plank_w):
-            plank_high = Solid((x, 238), (plank_w, 12))
+        for x in range(int(bridge_x_start), int(bridge_x_end), plank_w):
+            plank_high = Solid((x, int(top_row_y)), (plank_w, 12))
             plank_high.set_texture(game.RESSOURCES["textures"]["bridge_plank"])
             bridge.append(plank_high)
 
         for obj in bridge:
             scene.add(obj, "#object")
 
-        print_info("Pont d'urgence déployé (x=1562–1640, y=238 et y=288)")
+        print_info(
+            f"Pont d'urgence déployé (x={int(bridge_x_start)}-{int(bridge_x_end)}, "
+            f"y={int(top_row_y)} et y={int(bottom_row_y)})"
+        )
 
 
 def spawn_enemy_wave(scene: Scene, game: Game, positions: list):
