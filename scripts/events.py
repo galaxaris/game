@@ -13,4 +13,10 @@ def register_events(game: Game):
     game.event_manager.registerEvent("goto_title_screen", [lambda e: load_scene("MainMenuScene", game)])
     game.event_manager.registerEvent("start_game", [lambda e: start_game(game)])
     game.event_manager.registerEvent("switch_scene", [lambda e: switch_scene(game)])
+
+    game.event_manager.registerEvent("goto_tutorial", [lambda e: load_scene("Level1Scene", game)])
+    game.event_manager.registerEvent("goto_forest", [lambda e: load_scene("Level2Scene", game)])
+    game.event_manager.registerEvent("goto_desert", [lambda e: load_scene("Level3Scene", game)])
+    game.event_manager.registerEvent("goto_industrial", [lambda e: load_scene("BossLevelScene", game)])
+
     print_success("Events registered successfully")

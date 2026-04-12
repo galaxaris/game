@@ -1,15 +1,17 @@
 from api.Game import Game
+from api.UI.Button import Button
 from api.UI.Dialog import Dialog
-from api.assets.Animation import Animation
+from api.UI.Image import Image
+from api.UI.Modal import Modal
 from api.engine.Scene import Scene
 from api.entity.Player import Player
 from api.environment.Background import Background
 from api.environment.Solid import Solid
 from api.environment.Trigger import TriggerInteract
 from api.utils import Debug
-from api.utils.Console import print_info
-from game.scripts.player_manager import init_player
+
 from game.Variables import *
+
 
 scene: Scene = None
 player = None
@@ -139,7 +141,54 @@ def exit_game_dialogue(game):
 
 
 def launch_computer(game):
-    pass
+    global scene
+    menu = Modal((75, 37), (510, 286))
+
+
+    scene.UI.add("computer_menu", menu)
+    scene.UI.show("computer_menu")
+
+    button = Button((420,0), (70, 30), "Fermer", [(255,255,255),(255,0,0),(255,50,50),(255,100,100)], game.RESSOURCES["fonts"]["default"])
+    button.set_callback(lambda e: scene.UI.hide("computer_menu"))
+
+    # Définition des boutons avec des palettes de couleurs spécifiques à chaque biome
+    # Ordre : [Font, Normal BG, Hover BG, Click BG]
+
+    tutoriel_button = Button((40, 160), (100, 40), "Tutoriel",
+                             [(255, 255, 255), (76, 175, 80), (129, 199, 132), (46, 125, 50)],
+                             game.RESSOURCES["fonts"]["default"])
+
+    tutoriel_button.set_callback(lambda e: game.event_manager.triggerEvent("goto_tutorial"))
+
+    foret_button = Button((110, 60), (120, 40), "Forêt",
+                          [(245, 245, 220), (101, 67, 33), (121, 87, 63), (141, 107, 83)],
+                          game.RESSOURCES["fonts"]["default"])
+    foret_button.set_callback(lambda e: game.event_manager.triggerEvent("goto_forest"))
+
+    desert_button = Button((240, 120), (110, 40), "Désert",
+                           [(255, 253, 231), (218, 165, 32), (255, 215, 0), (184, 134, 11)],
+                           game.RESSOURCES["fonts"]["default"])
+    desert_button.set_callback(lambda e: game.event_manager.triggerEvent("goto_desert"))
+
+    industrial_button = Button((360, 200), (120, 40), "Industriel",
+                               [(236, 240, 241), (127, 140, 141), (189, 195, 199), (52, 73, 94)],
+                               game.RESSOURCES["fonts"]["default"])
+    industrial_button.set_callback(lambda e: game.event_manager.triggerEvent("goto_industrial"))
+
+    background_image = Image((0, 0), (490, 266), game.RESSOURCES["textures"]["computer_menu"])
+    menu.add_element(background_image)
+    menu.add_element(button)
+
+
+
+    if(story["current_chapter"] > 1):
+        menu.add_element(foret_button, x=0)
+    if(story["current_chapter"] > 2):
+        menu.add_element(desert_button, x=1)
+    if(story["current_chapter"] > 3):
+        menu.add_element(industrial_button, x=2)
+    menu.add_element(tutoriel_button, x=0)
+
 
 
 def start(game: Game):
@@ -150,6 +199,10 @@ def start(game: Game):
     bg = Background(game.RESSOURCES["textures"]["ship"], False, scene.size)
 
     ground = Solid((0,270), (640,360))
+    left_wall = Solid((-50,0),(50,360))
+    right_wall = Solid((640,0),(50,360))
+    scene.add(left_wall, "#objects")
+    scene.add(right_wall, "#objects")
     scene.add(ground, "#objects")
 
     player = Player((550, 0), (32, 64))
@@ -163,6 +216,7 @@ def start(game: Game):
     )
 
     scene.add(player, "#player")
+
 
     if story["has_started"] == False:
         desolated_earth_bg = Background(game.RESSOURCES["textures"]["desolated_earth"], False, scene.size)
