@@ -8,8 +8,8 @@
         "sign": "Objects/sign.png",
 
         "tree_stump": "Terrain/tree_stump.png",
-        "moving_platform": "Terrain/moving_platform.png",
-        "bridge_plank": "Terrain/bridge_plank.png",
+        "moving_platform": "Terrain/forest-tiles/tile_06.png",
+        "bridge_plank": "Terrain/forest-tiles/tile_44.png",
 
         "player": "Player/NinjaFrog/jump.png",
         "jump_anim": "Player/NinjaFrog/jump_scaled.png",
@@ -70,8 +70,8 @@
         "level2": "Idee3.mp3"
     },
     "sfx": {
-        "jump": "frog-sound.mp3",
-        "death": "Mario died _(.mp3",
+        "jump": "robot-jump.mp3",
+        "death": "robot-die.mp3",
         "fire": "piou1.mp3",
         "empty_weapon": "empty_weapon.mp3",
         "water_refill": "water_refill.mp3",
