@@ -74,7 +74,7 @@
         "death": "robot-die.mp3",
         "fire": "piou1.mp3",
         "empty_weapon": "empty_weapon.mp3",
-        "water_refill": "water_refill.mp3",
+        "water_refill": "water_fill.mp3",
         "checkpoint": "checkpoint_sfx.mp3",
         "switch": "switch_click.mp3"
     },
