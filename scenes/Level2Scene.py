@@ -129,7 +129,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol1", dialog_ecol1)
     sign1 = TriggerInteract(
-        (150, 268), (24, 32), ["player"],
+        (150, 270), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol1")]
     )
     sign1.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -221,7 +221,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol2", dialog_ecol2)
     sign2 = TriggerInteract(
-        (851, 253), (24, 32), ["player"],
+        (851, 255), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol2")]
     )
     sign2.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -263,7 +263,7 @@ def start(game: Game):
     )
     scene.UI.add("story1", dialog_story1)
     sign_story1 = TriggerInteract(
-        (978, 268), (24, 32), ["player"],
+        (978, 270), (32, 32), ["player"],
         [lambda obj: scene.UI.show("story1")]
     )
     sign_story1.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -363,7 +363,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol3", dialog_ecol3)
     sign3 = TriggerInteract(
-        (1479, 228), (24, 32), ["player"],
+        (1479, 230), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol3")]
     )
     sign3.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -471,7 +471,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol4", dialog_ecol4)
     sign4 = TriggerInteract(
-        (2252, 200), (24, 32), ["player"],
+        (2252, 202), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol4")]
     )
     sign4.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -492,7 +492,7 @@ def start(game: Game):
     )
     scene.UI.add("story2", dialog_story2)
     sign_story2 = TriggerInteract(
-        (2160, 223), (24, 32), ["player"],
+        (2160, 225), (32, 32), ["player"],
         [lambda obj: scene.UI.show("story2")]
     )
     sign_story2.set_texture(game.RESSOURCES["textures"]["sign"])
