@@ -9,7 +9,7 @@ from api.environment.Trigger import TriggerInteract
 from api.UI.Dialog import Dialog
 from api.utils.Console import print_info, print_success, print_error, print_warning
 from api.entity.Enemy import Enemy
-from game.scripts.levels.level1 import summon_stairs1
+from game.scripts.levels.level2 import summon_stairs1
 from api.entity.Boss import Boss
 from api.environment.Trap import Trap
 from api.environment.Trigger import Trigger
