@@ -41,8 +41,7 @@ scene = game.scene # Alias
 from game.scripts.run import update, Start
 from game.scripts.events import *
 register_events(game)
-load_scene("Level3Scene", game)
-Start()
+Start(game)
 game.run(lambda: update(game))
 
 

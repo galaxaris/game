@@ -53,3 +53,9 @@ player_settings = {
         "hit": "hit"
     }
 }
+
+# TODO: Remove in Production, only for testing purposes
+story = {
+    "has_started": True,
+    "current_chapter": 4,
+}

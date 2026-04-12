@@ -34,10 +34,10 @@ def init_level(game: Game, scene: Scene, player):
     scene.UI.show("player_ammo")
     scene.UI.show("player_ammo_icon")
 
-    create_killBoxes(game, scene, player, 50)
+    create_killBoxes(scene, 50)
     scene.camera.focus(player)
 
-def create_killBoxes(game, scene, player, length):
+def create_killBoxes(scene, length):
     trigger_box = TriggerKillBox((-1000, scene.size.y+400), (length*1000, 100), ["player", "projectile"], once=False, sfx=["death"])
     scene.add(trigger_box, "#objects")
 
