@@ -1,7 +1,6 @@
-# =============================================================================
-# level2.py — Scripts du Niveau 2 : "La Forêt"
-# Fonctions appelées par les triggers, factories de dialogues, helpers.
-# =============================================================================
+#=============================================================================
+#Scripts du Niveau 2 : "La Forêt"
+#=============================================================================
 
 from api.environment.Solid import Solid
 from api.Game import Game
@@ -14,9 +13,9 @@ from api.environment.Trigger import Trigger, TriggerInteract
 import random as rd
 
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  GAMEPLAY — MÉCANIQUE EAU / CHECKPOINT
-# ═════════════════════════════════════════════════════════════════════════════
+#%%###########################################################################
+# GAMEPLAY — MÉCANIQUE EAU / CHECKPOINT
+##############################################################################
 
 def refill_water(player, game: Game):
     """
@@ -26,7 +25,7 @@ def refill_water(player, game: Game):
     try:
         player.ammo = getattr(player, "max_ammo", 30)
         game.audio_manager.play_sfx("water_refill")
-        print_success("💧 Réservoir d'eau rechargé !")
+        print_success("Réservoir d'eau rechargé !")
     except Exception as e:
         print_warning(f"[refill_water] {e}")
 
@@ -39,14 +38,14 @@ def save_checkpoint(player, pos: list, game: Game):
     try:
         player.start_pos = list(pos)
         game.audio_manager.play_sfx("checkpoint")
-        print_success(f"✅ Checkpoint activé — réapparition en {pos}")
+        print_success(f"Checkpoint activé — réapparition en {pos}")
     except Exception as e:
         print_warning(f"[save_checkpoint] {e}")
 
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  DIALOG FACTORIES
-# ═════════════════════════════════════════════════════════════════════════════
+#%%############################################################################
+# DIALOG FACTORIES
+#############################################################################
 
 def make_ecology_dialog(font: str, sign_texture, title: str, message: str) -> Dialog:
     """
@@ -102,16 +101,16 @@ def make_melanie_dialog(font: str, melanie_texture, player_texture) -> Dialog:
     return dialog
 
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  INTERRUPTEURS / TRIGGERS DYNAMIQUES
-# ═════════════════════════════════════════════════════════════════════════════
+#%%###########################################################################
+# INTERRUPTEURS / TRIGGERS DYNAMIQUES
+##############################################################################
 
 def activate_switch(scene: Scene, game: Game, switch_id: str):
     """
     Active un interrupteur nommé et fait apparaître les éléments associés.
 
     switch_id = "bridge1"
-        → Déploie deux rangées de planches de bois sur le GAP #2 (x: 1562→1640).
+        -> Déploie deux rangées de planches de bois sur le GAP #2 (x: 1562→1640).
           Rangée basse (y=288) et rangée haute (y=238) pour offrir deux hauteurs
           de traversée selon l'impulsion du saut.
     """
@@ -120,7 +119,7 @@ def activate_switch(scene: Scene, game: Game, switch_id: str):
     except Exception:
         pass
 
-    print_success(f"🔧 Interrupteur '{switch_id}' activé !")
+    print_success(f"Interrupteur '{switch_id}' activé !")
 
     if switch_id == "bridge1":
         bridge = []
@@ -163,12 +162,12 @@ def spawn_enemy_wave(scene: Scene, game: Game, positions: list):
     for e in spawned:
         scene.add(e, "#object")
 
-    print_info(f"💥 Vague de {len(spawned)} ennemis invoquée !")
+    print_info(f"Vague de {len(spawned)} ennemis invoquée !")
 
 
-# ═════════════════════════════════════════════════════════════════════════════
+# #############################################################################
 #  LEGACY : summon_stairs1 (conservé depuis la version originale)
-# ═════════════════════════════════════════════════════════════════════════════
+# #############################################################################
 
 def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Texture,
                    game_height, texture_common: Texture, texture_checkpoint: Texture,
@@ -178,9 +177,9 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
     Activé une seule fois par un Trigger.
     """
     collections = []
-    print_info("Summoning stairs... — one-shot activation.")
+    print_info("Summoning stairs...")
 
-    # Escalier descendant
+    #Escalier descendant
     y = 451
     for x in range(1100, 2000, 100):
         step = Solid((x, y), (30, 10))
@@ -189,7 +188,7 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
         collections.append(step)
         y -= 10
 
-    # Blocs flottants aléatoires
+    #Blocs flottants aléatoires
     randomNum = 0
     for i in range(rdLength):
         randomNum = rd.randint(-6, 10)
@@ -201,7 +200,7 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
         block.set_texture(texture_common)
         collections.append(block)
 
-    # Grande plateforme de mi-parcours
+    #Grande plateforme de mi-parcours
     platform = Solid(
         (1350 + blockDim[0] * (rdLength + 13) + blockDim[0],
          game_height - 300 - blockDim[1] * randomNum),
@@ -211,7 +210,7 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
     platform.set_texture(texture_checkpoint)
     collections.append(platform)
 
-    # Dialogue du panneau
+    #Dialogue du panneau
     dialog = Dialog(dialog_font)
     dialog.add_character("Sign", info_box_texture)
     dialog.add_character("You", me)
@@ -221,12 +220,12 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
     dialog.add_message("You", "Okay, see you.")
     scene.UI.add("Checkpoint", dialog)
 
-    # Fonction interne de continuation (escalier partie 2)
+    #Fonction interne de continuation (escalier partie 2)
     _final_random = randomNum   # capture pour la closure
 
     def summon_stairs2():
         coll2 = []
-        print_info("Summoning stairs part 2... — one-shot activation.")
+        print_info("Summoning stairs part 2...")
         y2 = game_height - 300 - blockDim[1] * _final_random
         for x in range(3300, 3600, 10):
             step = Solid((x, y2), (30, 10))
@@ -237,7 +236,7 @@ def summon_stairs1(scene: Scene, me: Texture, pnj: Texture, info_box_texture: Te
         for obj in coll2:
             scene.add(obj, "#object")
 
-    # Panneau interactif de mi-parcours
+    #Panneau interactif de mi-parcours
     info_box_x = 1350 + blockDim[0] * 2 + blockDim[0] * (rdLength + 13) + blockDim[0]
     info_box_y = game_height - 300 - blockDim[1] * _final_random - 30
 
