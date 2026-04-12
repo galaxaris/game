@@ -1,3 +1,5 @@
+[Readme](README.md) | [Scenario](SCENARIO.md) | [License](LICENSE.md)
+
 # Omicronde Project - Galaxaris
 <i>Version Beta<br/>
 **License file**<br/>

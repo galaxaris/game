@@ -3,6 +3,7 @@
         "icon": "icon.png",
         "grass": "Terrain/grass.png",
         "checkpoint_ground": "Terrain/beach_sand.png",
+        "wall": "Terrain/wall.png",
         "sign": "Objects/sign.png",
 
         "player": "Player/NinjaFrog/jump.png",
@@ -56,7 +57,8 @@
     "music": {
         "titleScreen": "La Teuf du Farfadet - cut.mp3",
         "inGame": "Original_Super_Mario_Bros_Soundtrack_Full.mp3",
-        "pause": "Alicia.mp3"
+        "pause": "Alicia.mp3",
+        "level2": "Idee3.mp3"
     },
     "sfx": {
         "jump": "frog-sound.mp3",

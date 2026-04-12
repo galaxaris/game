@@ -1,13 +1,20 @@
-<!-- <img src="hgg-icon.png" alt="Hogwarts Game Logo" width="100"/>-->
 
------
+
+[Readme](README.md) | [Scenario](SCENARIO.md) | [License](LICENSE.md)
+
+----
+
+<img src="assets/Images/icon.png" alt="Hogwarts Game Logo" width="100"/>
 
 <!-- TEST2 -->
-# ✨ The Omicronde Project ✨
+# ✨ Robot Recovery ✨
 The Official Omicronde Project, by [Galaxaris](https://github.com/galaxaris/).
+
+_**Robot Recovery**_ is a platformer video game project. Intended for children between 6 and 10 years old, it is a fun and educational game about our future and the importance of taking care of our planet...
 
 _Developed by Galaxaris_ 
 
+## [DISCOVER THE SCENARIO](SCENARIO.md)
 
 ## Installation
 _If you encounter any issue during installation, do not hesitate to [contact us](https://gaugoth-corp.pages-perso.free.fr/en/credits/contact/?subject=Omicronde%20Project%20installation%20issue)!_
