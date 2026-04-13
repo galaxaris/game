@@ -134,12 +134,6 @@ def activate_switch(scene: Scene, game: Game, switch_id: str):
             plank.set_texture(game.RESSOURCES["textures"]["bridge_plank"])
             bridge.append(plank)
 
-        # Rangée haute — raccourci depuis les plateformes élevées
-        for x in range(int(bridge_x_start), int(bridge_x_end), plank_w):
-            plank_high = Solid((x, int(top_row_y)), (plank_w, 12))
-            plank_high.set_texture(game.RESSOURCES["textures"]["bridge_plank"])
-            bridge.append(plank_high)
-
         for obj in bridge:
             scene.add(obj, "#object")
 

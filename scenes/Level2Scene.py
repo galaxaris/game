@@ -1075,7 +1075,7 @@ def start(game: Game):
     # SECTION 2 — TRONCS ET PLATEFORMES MOBILES
     ###########################################################################
     section2_start = cursor + 150
-    section2_end = section2_start + 1200
+    section2_end = section2_start + 1250
     add_ground_strip(section2_start, section2_end)
 
     ###############################################################################
@@ -1097,7 +1097,7 @@ def start(game: Game):
 
 
     #TP the player here for debug
-    #p.set_position((section2_start + 200, 0))
+    p.set_position((section2_start + 200, 0))
 
     collections += [Solid((section2_start + 120, 275), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     ac1 = Solid((section2_start + 100, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
@@ -1113,9 +1113,36 @@ def start(game: Game):
     scene.add(mp1, "#object")
 
     #Add an anchor on the top middle of the moving platform
-    ac1 = Solid((section2_start + 400, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
+    ac1 = Solid((section2_start + 300, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
     ac1.add_tag("anchor")
     scene.add(ac1, "#object")
+
+    ## Add a plateform ("checkpoint_ground") 50px on the top of the anchor, with plant1, checkpoint & trap & collector of rain on it
+    platform_w = 400
+    platform_x = section2_start + 350
+    platform_y = 100 - 50
+    platform = Solid((platform_x, platform_y), (platform_w, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])
+    scene.add(platform, "#object")
+    collections += [platform]
+
+
+    collections += [TriggerInteract(
+        (platform_x + 70, platform_y - 48), (48, 48), ["player"],
+        [lambda obj: refill_water(p, game)]
+    ).set_texture(game.RESSOURCES["textures"]["rain_collector"])]
+
+    checkpoint_regular = Trigger(
+        (platform_x + 28, platform_y - 120),
+        (64, 64),
+        ["player"],
+        [lambda obj, cp=[platform_x + 28, platform_y - 120]: save_checkpoint(p, cp, game)],
+        once=True,
+    ).set_texture(game.RESSOURCES["textures"]["switch_on"], rescale=True)
+    collections += [checkpoint_regular]
+
+    for x in range(section2_start + 360, section2_end - 500, 100):
+        #plant1 on the previous platformform
+        collections += [GameObject((x, platform_y - 16), (32, 16)).set_texture(game.RESSOURCES["textures"]["plant1"])]
 
 
     ### Ennemi #2
@@ -1132,13 +1159,13 @@ def start(game: Game):
     })
     scene.add(trap2, "#object")
 
-    for x in range(section2_start + 600, section2_end - 40, 150):
+    for x in range(section2_start + 600, section2_end - 40, 100):
         collections += [Solid((x, 275), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
     # Add a lot of tree1
     pas = rd.randint(100, 250)
     x = int(section2_start)
-    while x < int(section2_end):
+    while x < int(section2_end + 800):
         collections += [GameObject((x, 185), (123, 116)).set_texture(game.RESSOURCES["textures"]["tree1"])]
         # Add a second tree on the right if the random number is superior to 200
         if rd.randint(1, 100) > 200:
@@ -1158,7 +1185,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol2", dialog_ecol2)
     sign2 = TriggerInteract(
-        (section2_end - 80, 268), (32, 32), ["player"],
+        (section2_end - 70, 268), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol2")]
     )
     sign2.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -1172,19 +1199,19 @@ def start(game: Game):
     # SECTION 3 — FORÊT DENSE
     ###########################################################################
     section3_start = cursor
-    section3_end = section3_start + 820
+    section3_end = section3_start + 1520
     add_ground_strip(section3_start, section3_end)
 
     cp1_x = section3_start + 40
     collections += [Solid((cp1_x, 260), (95, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
 
     #### Checkpoint #1
-    cp1_pos = [cp1_x + 28, 212]
     checkpoint1 = Trigger(
-        (cp1_x, 240), (95, 30), ["player"],
-        [lambda obj: save_checkpoint(p, cp1_pos, game)],
-        once=True
+        (cp1_x - 4, 200), (64, 64), ["player"],
+        [lambda obj, cp=[cp1_x - 4, 200]: save_checkpoint(p, cp, game)],
+        once=True,
     )
+    checkpoint1.set_texture(game.RESSOURCES["textures"]["switch_on"], rescale=True)
     collections += [checkpoint1]
 
     #### Dialogue #1 : journal de bord
@@ -1223,25 +1250,21 @@ def start(game: Game):
 
     tier_low = [
         (section3_start + 120, 260, 45, 27),
-        (section3_start + 300, 260, 45, 27),
         (section3_start + 470, 260, 45, 27),
-        (section3_start + 650, 260, 45, 27),
     ]
     for sx, sy, sw, sh in tier_low:
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
     tier_mid = [
         (section3_start + 170, 210, 85, 15),
-        (section3_start + 360, 210, 105, 15),
         (section3_start + 540, 210, 80, 15),
     ]
     for sx, sy, sw, sh in tier_mid:
-        collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
+        collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["mossy_steel"])]
 
     tier_high = [
-        (section3_start + 220, 160, 45, 27),
-        (section3_start + 420, 155, 45, 27),
-        (section3_start + 620, 160, 45, 27),
+        (section3_start + 520, 155, 45, 27),
+        (section3_start + 680, 155, 45, 27),
     ]
     for sx, sy, sw, sh in tier_high:
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
@@ -1281,7 +1304,7 @@ def start(game: Game):
     scene.UI.add("switch1_msg", switch_msg)
 
     switch1 = TriggerInteract(
-        (section3_start + 680, 178), (22, 32), ["player"],
+        (section3_end - 100, 230), (64, 64), ["player"],
         [
             lambda obj: activate_switch(scene, game, "bridge1"),
             lambda obj: scene.UI.show("switch1_msg"),
@@ -1324,14 +1347,14 @@ def start(game: Game):
     # GAP #2 — Le pont est deploie via activate_switch("bridge1")
     ###########################################################################
     gap2_start = cursor
-    cursor += 220
+    cursor += 420
     gap2_end = cursor
 
     scene.this.bridge1_range = (gap2_start, gap2_end)
     scene.this.bridge1_rows = (238, 288)
 
     # Guide visuel minimal en attendant l'activation du switch.
-    add_simple_platforms(gap2_start + 55, gap2_end - 45, y=210, step=85, width=45)
+    #add_simple_platforms(gap2_start + 55, gap2_end - 45, y=210, step=85, width=45)
 
     #%%########################################################################
     # SECTION 4 — TRANSITION / MINI-SAUTS
