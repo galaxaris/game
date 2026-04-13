@@ -1002,8 +1002,6 @@ def start(game: Game):
         pas = rd.randint(100, 250)
         x += pas
 
-    fillLevelWithALotOfWonderfulStuff(section1_start + 500, section1_end, 150, 800, density=1)
-
    # #### Collecteur de pluie #0
    # collections += [Solid((section1_start + 440, 250), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
    # rain_secret0 = TriggerInteract(
@@ -1029,6 +1027,10 @@ def start(game: Game):
     )
     sign1.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign1]
+
+    #Génération procédurale de zinzin
+    fillLevelWithALotOfWonderfulStuff(section1_start + 500, section1_end, 150, 800, density=1)
+
 
     ### Ennenmi #1
     #enemy1 = Enemy((section1_start + 700, 252), (48, 48), mode="patrol", range=180)
@@ -1063,7 +1065,7 @@ def start(game: Game):
     gap1_start = cursor
     cursor += 180
     gap1_end = cursor
-    add_simple_platforms(gap1_start + 40, gap1_end - 25, y=250, step=60, width=45)
+    #add_simple_platforms(gap1_start + 40, gap1_end - 25, y=250, step=60, width=45)
 
     #%%########################################################################
     # SECTION 2 — TRONCS ET PLATEFORMES MOBILES
@@ -1079,19 +1081,6 @@ def start(game: Game):
     #TP the player here for debug
     p.set_position((section2_start + 200, 150))
 
-    stump_layout = [
-        (0, 285, 45, 27),
-        (95, 268, 45, 27),
-        (200, 248, 45, 27),
-        (315, 232, 45, 27),
-        (440, 248, 45, 27),
-        (560, 268, 45, 27),
-        (660, 285, 45, 27),
-    ]
-    for dx, sy, sw, sh in stump_layout:
-        collections += [
-            Solid((section2_start + dx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])
-        ]
 
     mp1 = Solid((section2_start + 220, 220), (75, 15))
     mp1.set_texture(game.RESSOURCES["textures"]["moving_platform"])
@@ -1101,17 +1090,9 @@ def start(game: Game):
     })
     scene.add(mp1, "#object")
 
-    #### Plateforme mobile #2 : (verticale)
-    #mp2 = Solid((section2_start + 520, 195), (70, 15))
-    #mp2.set_texture(game.RESSOURCES["textures"]["moving_platform"])
-    #moving_platforms.append({
-    #    "solid": mp2, "axis": "y", "speed": 0.5, "direction": 1,
-    #    "min_y": 175, "max_y": 265, "_current": 195.0,
-    #})
-    #scene.add(mp2, "#object")
 
     ### Ennemi #2
-    enemy2 = Enemy((section2_start + 420, 100), (48, 48), mode="patrol", range=220)
+    enemy2 = Enemy((section2_start + 420, 100), (48, 48), mode="chase", range=220)
     enemy2.set_gravity(game_settings["GRAVITY"])
     enemy2.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy2]
@@ -1141,7 +1122,7 @@ def start(game: Game):
     sign2.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign2]
 
-    add_simple_platforms(section2_start + 70, section2_end - 80, y=240, step=150, width=45)
+    #add_simple_platforms(section2_start + 70, section2_end - 80, y=240, step=150, width=45)
 
     cursor = section2_end
 
@@ -1232,12 +1213,12 @@ def start(game: Game):
     collections += [rain_secret1]
 
     #### Ennemis #3 & #4
-    enemy3 = Enemy((section3_start + 300, 152), (48, 48), mode="patrol", range=230)
+    enemy3 = Enemy((section3_start + 300, 152), (48, 48), mode="chase", range=230)
     enemy3.set_gravity(game_settings["GRAVITY"])
     enemy3.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy3]
 
-    enemy4 = Enemy((section3_start + 610, 157), (48, 48), mode="idle", range=140)
+    enemy4 = Enemy((section3_start + 610, 157), (48, 48), mode="chase", range=140)
     enemy4.set_gravity(game_settings["GRAVITY"])
     enemy4.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy4]
