@@ -192,6 +192,37 @@ def start(game: Game):
             collections.append(solid)
             return solid, int(width), int(height)
 
+        def add_platform_staircase(x_origin: int, from_y: int, to_y: int, direction: int = 1):
+            step_count = max(3, min(8, int(abs(to_y - from_y) / 34) + 1))
+            step_spacing_x = 58
+            min_x = None
+            max_x = None
+
+            for i in range(step_count):
+                t = float(i + 1) / float(step_count)
+                step_y = int(from_y + (to_y - from_y) * t)
+                step_x = int(x_origin + (i * step_spacing_x * direction))
+                step_w = rd.randint(60, 110)
+                add_custom_solid(step_x, step_y, step_w, 30, "platform_forest", rescale=False)
+
+                if min_x is None:
+                    min_x = step_x
+                    max_x = step_x + step_w
+                else:
+                    min_x = min(min_x, step_x)
+                    max_x = max(max_x, step_x + step_w)
+
+                if plant1 and has_texture("plant1"):
+                    plant_w, _ = texture_size("plant1")
+                    if step_w > plant_w + 8:
+                        plant_x = step_x + rd.randint(4, max(4, step_w - plant_w - 4))
+                        add_scaled_decor("plant1", plant_x, step_y + 2, align_bottom=True)
+
+            return {
+                "start_x": int(min_x if min_x is not None else x_origin),
+                "end_x": int(max_x if max_x is not None else x_origin),
+            }
+
         start_x = int(min(x_start, x_end))
         end_x = int(max(x_start, x_end))
         if end_x - start_x < 260:
@@ -229,8 +260,9 @@ def start(game: Game):
         tier_min_idx = 1 if tier_count > 3 else 0
         tier_max_idx = tier_count - 1
 
-        main_step = int(max(210, min(360, 370 - spawn_density * 150)))
-        main_jitter = int(max(20, min(55, 64 - spawn_density * 18)))
+        # Chemin principal moins dense pour laisser place aux parcours techniques.
+        main_step = int(max(290, min(520, 560 - spawn_density * 150)))
+        main_jitter = int(max(35, min(90, 95 - spawn_density * 18)))
 
         if not (platform_forest and has_texture("platform_forest")):
             return
@@ -251,6 +283,10 @@ def start(game: Game):
 
         x_cursor = playable_start + rd.randint(0, 30)
         while x_cursor < playable_end - 60:
+            if len(main_slots) > 1 and rd.random() < 0.22 and x_cursor < playable_end - 220:
+                x_cursor += rd.randint(110, 220)
+                continue
+
             plat_width = rd.randint(50, 200)
             y_slot = tiers[tier_idx] + rd.randint(-10, 10)
             y_slot = max(safe_min_y, min(safe_max_y, y_slot))
@@ -280,7 +316,82 @@ def start(game: Game):
         if not main_slots:
             return
 
-        anchor_stride = 2 if spawn_density >= 0.5 else 3
+        # Escalier d'entree et de sortie pour connecter sol <-> zone procedurale.
+        first_slot = main_slots[0]
+        last_slot = main_slots[-1]
+        first_stair_steps = max(3, min(8, int(abs((floor_y - 30) - first_slot["y"]) / 34) + 1))
+        first_stair_origin = max(start_x + 20, first_slot["x"] - (first_stair_steps * 58) - 20)
+        first_stair_info = add_platform_staircase(first_stair_origin, floor_y - 30, first_slot["y"], direction=1)
+
+        end_stair_origin = last_slot["x"] + last_slot["w"] + 20
+        add_platform_staircase(end_stair_origin, last_slot["y"], floor_y - 30, direction=1)
+
+        # Zone de securite: pas d'elements bloquants avant la fin de l'escalier d'entree.
+        protected_until_x = max(first_slot["x"], first_stair_info["end_x"]) + 16
+
+        # Deuxieme chemin plus haut, regulier et deconnecte du chemin principal.
+        upper_slots = []
+        upper_stride = 3
+        upper_offset = rd.randint(0, upper_stride - 1)
+        upper_keys = []
+        if platform_forest1 and has_texture("platform-forest1"):
+            upper_keys.append(("platform-forest1", 99, 78))
+        if platform_forest2 and has_texture("platform-forest2"):
+            upper_keys.append(("platform-forest2", 50, 33))
+
+        if upper_keys:
+            for idx, slot in enumerate(main_slots):
+                if idx % upper_stride != upper_offset:
+                    continue
+                key, base_w, base_h = rd.choice(upper_keys)
+                repeat_x = 1 if key == "platform-forest1" else rd.choice([1, 2])
+                up_w = base_w * repeat_x
+                up_h = base_h
+                up_x = slot["x"] + rd.randint(-20, 20)
+                up_y = max(-320, min(safe_min_y - 35, slot["y"] - rd.randint(100, 190)))
+                add_custom_solid(up_x, up_y, up_w, up_h, key, rescale=True)
+                upper_slots.append({"x": up_x, "y": up_y, "w": up_w, "h": up_h})
+
+            for i in range(len(upper_slots) - 1):
+                left_u = upper_slots[i]
+                right_u = upper_slots[i + 1]
+                gap_u = right_u["x"] - (left_u["x"] + left_u["w"])
+                if gap_u < 70:
+                    continue
+
+                if moving_platform and has_texture("moving_platform") and rd.random() < 0.45:
+                    mp_w_u = 100
+                    mp_h_u = 15
+                    min_x_u = left_u["x"] + left_u["w"] + 8
+                    max_x_u = right_u["x"] - mp_w_u - 8
+                    if max_x_u - min_x_u >= 30:
+                        mp_u = Solid((min_x_u, int((left_u["y"] + right_u["y"]) / 2)), (mp_w_u, mp_h_u))
+                        mp_u.set_texture(textures["moving_platform"], rescale=True)
+                        moving_platforms.append({
+                            "solid": mp_u,
+                            "axis": "x",
+                            "speed": round(rd.uniform(0.55, 1.05), 2),
+                            "direction": 1,
+                            "min_x": min_x_u,
+                            "max_x": max_x_u,
+                            "_current": float(min_x_u),
+                        })
+                        scene.add(mp_u, "#object")
+
+                if anchor and has_texture("industrial_tile"):
+                    anchor_mid_x = left_u["x"] + left_u["w"] + max(6, gap_u // 2 - 12)
+                    anchor_mid_y = min(left_u["y"], right_u["y"]) - rd.randint(60, 115)
+                    anchor_u, _, _ = add_custom_solid(
+                        anchor_mid_x,
+                        anchor_mid_y,
+                        25,
+                        25,
+                        "industrial_tile",
+                        rescale=True,
+                    )
+                    anchor_u.add_tag("anchor")
+
+        anchor_stride = 2
         anchor_offset = rd.randint(0, anchor_stride - 1)
 
         # Relier les grandes plateformes avec les connecteurs demandes.
@@ -289,6 +400,10 @@ def start(game: Game):
             right_slot = main_slots[i + 1]
             gap = right_slot["x"] - (left_slot["x"] + left_slot["w"])
             vertical_gap = abs(right_slot["y"] - left_slot["y"])
+            connector_start_x = left_slot["x"] + left_slot["w"] + 12
+
+            if connector_start_x < protected_until_x:
+                continue
 
             if gap <= 26:
                 continue
@@ -341,14 +456,17 @@ def start(game: Game):
             if gap < piece_w + 16:
                 continue
 
-            piece_count = max(1, min(6, int(gap / (piece_w + 18))))
-            spacing = max(8, int((gap - piece_count * piece_w) / (piece_count + 1)))
+            # Parcours plus techniques: moins de pieces et espaces plus grands.
+            piece_count = max(1, min(4, int(gap / 125)))
+            spacing = max(22, int((gap - piece_count * piece_w) / (piece_count + 1)))
             x_piece = left_slot["x"] + left_slot["w"] + spacing
+            y_piece = bridge_y
 
             for _ in range(piece_count):
                 if x_piece + piece_w >= right_slot["x"]:
                     break
-                add_custom_solid(x_piece, bridge_y, piece_w, piece_h, connector_mode, rescale=True)
+                y_piece = max(safe_min_y, min(safe_max_y, y_piece + rd.randint(-26, 26)))
+                add_custom_solid(x_piece, y_piece, piece_w, piece_h, connector_mode, rescale=True)
                 x_piece += piece_w + spacing
 
             if anchor and has_texture("industrial_tile") and i % anchor_stride == anchor_offset:
@@ -369,6 +487,8 @@ def start(game: Game):
             wall_w, wall_h = texture_size("wall")
             wall_offset = rd.randint(0, 2)
             for idx, slot in enumerate(main_slots):
+                if slot["x"] < protected_until_x:
+                    continue
                 if idx % 3 != wall_offset:
                     continue
 
@@ -381,6 +501,8 @@ def start(game: Game):
         if plant1 and has_texture("plant1"):
             plant_w, _ = texture_size("plant1")
             for slot in main_slots:
+                if slot["x"] < protected_until_x:
+                    continue
                 plant_count = 1 + (1 if spawn_density > 0.55 and rd.random() < 0.50 else 0)
                 for _ in range(plant_count):
                     if slot["w"] <= plant_w + 10:
@@ -392,6 +514,8 @@ def start(game: Game):
             tree2_w, _ = texture_size("tree2")
             tree2_offset = rd.randint(0, 1)
             for idx, slot in enumerate(main_slots):
+                if slot["x"] < protected_until_x:
+                    continue
                 if idx % 2 != tree2_offset or slot["w"] < tree2_w + 12:
                     continue
                 tree_x = slot["x"] + rd.randint(4, max(4, slot["w"] - tree2_w - 4))
@@ -401,6 +525,8 @@ def start(game: Game):
             tree1_w, _ = texture_size("tree1")
             tree1_offset = rd.randint(0, 3)
             for idx, slot in enumerate(main_slots):
+                if slot["x"] < protected_until_x:
+                    continue
                 if idx % 4 != tree1_offset or slot["w"] < tree1_w + 12:
                     continue
                 tree_x = slot["x"] + rd.randint(2, max(2, slot["w"] - tree1_w - 2))
@@ -413,6 +539,8 @@ def start(game: Game):
             high_limit = safe_min_y + int((safe_max_y - safe_min_y) * 0.80)
 
             for idx, slot in enumerate(main_slots):
+                if slot["x"] < protected_until_x:
+                    continue
                 if idx % rain_stride != rain_offset:
                     continue
                 if slot["y"] > high_limit:
@@ -437,6 +565,8 @@ def start(game: Game):
             trap_offset = rd.randint(0, trap_stride - 1)
 
             for idx, slot in enumerate(main_slots):
+                if slot["x"] < protected_until_x:
+                    continue
                 if idx < 1 or idx > len(main_slots) - 2:
                     continue
                 if idx % trap_stride != trap_offset:
@@ -470,6 +600,8 @@ def start(game: Game):
             enemy_count = 0
 
             for idx, slot in enumerate(main_slots):
+                if slot["x"] < protected_until_x:
+                    continue
                 if idx < 1 or idx > len(main_slots) - 2:
                     continue
                 if idx % enemy_stride != enemy_offset:
@@ -506,8 +638,8 @@ def start(game: Game):
     # SECTION 1 — LISIÈRE DE LA FORÊT
     ###########################################################################
     section1_start = cursor
-    section1_end = section1_start + 2000
-    add_ground_strip(section1_start, section1_end, "platform_forest")
+    section1_end = section1_start + 4000
+    add_ground_strip(section1_start, section1_end-3000, "platform_forest")
 
     #collections += [Solid((section1_start + 115, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     #collections += [Solid((section1_start + 255, 225), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
@@ -517,7 +649,7 @@ def start(game: Game):
     # Add a lot of tree1
     pas = rd.randint(100, 250)
     x = int(section1_start)
-    while x < int(section1_end):
+    while x < int(section1_end-3200):
         collections += [GameObject((x, 185), (123, 116)).set_texture(game.RESSOURCES["textures"]["tree1"])]
         # Add a second tree on the right if the random number is superior to 200
         if rd.randint(1, 100) > 200:
@@ -526,7 +658,7 @@ def start(game: Game):
         pas = rd.randint(100, 250)
         x += pas
 
-    fillLevelWithALotOfWonderfulStuff(section1_start + 300, section1_end+2000, 150, 600, density=1)
+    fillLevelWithALotOfWonderfulStuff(section1_start + 300, section1_end, 150, 600, density=1)
 
    # #### Collecteur de pluie #0
    # collections += [Solid((section1_start + 440, 250), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
