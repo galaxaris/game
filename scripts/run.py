@@ -8,10 +8,10 @@ from api.utils.InputManager import onKeyDown, onKeyUp
 def Start(game):
     print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\nIf you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
-    load_scene("MainMenuScene", game)
+    load_scene("Level2Scene", game)
 
     #TODO: TO BE REMOVED
-    toggle_audio(game.audio_manager)
+    #toggle_audio(game.audio_manager)
 
     
 
