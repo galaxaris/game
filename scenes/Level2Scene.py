@@ -138,246 +138,346 @@ def start(game: Game):
         enemy: bool = True,
     ):
         """
-        Generate un segment de foret procedurale, jouable et paramétrable.
-        Chaque famille d'elements peut etre activee/desactivee via booleen.
+        Genere un segment de foret procedurale jouable et fortement vertical.
+        Tous les elements sont calibres sur la taille native de leur texture,
+        sauf platform_forest (texture faite pour se repeter).
         """
+        textures = game.RESSOURCES["textures"]
+
+        def has_texture(texture_key: str) -> bool:
+            return texture_key in textures and textures[texture_key] is not None
+
+        def texture_size(texture_key: str, fallback: tuple[int, int] = (32, 32)) -> tuple[int, int]:
+            if not has_texture(texture_key):
+                return fallback
+            tex = textures[texture_key]
+            try:
+                if hasattr(tex, "image") and tex.image is not None:
+                    w, h = tex.image.get_size()
+                else:
+                    w, h = tex.get_size()
+                return max(1, int(w)), max(1, int(h))
+            except Exception:
+                return fallback
+
+        def add_scaled_solid(x: int, y: int, texture_key: str, tiles_x: int = 1, tiles_y: int = 1):
+            tex_w, tex_h = texture_size(texture_key)
+            width = max(1, int(tex_w * max(1, tiles_x)))
+            height = max(1, int(tex_h * max(1, tiles_y)))
+            solid = Solid((int(x), int(y)), (width, height))
+            solid.set_texture(textures[texture_key], rescale=texture_key != "platform_forest")
+            collections.append(solid)
+            return solid, width, height
+
+        def add_scaled_decor(texture_key: str, x: int, y: int, align_bottom: bool = False):
+            tex_w, tex_h = texture_size(texture_key)
+            top_y = int(y - tex_h) if align_bottom else int(y)
+            deco = GameObject((int(x), top_y), (tex_w, tex_h))
+            deco.set_texture(textures[texture_key], rescale=True)
+            collections.append(deco)
+            return deco, tex_w, tex_h
+
         start_x = int(min(x_start, x_end))
         end_x = int(max(x_start, x_end))
-        if end_x - start_x < 220:
+        if end_x - start_x < 260:
             return
 
-        spawn_density = max(0.06, min(float(density), 0.35))
+        spawn_density = max(0.08, min(float(density), 1.0))
 
-        safe_min_y = max(95, int(min(y_min, y_max)))
-        safe_max_y = min(floor_y - 36, int(max(y_min, y_max)))
-        if safe_max_y - safe_min_y < 35:
-            safe_min_y = max(95, safe_max_y - 35)
+        requested_low_y = int(min(y_min, y_max))
+        requested_high_y = int(max(y_min, y_max))
+
+        # Si y_max depasse le sol, on l'interprete comme une demande de verticalite plus forte.
+        if requested_high_y > floor_y:
+            requested_span = max(120, min(requested_high_y - requested_low_y, floor_y + 520))
+            safe_max_y = floor_y - 24
+            safe_min_y = max(-260, safe_max_y - requested_span)
+        else:
+            safe_min_y = max(-260, requested_low_y)
+            safe_max_y = min(floor_y - 24, requested_high_y)
+
+        if safe_max_y - safe_min_y < 120:
+            safe_min_y = max(-260, safe_max_y - 120)
 
         playable_start = start_x + 70
         playable_end = end_x - 70
-        if playable_end <= playable_start:
+        if playable_end - playable_start < 320:
             return
 
-        base_step = int(max(150, min(290, ground_w * (0.58 - spawn_density))))
-        jitter = max(14, int(base_step * 0.20))
-
-        lane_count = 5
-        lane_span = max(1, safe_max_y - safe_min_y)
-        lanes = [
-            safe_min_y + int(i * lane_span / (lane_count - 1))
-            for i in range(lane_count)
+        y_span = safe_max_y - safe_min_y
+        tier_count = max(5, min(9, 4 + y_span // 70))
+        tiers = [
+            safe_max_y - int(i * y_span / (tier_count - 1))
+            for i in range(tier_count)
         ]
 
-        lane_idx = rd.randint(1, lane_count - 2)
-        lane_dir = rd.choice([-1, 1])
-        anchors = []
+        tier_min_idx = 1 if tier_count > 3 else 0
+        tier_max_idx = tier_count - 1
 
-        x_cursor = playable_start + rd.randint(0, 35)
-        while x_cursor < playable_end:
-            if rd.random() < 0.66:
-                lane_idx += lane_dir
-                lane_idx = max(0, min(lane_count - 1, lane_idx))
-                if lane_idx in (0, lane_count - 1):
-                    lane_dir *= -1
+        main_step = int(max(210, min(360, 370 - spawn_density * 150)))
+        main_jitter = int(max(20, min(55, 64 - spawn_density * 18)))
 
-            y_anchor = lanes[lane_idx] + rd.randint(-12, 12)
-            y_anchor = max(safe_min_y, min(safe_max_y, y_anchor))
-            anchors.append((x_cursor, int(y_anchor)))
+        main_platform_keys = []
+        if checkpoint_ground and has_texture("checkpoint_ground"):
+            main_platform_keys.append("checkpoint_ground")
+        if tree_stump and has_texture("tree_stump"):
+            main_platform_keys.append("tree_stump")
+        if platform_forest1 and has_texture("platform-forest1"):
+            main_platform_keys.append("platform-forest1")
+        if platform_forest2 and has_texture("platform-forest2"):
+            main_platform_keys.append("platform-forest2")
+        if bridge_plank and has_texture("bridge_plank"):
+            main_platform_keys.append("bridge_plank")
+        if platform_forest and has_texture("platform_forest"):
+            main_platform_keys.append("platform_forest")
 
-            x_cursor += max(120, base_step + rd.randint(-jitter, jitter))
-
-        if not anchors:
+        if not main_platform_keys:
             return
 
-        platform_catalog = []
-        if platform_forest:
-            platform_catalog.append(("platform_forest", (88, 130), 16))
-        if checkpoint_ground:
-            platform_catalog.append(("checkpoint_ground", (74, 120), 15))
-        if tree_stump:
-            platform_catalog.append(("tree_stump", (45, 58), 27))
-        if platform_forest1:
-            platform_catalog.append(("platform-forest1", (68, 110), 16))
-        if platform_forest2:
-            platform_catalog.append(("platform-forest2", (68, 110), 16))
-        if bridge_plank:
-            platform_catalog.append(("bridge_plank", (56, 84), 12))
+        connector_keys = []
+        if tree_stump and has_texture("tree_stump"):
+            connector_keys.append("tree_stump")
+        if checkpoint_ground and has_texture("checkpoint_ground"):
+            connector_keys.append("checkpoint_ground")
+        if bridge_plank and has_texture("bridge_plank"):
+            connector_keys.append("bridge_plank")
+        if not connector_keys:
+            connector_keys = list(main_platform_keys)
 
-        platform_slots = []
-        if platform_catalog:
-            for ax, ay in anchors:
-                texture_key, width_range, height = rd.choice(platform_catalog)
-                width = rd.randint(*width_range)
+        main_slots = []
+        tier_idx = min(tier_max_idx, max(tier_min_idx, tier_min_idx + (tier_max_idx - tier_min_idx) // 2))
+        tier_dir = rd.choice([-1, 1])
 
-                if texture_key == "tree_stump":
-                    width = rd.choice([45, 50, 56])
-                    height = 27
-                elif texture_key == "bridge_plank":
-                    ay = max(safe_min_y, ay - rd.randint(0, 10))
+        x_cursor = playable_start + rd.randint(0, 30)
+        while x_cursor < playable_end - 60:
+            texture_key = rd.choice(main_platform_keys)
+            tex_w, _ = texture_size(texture_key)
 
-                plat = Solid((ax, ay), (width, height))
-                plat.set_texture(game.RESSOURCES["textures"][texture_key])
-                collections.append(plat)
-                platform_slots.append((ax, ay, width, height))
+            target_width = rd.randint(180, 290)
+            if texture_key == "bridge_plank":
+                target_width += rd.randint(20, 70)
 
-        if wall:
-            last_wall_x = playable_start - 9999
-            for ax, _, _, _ in platform_slots:
-                if ax - last_wall_x < 260:
-                    continue
-                if rd.random() > (0.23 + spawn_density * 0.20):
-                    continue
+            tiles_x = max(2, int(round(target_width / max(1, tex_w))))
+            y_slot = tiers[tier_idx] + rd.randint(-10, 10)
+            y_slot = max(safe_min_y, min(safe_max_y, y_slot))
 
-                pillar_h = rd.randint(40, 95)
-                pillar_x = ax + rd.randint(-18, 18)
-                pillar = Solid((pillar_x, floor_y - pillar_h), (18, pillar_h))
-                pillar.set_texture(game.RESSOURCES["textures"]["wall"])
-                collections.append(pillar)
-                last_wall_x = ax
+            _, width, height = add_scaled_solid(x_cursor, y_slot, texture_key, tiles_x=tiles_x)
+            main_slots.append({"x": int(x_cursor), "y": int(y_slot), "w": int(width), "h": int(height)})
 
-        last_tree1_x = playable_start - 9999
-        last_tree2_x = playable_start - 9999
-        for ax, _ in anchors:
-            if plant1 and rd.random() < (0.52 + spawn_density * 0.25):
-                plant_y = rd.randint(
-                    max(110, safe_min_y - 15),
-                    min(floor_y - 42, safe_max_y + 25),
-                )
-                collections.append(
-                    GameObject((ax + rd.randint(-20, 20), plant_y), (32, 32)).set_texture(
-                        game.RESSOURCES["textures"]["plant1"]
-                    )
-                )
+            x_cursor += max(180, main_step + rd.randint(-main_jitter, main_jitter))
 
-            if tree2 and ax - last_tree2_x > 220 and rd.random() < 0.30:
-                collections.append(
-                    GameObject((ax + rd.randint(-25, 20), floor_y - 78), (78, 78)).set_texture(
-                        game.RESSOURCES["textures"]["tree2"]
-                    )
-                )
-                last_tree2_x = ax
+            if rd.random() < 0.85:
+                tier_idx += tier_dir * rd.choice([1, 1, 2])
 
-            if tree1 and ax - last_tree1_x > 360 and rd.random() < 0.20:
-                collections.append(
-                    GameObject((ax + rd.randint(-15, 20), floor_y - 116), (123, 116)).set_texture(
-                        game.RESSOURCES["textures"]["tree1"]
-                    )
-                )
-                last_tree1_x = ax
+            if tier_idx >= tier_max_idx:
+                tier_idx = tier_max_idx
+                tier_dir = -1
+            elif tier_idx <= tier_min_idx:
+                tier_idx = tier_min_idx
+                tier_dir = 1
 
-        if moving_platform and platform_slots:
-            max_moving = max(1, min(3, int((playable_end - playable_start) / 900)))
-            added_moving = 0
-            last_moving_x = playable_start - 9999
+        if not main_slots:
+            return
 
-            for px, py, pw, _ in platform_slots:
-                if added_moving >= max_moving:
-                    break
-                if px - last_moving_x < 420:
-                    continue
-                if rd.random() > (0.20 + spawn_density * 0.70):
+        # Relier les grandes plateformes pour garder une progression jouable.
+        for i in range(len(main_slots) - 1):
+            left_slot = main_slots[i]
+            right_slot = main_slots[i + 1]
+            gap = right_slot["x"] - (left_slot["x"] + left_slot["w"])
+            vertical_gap = abs(right_slot["y"] - left_slot["y"])
+
+            if gap <= 26:
+                continue
+            if gap < 120 and vertical_gap < 90:
+                continue
+
+            texture_key = rd.choice(connector_keys)
+            tex_w, _ = texture_size(texture_key)
+            max_bridge_width = max(70, gap - 36)
+            target_bridge_width = min(max_bridge_width, max(90, int(gap * 0.70)))
+            tiles_x = max(1, int(round(target_bridge_width / max(1, tex_w))))
+            bridge_width = tex_w * tiles_x
+
+            if bridge_width >= gap - 24:
+                tiles_x = max(1, (gap - 28) // max(1, tex_w))
+                bridge_width = tex_w * tiles_x
+            if tiles_x <= 0:
+                continue
+
+            bridge_x = left_slot["x"] + left_slot["w"] + max(8, (gap - bridge_width) // 2)
+            bridge_y = int((left_slot["y"] + right_slot["y"]) / 2) + rd.randint(-12, 12)
+            bridge_y = max(safe_min_y, min(safe_max_y, bridge_y))
+
+            add_scaled_solid(bridge_x, bridge_y, texture_key, tiles_x=tiles_x)
+
+        if wall and has_texture("wall"):
+            wall_w, wall_h = texture_size("wall")
+            wall_offset = rd.randint(0, 2)
+            for idx, slot in enumerate(main_slots):
+                if idx % 3 != wall_offset:
                     continue
 
-                mp_x = px + max(0, pw // 2 - 36)
-                mp_y = max(safe_min_y + 8, py - rd.randint(18, 45))
-                min_y_mp = max(95, mp_y - rd.randint(35, 70))
-                max_y_mp = min(floor_y - 60, mp_y + rd.randint(45, 95))
-                if max_y_mp - min_y_mp < 35:
+                col_tiles_h = rd.randint(2, 4)
+                col_height = wall_h * col_tiles_h
+                col_y = floor_y - col_height
+                col_x = slot["x"] + rd.choice([8, max(8, slot["w"] - wall_w - 8)])
+                add_scaled_solid(col_x, col_y, "wall", tiles_y=col_tiles_h)
+
+        if plant1 and has_texture("plant1"):
+            plant_w, _ = texture_size("plant1")
+            for slot in main_slots:
+                plant_count = 1 + (1 if spawn_density > 0.55 and rd.random() < 0.50 else 0)
+                for _ in range(plant_count):
+                    if slot["w"] <= plant_w + 10:
+                        break
+                    plant_x = slot["x"] + rd.randint(4, max(4, slot["w"] - plant_w - 4))
+                    add_scaled_decor("plant1", plant_x, slot["y"] + 2, align_bottom=True)
+
+        if tree2 and has_texture("tree2"):
+            tree2_w, _ = texture_size("tree2")
+            tree2_offset = rd.randint(0, 1)
+            for idx, slot in enumerate(main_slots):
+                if idx % 2 != tree2_offset or slot["w"] < tree2_w + 12:
+                    continue
+                tree_x = slot["x"] + rd.randint(4, max(4, slot["w"] - tree2_w - 4))
+                add_scaled_decor("tree2", tree_x, slot["y"] + 2, align_bottom=True)
+
+        if tree1 and has_texture("tree1"):
+            tree1_w, _ = texture_size("tree1")
+            tree1_offset = rd.randint(0, 3)
+            for idx, slot in enumerate(main_slots):
+                if idx % 4 != tree1_offset or slot["w"] < tree1_w + 12:
+                    continue
+                tree_x = slot["x"] + rd.randint(2, max(2, slot["w"] - tree1_w - 2))
+                add_scaled_decor("tree1", tree_x, slot["y"] + 2, align_bottom=True)
+
+        if moving_platform and has_texture("moving_platform") and len(main_slots) > 1:
+            mp_tex_w, mp_tex_h = texture_size("moving_platform")
+            mp_tiles_w = 2 if mp_tex_w < 70 else 1
+            mp_w = mp_tex_w * mp_tiles_w
+            moving_stride = 3
+            moving_offset = rd.randint(0, moving_stride - 1)
+
+            for idx in range(len(main_slots) - 1):
+                if idx % moving_stride != moving_offset:
                     continue
 
-                mp = Solid((mp_x, mp_y), (72, 15))
-                mp.set_texture(game.RESSOURCES["textures"]["moving_platform"])
+                left_slot = main_slots[idx]
+                right_slot = main_slots[idx + 1]
+                gap = right_slot["x"] - (left_slot["x"] + left_slot["w"])
+                if gap < mp_w + 30:
+                    continue
+
+                mp_x = left_slot["x"] + left_slot["w"] + (gap - mp_w) // 2
+                base_y = int((left_slot["y"] + right_slot["y"]) / 2) + rd.randint(-10, 10)
+                base_y = max(safe_min_y + 8, min(floor_y - mp_tex_h - 24, base_y))
+
+                min_y_mp = max(safe_min_y, base_y - rd.randint(80, 145))
+                max_y_mp = min(floor_y - mp_tex_h - 8, base_y + rd.randint(75, 130))
+                if max_y_mp - min_y_mp < 70:
+                    continue
+
+                mp = Solid((mp_x, base_y), (mp_w, mp_tex_h))
+                mp.set_texture(textures["moving_platform"], rescale=True)
                 moving_platforms.append({
                     "solid": mp,
                     "axis": "y",
-                    "speed": round(rd.uniform(0.45, 0.95), 2),
+                    "speed": round(rd.uniform(0.40, 0.85), 2),
                     "direction": rd.choice([-1, 1]),
                     "min_y": min_y_mp,
                     "max_y": max_y_mp,
-                    "_current": float(mp_y),
+                    "_current": float(base_y),
                 })
                 scene.add(mp, "#object")
-                added_moving += 1
-                last_moving_x = px
 
-        if rain_collector and platform_slots:
-            last_rain_x = playable_start - 9999
-            high_band_limit = safe_min_y + int((safe_max_y - safe_min_y) * 0.65)
-            for px, py, pw, _ in platform_slots:
-                if px - last_rain_x < 430:
+        if rain_collector and has_texture("rain_collector"):
+            rain_w, rain_h = texture_size("rain_collector")
+            rain_stride = 3 if spawn_density < 0.65 else 2
+            rain_offset = rd.randint(0, rain_stride - 1)
+            high_limit = safe_min_y + int((safe_max_y - safe_min_y) * 0.80)
+
+            for idx, slot in enumerate(main_slots):
+                if idx % rain_stride != rain_offset:
                     continue
-                if py > high_band_limit:
+                if slot["y"] > high_limit:
                     continue
-                if rd.random() > (0.16 + spawn_density * 0.35):
+                if slot["w"] < rain_w + 8:
                     continue
 
-                rain_x = px + max(0, pw // 2 - 20)
-                rain_y = max(90, py - 44)
+                rain_x = slot["x"] + max(0, min(slot["w"] - rain_w, slot["w"] // 2 - rain_w // 2))
+                rain_y = slot["y"] - rain_h
                 rain = TriggerInteract(
                     (rain_x, rain_y),
-                    (42, 42),
+                    (rain_w, rain_h),
                     ["player"],
                     [lambda obj: refill_water(p, game)],
                 )
-                rain.set_texture(game.RESSOURCES["textures"]["rain_collector"])
+                rain.set_texture(textures["rain_collector"], rescale=True)
                 collections.append(rain)
-                last_rain_x = px
 
-        if trap_idle and platform_slots:
-            last_trap_x = playable_start - 9999
-            for px, py, pw, _ in platform_slots:
-                if px - last_trap_x < 360:
+        if trap_idle and has_texture("trap_idle") and has_texture("trap_active"):
+            trap_w, trap_h = texture_size("trap_idle")
+            trap_stride = 3 if spawn_density < 0.60 else 2
+            trap_offset = rd.randint(0, trap_stride - 1)
+
+            for idx, slot in enumerate(main_slots):
+                if idx < 1 or idx > len(main_slots) - 2:
                     continue
-                if px < playable_start + 120 or px > playable_end - 120:
+                if idx % trap_stride != trap_offset:
                     continue
-                if rd.random() > (0.18 + spawn_density * 0.50):
+                if slot["w"] < trap_w + 16:
                     continue
 
-                trap_x = px + rd.randint(8, max(8, pw - 36))
-                trap_y = floor_y - 15 if py >= floor_y - 70 else py - 15
+                trap_x = slot["x"] + slot["w"] - trap_w - 6
+                trap_y = slot["y"] - trap_h
                 trap = Trap(
                     (trap_x, trap_y),
-                    (32, 15),
+                    (trap_w, trap_h),
                     "player",
-                    rd.randint(12, 22),
-                    cooldown=rd.randint(1200, 2300),
+                    rd.randint(12, 20),
+                    cooldown=rd.randint(1200, 2200),
                 )
                 trap.bind_textures({
-                    "idle": game.RESSOURCES["textures"]["trap_idle"],
-                    "active": game.RESSOURCES["textures"]["trap_active"],
+                    "idle": textures["trap_idle"],
+                    "active": textures["trap_active"],
                 })
                 scene.add(trap, "#object")
-                last_trap_x = px
 
-        if enemy and platform_slots:
-            max_enemies = max(1, min(3, int((playable_end - playable_start) / 950)))
-            if spawn_density < 0.10:
-                max_enemies = max(1, max_enemies - 1)
+        if enemy and has_texture("enemy"):
+            enemy_sheet_w, enemy_sheet_h = texture_size("enemy")
+            enemy_w = max(28, enemy_sheet_w // 11)
+            enemy_h = max(28, enemy_sheet_h)
 
-            last_enemy_x = playable_start - 9999
-            added_enemies = 0
-            for px, py, pw, _ in platform_slots:
-                if added_enemies >= max_enemies:
+            enemy_stride = 2 if spawn_density >= 0.55 else 3
+            enemy_offset = rd.randint(0, enemy_stride - 1)
+            enemy_budget = max(2, min(7, len(main_slots) // enemy_stride + 1))
+            enemy_count = 0
+
+            for idx, slot in enumerate(main_slots):
+                if idx < 1 or idx > len(main_slots) - 2:
+                    continue
+                if idx % enemy_stride != enemy_offset:
+                    continue
+                if enemy_count >= enemy_budget:
                     break
-                if px - last_enemy_x < 520:
-                    continue
-                if rd.random() > (0.30 + spawn_density * 0.45):
+                if slot["w"] < enemy_w + 10:
                     continue
 
-                enemy_x = px + max(0, min(pw - 48, pw // 2 - 20))
-                enemy_y = py - 48
+                enemy_x = slot["x"] + max(0, min(slot["w"] - enemy_w, slot["w"] // 2 - enemy_w // 2))
+                enemy_y = slot["y"] - enemy_h
+                enemy_mode = "patrol" if idx % 2 == 0 else "idle"
+                enemy_range = max(120, min(280, int(slot["w"] * 0.95)))
+
                 enemy_obj = Enemy(
                     (enemy_x, enemy_y),
-                    (48, 48),
-                    mode=rd.choice(["idle", "patrol"]),
-                    range=rd.randint(120, 260),
+                    (enemy_w, enemy_h),
+                    mode=enemy_mode,
+                    range=enemy_range,
                 )
                 enemy_obj.set_gravity(game_settings["GRAVITY"])
-                enemy_obj.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
+                enemy_obj.set_animation(Animation(textures["enemy"], 11, 50))
                 collections.append(enemy_obj)
-
-                added_enemies += 1
-                last_enemy_x = px
+                enemy_count += 1
     
 
     # Mur gauche (barrière de départ) - laisser visible
@@ -410,7 +510,7 @@ def start(game: Game):
         pas = rd.randint(100, 250)
         x += pas
 
-    fillLevelWithALotOfWonderfulStuff(section1_start, section1_end, 150, 600, density=1)
+    fillLevelWithALotOfWonderfulStuff(section1_start + 300, section1_end+2000, 150, 600, density=1)
 
    # #### Collecteur de pluie #0
    # collections += [Solid((section1_start + 440, 250), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
