@@ -6,6 +6,7 @@ from api.utils import Debug
 from game.scripts.levels.level_generation import init_level
 from game.scripts.levels.level_ui import update_player_health_ui, update_ammo_ui
 from game.scripts.player_manager import init_player
+from api.physics.MovingPlatform import update_moving_platform
 
 import pygame as pg
 
@@ -19,11 +20,12 @@ player = None
 running = True
 
 def start(game: Game):
-    global scene
-    global player
+    global scene, player
+    moving_platforms = []
     scene = Scene(game.render_size)
     scene.name = "Level3Scene"
     scene.this.player = init_player(game)
+    scene.this.moving_platform = []
     init_level(game, scene, scene.this.player)
 
     scene.camera.set_offset((scene.size.x // 2 - scene.this.player.size.x, scene.size.y // 2 - scene.this.player.size.y + 100))
@@ -46,13 +48,13 @@ def start(game: Game):
     collections += [anchor_block]
 
     moving_floor = Solid((1300, 100), (100, 100))
-    moving_floor.add_tag("moving_floor")
-
-    scene.this.moving_platform = moving_floor
+    moving_floor.add_tag("anchor")
+    scene.this.moving_platform.append({
+        "solid": moving_floor, "axis": "x", "speed": 0.85, "direction": 1,
+        "min_x": 1300 - 100, "max_x": 1300 + 100, "_current": float(1300),
+    })
 
     collections += [moving_floor]
-
-
 
     for coll in collections:
         if "anchor" in coll.tags:
@@ -69,18 +71,11 @@ def start(game: Game):
 
 
 def update(game: Game):
+    global scene, player
+
     Debug.register_debug_entity(game, scene.this.player)
     update_player_health_ui(scene.this.player_ui_health, scene.this.player.health)
     update_ammo_ui(scene.this.player_ui_ammo, scene.this.player.ammo)
 
-    time_s = pg.time.get_ticks() / 1000.0 # converts ms into s
-
-    if hasattr(scene.this, "moving_platform"):
-        platform = scene.this.moving_platform
-
-        #0.75 is the speed
-        new_x = platform.pos.x + math.sin(time_s * 0.75) * 10
-
-        platform.pos.x = new_x
-
+    update_moving_platform(scene.this.moving_platform)
 

@@ -35,6 +35,7 @@ from api.entity.Enemy import Enemy
 from api.entity.Boss import Boss
 from api.environment.Trap import Trap
 from api.assets.Animation import Animation
+from api.physics.MovingPlatform import update_moving_platform
 
 from game.Variables import game_settings
 from game.scripts.levels.level2 import (
@@ -627,32 +628,7 @@ def update(game: Game):
     update_ammo_ui(scene.this.player_ui_ammo, scene.this.player.ammo)
 
     #%%### Animation des plateformes mobiles 
-    for mp in moving_platforms:
-        s = mp["solid"]
-        mp["_current"] += mp["speed"] * mp["direction"]
-
-        ### Plateformes horizontales
-        if mp["axis"] == "x":
-            x_new = int(mp["_current"])
-            s.rect.x = x_new
-            try:
-                s.pos[0] = float(mp["_current"])
-            except (TypeError, AttributeError):
-                pass
-            if mp["_current"] >= mp["max_x"] or mp["_current"] <= mp["min_x"]:
-                mp["direction"] *= -1
-
-        ### Plateformes verticales
-        elif mp["axis"] == "y":
-            y_new = int(mp["_current"])
-            s.rect.y = y_new
-            try:
-                s.pos[1] = float(mp["_current"])
-            except (TypeError, AttributeError):
-                pass
-            if mp["_current"] >= mp["max_y"] or mp["_current"] <= mp["min_y"]:
-                mp["direction"] *= -1
-
+    update_moving_platform(moving_platforms)
 
     update_ammo_ui(scene.this.player_ui_ammo, scene.this.player.ammo)
 
