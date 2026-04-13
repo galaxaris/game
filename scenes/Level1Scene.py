@@ -201,9 +201,11 @@ def start(game: Game):
 ######## END LEVEL TRIGGER ########
 ###################################
 
-    end_level = Trigger((3225, 375), (48, 48), ["player"],
-                          [lambda obj: game.event_manager.triggerEvent("goto_base")],
+    end_level = Trigger((3125, 63), (191,337), ["player"],
+                          [lambda obj: game.event_manager.triggerEvent("end_level")],
                           once=True)
+
+    end_level.set_texture(game.RESSOURCES["textures"]["antenna"])
     scene.add(end_level)
 
     init_level(game, scene, scene.this.player)

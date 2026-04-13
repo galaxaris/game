@@ -61,7 +61,9 @@
         "player_base": "Portrait/portrait_base.jpeg",
         "ship": "Background/ship.jpeg",
         "desolated_earth": "Background/desolated_earth.jpeg",
-        "computer_menu": "UI/level_menu.png"
+        "computer_menu": "UI/level_menu.png",
+
+        "antenna": "Objects/antenna.png"
 
     },
     "animations": {
