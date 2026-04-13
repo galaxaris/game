@@ -141,6 +141,22 @@ def exit_game_dialogue(game):
     scene.UI.show("quit_dialog")
 
 
+def play_boss_end_dialogue(game):
+    global scene
+    dialog = Dialog(game.RESSOURCES["fonts"]["default"])
+    dialog.add_character("Mélanie Cavill", game.RESSOURCES["textures"]["melanie"])
+    dialog.add_message(
+        "Mélanie Cavill",
+        "Bravo, on va pouvoir sauver la planete car tu as battu les mechants robots !"
+    )
+    dialog.add_message(
+        "Mélanie Cavill",
+        "Nous allons recycler leurs composants pour restaurer la Terre."
+    )
+    scene.UI.add("boss_end_dialogue", dialog)
+    scene.UI.show("boss_end_dialogue")
+
+
 def launch_computer(game):
     global scene
     menu = Modal((75, 37), (510, 286))
@@ -241,6 +257,10 @@ def start(game: Game):
 
     scene.add(computer)
     scene.add(exit)
+
+    if getattr(game, "boss_victory_return", False):
+        setattr(game, "boss_victory_return", False)
+        play_boss_end_dialogue(game)
 
     """player = init_player(game)
     scene.add(player, "#player")"""
