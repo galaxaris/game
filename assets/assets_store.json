@@ -1,9 +1,15 @@
 {
     "textures": {
         "icon": "icon.png",
+
         "grass": "Terrain/grass.png",
         "checkpoint_ground": "Terrain/beach_sand.png",
+        "wall": "Terrain/wall.png",
         "sign": "Objects/sign.png",
+
+        "tree_stump": "Terrain/tree_stump.png",
+        "moving_platform": "Terrain/forest-tiles/tile_06.png",
+        "bridge_plank": "Terrain/forest-tiles/tile_44.png",
 
         "player": "Player/NinjaFrog/jump.png",
         "jump_anim": "Player/NinjaFrog/jump_scaled.png",
@@ -29,29 +35,48 @@
 
         "water_drop": "Objects/water_drop.png",
 
+        "rain_collector": "Objects/rain_collector.png",
+        "switch_off": "Objects/switch_off.png",
+        "switch_on": "Objects/switch_on.png",
+
         "boss": "Player/MaskDude/idle.png",
         "enemy": "Player/little robot/idle_robot_scaled.png",
         "health": "UI/heart.png",
 
         "trap_idle": "Objects/ggg.png",
-        "trap_active": "UI/Background/Tiles/blue.png"
+        "trap_active": "UI/Background/Tiles/blue.png",
+
+        "melanie": "Portrait/melanie.jpeg",
+        "ai_icon": "Portrait/ai_icon.jpeg",
+        "player_base": "Portrait/portrait_base.jpeg",
+        "ship": "Background/ship.jpeg",
+        "desolated_earth": "Background/desolated_earth.jpeg",
+        "computer_menu": "UI/level_menu.png"
+
     },
     "animations": {
         "run": ["Player/NinjaFrog/run_scaled.png", 12, 70],
         "run_fast": ["Player/NinjaFrog/run_scaled.png", 12, 50],
         "idle": ["Player/NinjaFrog/idle_scaled.png", 11, 100],
-        "hit": ["Player/NinjaFrog/hit_scaled.png", 7, 50]
+        "hit": ["Player/NinjaFrog/hit_scaled.png", 7, 50],
+        "you_idle": ["Player/You/idle.png", 4, 150],
+        "you_run": ["Player/You/run.png", 4, 150],
+        "you_run_fast": ["Player/You/run.png", 4, 75]
     },
     "music": {
-        "titleScreen": "La Teuf du Farfadet - cut.mp3",
-        "inGame": "Original_Super_Mario_Bros_Soundtrack_Full.mp3",
-        "pause": "Alicia.mp3"
+        "titleScreen": "MainTheme.mp3",
+        "inGame": "Desert.mp3",
+        "pause": "Alicia.mp3",
+        "level2": "Idee3.mp3"
     },
     "sfx": {
-        "jump": "frog-sound.mp3",
-        "death": "Mario died _(.mp3",
+        "jump": "robot-jump.mp3",
+        "death": "robot-die.mp3",
         "fire": "piou1.mp3",
-        "empty_weapon": "empty_weapon.mp3"
+        "empty_weapon": "empty_weapon.mp3",
+        "water_refill": "water_fill.mp3",
+        "checkpoint": "checkpoint_sfx.mp3",
+        "switch": "switch_click.mp3"
     },
     "fonts": {
         "default": "Gm6x11.ttf",
