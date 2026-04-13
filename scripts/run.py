@@ -9,7 +9,6 @@ def Start(game):
     print_info("Welcome to the Omicronde Game - [bold]Galaxaris Demo[/bold] !\nIf you don't see the game window, it might be behind your current window, please check!\nAnd... [green]HAVE FUN![/green]")
 
     load_scene("MainMenuScene", game)
-    game.audio_manager.play_music("titleScreen")
 
     
 

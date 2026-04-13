@@ -26,6 +26,9 @@ def start(game: Game):
     scene.this.player = init_player(game)
     init_level(game, scene, scene.this.player)
 
+    game.audio_manager.play_music("level3")
+
+
     scene.this.camera = GameCamera((int(scene.this.player.pos.x), int(scene.this.player.pos.y)))
     scene.this.camera.set_offset(pg.Vector2(0, -100))
 

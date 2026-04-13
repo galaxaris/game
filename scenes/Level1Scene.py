@@ -16,6 +16,8 @@ def start(game: Game):
     scene.name = "Level1Scene"
     scene.this.player = init_player(game)
 
+    game.audio_manager.play_music("level1")
+
     """
     CREATION OF COLLIDERS
     """

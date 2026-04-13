@@ -92,13 +92,9 @@ def main_menu( game: Game, scene):
 #%%############### UI CALLBACKS ##########################
 ##########################################################
 def start_game_scene(game_scene: Scene, game: Game):
-    audio_manager = game.audio_manager
-    audio_manager.play_music("inGame")
     game.scene = game_scene
 
 def goto_title_scene(menu_scene: Scene, game: Game):
-    audio_manager = game.audio_manager
-    audio_manager.play_music("titleScreen")
     game.scene = menu_scene
 
 def toggle_audio(audio_manager: AudioManager = None, menu = None):

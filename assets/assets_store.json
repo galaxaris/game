@@ -66,8 +66,11 @@
     "music": {
         "titleScreen": "MainTheme.mp3",
         "inGame": "Desert.mp3",
-        "pause": "Alicia.mp3",
-        "level2": "Idee3.mp3"
+        "level1": "Dear To The Heart.mp3",
+        "level2": "Idee3.mp3",
+        "level3": "Desert.mp3",
+        "bossLevel": "industrial.mp3",
+        "pause": "Idea2.mp3"
     },
     "sfx": {
         "jump": "robot-jump.mp3",
