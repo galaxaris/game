@@ -1071,7 +1071,7 @@ def start(game: Game):
     # SECTION 2 — TRONCS ET PLATEFORMES MOBILES
     ###########################################################################
     section2_start = cursor + 150
-    section2_end = section2_start + 1200
+    section2_end = section2_start + 1250
     add_ground_strip(section2_start, section2_end)
 
     ###############################################################################
@@ -1093,7 +1093,7 @@ def start(game: Game):
 
 
     #TP the player here for debug
-    #p.set_position((section2_start + 200, 0))
+    p.set_position((section2_start + 200, 0))
 
     collections += [Solid((section2_start + 120, 275), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     ac1 = Solid((section2_start + 100, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
@@ -1109,9 +1109,36 @@ def start(game: Game):
     scene.add(mp1, "#object")
 
     #Add an anchor on the top middle of the moving platform
-    ac1 = Solid((section2_start + 400, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
+    ac1 = Solid((section2_start + 300, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
     ac1.add_tag("anchor")
     scene.add(ac1, "#object")
+
+    ## Add a plateform ("checkpoint_ground") 50px on the top of the anchor, with plant1, checkpoint & trap & collector of rain on it
+    platform_w = 400
+    platform_x = section2_start + 350
+    platform_y = 100 - 50
+    platform = Solid((platform_x, platform_y), (platform_w, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])
+    scene.add(platform, "#object")
+    collections += [platform]
+
+
+    collections += [TriggerInteract(
+        (platform_x + 70, platform_y - 48), (48, 48), ["player"],
+        [lambda obj: refill_water(p, game)]
+    ).set_texture(game.RESSOURCES["textures"]["rain_collector"])]
+
+    checkpoint_regular = Trigger(
+        (platform_x + 28, platform_y - 120),
+        (64, 64),
+        ["player"],
+        [lambda obj, cp=[platform_x + 28, platform_y - 120]: save_checkpoint(p, cp, game)],
+        once=True,
+    ).set_texture(game.RESSOURCES["textures"]["switch_on"], rescale=True)
+    collections += [checkpoint_regular]
+
+    for x in range(section2_start + 360, section2_end - 500, 100):
+        #plant1 on the previous platformform
+        collections += [GameObject((x, platform_y - 16), (32, 16)).set_texture(game.RESSOURCES["textures"]["plant1"])]
 
 
     ### Ennemi #2
@@ -1128,7 +1155,7 @@ def start(game: Game):
     })
     scene.add(trap2, "#object")
 
-    for x in range(section2_start + 600, section2_end - 40, 150):
+    for x in range(section2_start + 600, section2_end - 40, 100):
         collections += [Solid((x, 275), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
     # Add a lot of tree1
@@ -1154,7 +1181,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol2", dialog_ecol2)
     sign2 = TriggerInteract(
-        (section2_end - 80, 268), (32, 32), ["player"],
+        (section2_end - 70, 268), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol2")]
     )
     sign2.set_texture(game.RESSOURCES["textures"]["sign"])
