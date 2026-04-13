@@ -1074,40 +1074,78 @@ def start(game: Game):
     #%%########################################################################
     # SECTION 2 — TRONCS ET PLATEFORMES MOBILES
     ###########################################################################
-    section2_start = cursor
-    section2_end = section2_start + 700
+    section2_start = cursor + 150
+    section2_end = section2_start + 1200
     add_ground_strip(section2_start, section2_end)
 
     ###############################################################################
 ##############################################################################################################################################################
 ###############################################################################
 
+
+
+    #===================
+    # Trap y: 290
+    # Tree stump y: 275
+    #
+    #
+    #
+    #
+    #
+    #
+    #======================
+
+
     #TP the player here for debug
-    p.set_position((section2_start + 200, 150))
+    #p.set_position((section2_start + 200, 0))
 
+    collections += [Solid((section2_start + 120, 275), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
+    ac1 = Solid((section2_start + 100, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
+    ac1.add_tag("anchor")
+    scene.add(ac1, "#object")
 
-    mp1 = Solid((section2_start + 220, 220), (75, 15))
+    mp1 = Solid((section2_start + 300, 140), (95, 15))
     mp1.set_texture(game.RESSOURCES["textures"]["moving_platform"])
     moving_platforms.append({
         "solid": mp1, "axis": "x", "speed": 0.85, "direction": 1,
-        "min_x": section2_start + 180, "max_x": section2_start + 460, "_current": float(section2_start + 220),
+        "min_x": section2_start + 220, "max_x": section2_start + 600, "_current": float(section2_start + 220),
     })
     scene.add(mp1, "#object")
 
+    #Add an anchor on the top middle of the moving platform
+    ac1 = Solid((section2_start + 400, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
+    ac1.add_tag("anchor")
+    scene.add(ac1, "#object")
+
 
     ### Ennemi #2
-    enemy2 = Enemy((section2_start + 420, 100), (48, 48), mode="chase", range=220)
+    enemy2 = Enemy((section2_start + 420, 240), (48, 48), mode="chase", range=220)
     enemy2.set_gravity(game_settings["GRAVITY"])
     enemy2.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy2]
 
     #### Piège #2
-    trap2 = Trap((section2_start + 180, 185), (28, 15), "player", 20, cooldown=1500)
+    trap2 = Trap((section2_start + 180, 290), (28, 15), "player", 20, cooldown=1500)
     trap2.bind_textures({
         "idle":   game.RESSOURCES["textures"]["trap_idle"],
         "active": game.RESSOURCES["textures"]["trap_active"],
     })
     scene.add(trap2, "#object")
+
+    for x in range(section2_start + 600, section2_end - 40, 150):
+        collections += [Solid((x, 275), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
+
+    # Add a lot of tree1
+    pas = rd.randint(100, 250)
+    x = int(section2_start)
+    while x < int(section2_end):
+        collections += [GameObject((x, 185), (123, 116)).set_texture(game.RESSOURCES["textures"]["tree1"])]
+        # Add a second tree on the right if the random number is superior to 200
+        if rd.randint(1, 100) > 200:
+            collections += [GameObject((x + 50, 185), (123, 116)).set_texture(game.RESSOURCES["textures"]["tree1"])]
+
+        pas = rd.randint(100, 250)
+        x += pas
 
     #### Panneau #2 (alerte biodiversité)
     dialog_ecol2 = make_ecology_dialog(
@@ -1312,7 +1350,7 @@ def start(game: Game):
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
     #### Plateforme mobile #3 : (horizontale)
-    mp3 = Solid((section4_start + 130, 232), (72, 15))
+    mp3 = Solid((section4_start + 130, 232), (95, 15))
     mp3.set_texture(game.RESSOURCES["textures"]["moving_platform"])
     moving_platforms.append({
         "solid": mp3, "axis": "x", "speed": 1.1, "direction": 1,
@@ -1337,14 +1375,6 @@ def start(game: Game):
     collections += [Solid((section5_start + 610, 232), (95, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
     collections += [Solid((section5_start + 790, 252), (90, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
 
-    #### Plateforme mobile #4 : (verticale)
-    #mp4 = Solid((section5_start + 190, 208), (82, 15))
-    #mp4.set_texture(game.RESSOURCES["textures"]["moving_platform"])
-    #moving_platforms.append({
-    #    "solid": mp4, "axis": "y", "speed": 0.9, "direction": 1,
-    #    "min_y": 192, "max_y": 282, "_current": 208.0,
-    #})
-    #scene.add(mp4, "#object")
 
     #### Ennemi #5
     enemy5 = Enemy((section5_start + 320, 182), (48, 48), mode="patrol", range=300)
