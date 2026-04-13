@@ -73,7 +73,7 @@ def start(game: Game):
     scene.this.player = init_player(game)
     init_level(game, scene, scene.this.player)
 
-    scene.camera.set_offset((scene.size.x // 2 - scene.this.player.size.x, scene.size.y // 2 - scene.this.player.size.y + 100))
+    scene.camera.set_offset((scene.size.x // 2 - scene.this.player.size.x, scene.size.y // 2 - scene.this.player.size.y + 50))
     scene.camera.set_limits((150, -scene.size.y - 100), (scene.size.x * 20, scene.size.y - 100))
 
     p = scene.this.player          # alias court, capturé dans les lambdas
@@ -100,7 +100,7 @@ def start(game: Game):
 
     def add_ground_strip(x_start: int, x_end: int, texture_key: str = "platform_forest"):
         collections.append(
-            Solid((x_start, floor_y), (x_end - x_start, 100)).set_texture(game.RESSOURCES["textures"][texture_key])
+            Solid((x_start, floor_y), (x_end - x_start, 150)).set_texture(game.RESSOURCES["textures"][texture_key])
         )
 
     def add_simple_platforms(
@@ -133,6 +133,8 @@ def start(game: Game):
         plant1: bool = True,
         moving_platform: bool = True,
         anchor: bool = True,
+        checkpoint_switch: bool = True,
+        middle_dialog_key: str = "mid_progress_notice",
         bridge_plank: bool = True,
         trap_idle: bool = True,
         rain_collector: bool = True,
@@ -192,18 +194,35 @@ def start(game: Game):
             collections.append(solid)
             return solid, int(width), int(height)
 
-        def add_platform_staircase(x_origin: int, from_y: int, to_y: int, direction: int = 1):
+        def add_anchor_decor(x: int, y: int):
+            if not (anchor and has_texture("industrial_tile")) and x >= x_start + 450:
+                return None
+            anchor_obj = Solid((int(x), int(y)), (25, 25))
+            anchor_obj.set_texture(textures["industrial_tile"], rescale=True)
+            anchor_obj.add_tag("anchor")
+            collections.append(anchor_obj)
+            return anchor_obj
+
+        def add_platform_staircase(
+            x_origin: int,
+            from_y: int,
+            to_y: int,
+            direction: int = 1,
+            add_landing: bool = False,
+        ):
             step_count = max(3, min(8, int(abs(to_y - from_y) / 34) + 1))
             step_spacing_x = 58
             min_x = None
             max_x = None
+            step_records = []
 
             for i in range(step_count):
                 t = float(i + 1) / float(step_count)
                 step_y = int(from_y + (to_y - from_y) * t)
                 step_x = int(x_origin + (i * step_spacing_x * direction))
-                step_w = rd.randint(60, 110)
+                step_w = 72
                 add_custom_solid(step_x, step_y, step_w, 30, "platform_forest", rescale=False)
+                step_records.append((step_x, step_y, step_w))
 
                 if min_x is None:
                     min_x = step_x
@@ -218,6 +237,30 @@ def start(game: Game):
                         plant_x = step_x + rd.randint(4, max(4, step_w - plant_w - 4))
                         add_scaled_decor("plant1", plant_x, step_y + 2, align_bottom=True)
 
+            if add_landing and step_records:
+                top_step_x, top_step_y, top_step_w = step_records[-1] if direction >= 0 else step_records[0]
+
+                # Plateforme d'arrivee placee reellement a la sortie de l'escalier.
+                platform_w = 0
+                platform_h = 30
+                platform_x = top_step_x + top_step_w + 14 if direction >= 0 else top_step_x - platform_w - 14
+                platform_y = max(safe_min_y, min(safe_max_y, top_step_y - 8))
+                add_custom_solid(platform_x, platform_y, platform_w, platform_h, "platform_forest", rescale=False)
+
+                for decor_key in ["plant1", "tree1", "tree2"]:
+                    if has_texture(decor_key):
+                        decor_w, _ = texture_size(decor_key)
+                        if platform_w > decor_w + 8:
+                            decor_x = platform_x + rd.randint(4, max(4, platform_w - decor_w - 4))
+                            add_scaled_decor(decor_key, decor_x, platform_y + 2, align_bottom=True)
+
+                if anchor and has_texture("industrial_tile"):
+                    anchor_x = platform_x + platform_w + 42 if direction >= 0 else platform_x - 67
+                    anchor_y = platform_y - 100
+                    add_anchor_decor(anchor_x, anchor_y)
+            
+            
+
             return {
                 "start_x": int(min_x if min_x is not None else x_origin),
                 "end_x": int(max_x if max_x is not None else x_origin),
@@ -228,6 +271,18 @@ def start(game: Game):
         if end_x - start_x < 260:
             return
 
+        segment_length = end_x - start_x
+        middle_checkpoint_enabled = segment_length > 2000
+        middle_center_x = start_x + (segment_length // 2)
+        middle_platform_w = 400
+        middle_safety_margin = 24
+        middle_safe_start = middle_center_x - (middle_platform_w // 2) - middle_safety_margin
+        middle_safe_end = middle_center_x + (middle_platform_w // 2) + middle_safety_margin
+
+        def in_middle_safe(x: int, width: int = 1) -> bool:
+            x_end = x + max(1, width)
+            return not (x_end < middle_safe_start or x > middle_safe_end)
+
         spawn_density = max(0.08, min(float(density), 1.0))
 
         requested_low_y = int(min(y_min, y_max))
@@ -235,15 +290,15 @@ def start(game: Game):
 
         # Si y_max depasse le sol, on l'interprete comme une demande de verticalite plus forte.
         if requested_high_y > floor_y:
-            requested_span = max(120, min(requested_high_y - requested_low_y, floor_y + 520))
-            safe_max_y = floor_y - 24
+            requested_span = max(110, min(requested_high_y - requested_low_y + 60, floor_y + 360))
+            safe_max_y = floor_y - 60
             safe_min_y = max(-260, safe_max_y - requested_span)
         else:
             safe_min_y = max(-260, requested_low_y)
-            safe_max_y = min(floor_y - 24, requested_high_y)
+            safe_max_y = min(floor_y - 60, requested_high_y)
 
-        if safe_max_y - safe_min_y < 120:
-            safe_min_y = max(-260, safe_max_y - 120)
+        if safe_max_y - safe_min_y < 110:
+            safe_min_y = max(-260, safe_max_y - 110)
 
         playable_start = start_x + 70
         playable_end = end_x - 70
@@ -251,7 +306,7 @@ def start(game: Game):
             return
 
         y_span = safe_max_y - safe_min_y
-        tier_count = max(5, min(9, 4 + y_span // 70))
+        tier_count = max(40, min(7, 3 + y_span // 85))
         tiers = [
             safe_max_y - int(i * y_span / (tier_count - 1))
             for i in range(tier_count)
@@ -260,36 +315,110 @@ def start(game: Game):
         tier_min_idx = 1 if tier_count > 3 else 0
         tier_max_idx = tier_count - 1
 
-        # Chemin principal moins dense pour laisser place aux parcours techniques.
-        main_step = int(max(290, min(520, 560 - spawn_density * 150)))
-        main_jitter = int(max(35, min(90, 95 - spawn_density * 18)))
+        # Chemin principal plus lisible: petits gaps et delta vertical controle.
+        main_step = int(max(105, min(165, 220 - spawn_density * 65)))
+        main_jitter = int(max(14, min(36, 40 - spawn_density * 10)))
+        max_vertical_step = 82
 
         if not (platform_forest and has_texture("platform_forest")):
             return
 
-        connector_modes = []
-        if platform_forest1 and has_texture("platform-forest1"):
-            connector_modes.append("platform-forest1")
-        if platform_forest2 and has_texture("platform-forest2"):
-            connector_modes.append("platform-forest2")
-        if moving_platform and has_texture("moving_platform"):
-            connector_modes.append("moving_platform")
-        if not connector_modes:
+        has_pf1 = platform_forest1 and has_texture("platform-forest1")
+        has_pf2 = platform_forest2 and has_texture("platform-forest2")
+        has_moving = moving_platform and has_texture("moving_platform")
+        if not (has_pf1 or has_pf2 or has_moving):
             return
 
+        moving_lane_reservations = []
+        platform_forest2_reservations = []
+
+        def reserve_moving_lane(travel_min_x: int, travel_max_x: int, y: int, h: int = 15) -> bool:
+            # Reserve an expanded lane so dynamic platforms do not stack on the same path.
+            lane_min_x = int(travel_min_x) - 16
+            lane_max_x = int(travel_max_x) + 16
+            lane_top = int(y) - 20
+            lane_bottom = int(y + h) + 20
+            for min_x_r, max_x_r, top_r, bottom_r in moving_lane_reservations:
+                if lane_max_x < min_x_r or lane_min_x > max_x_r:
+                    continue
+                if lane_bottom < top_r or lane_top > bottom_r:
+                    continue
+                return False
+            moving_lane_reservations.append((lane_min_x, lane_max_x, lane_top, lane_bottom))
+            return True
+
+        def reserve_platform_forest2(
+            x: int,
+            y: int,
+            w: int = 50,
+            h: int = 33,
+            padding: int = 4,
+        ) -> bool:
+            left = int(x) - padding
+            top = int(y) - padding
+            right = int(x + w) + padding
+            bottom = int(y + h) + padding
+            for r_left, r_top, r_right, r_bottom in platform_forest2_reservations:
+                if right <= r_left or left >= r_right or bottom <= r_top or top >= r_bottom:
+                    continue
+                return False
+            platform_forest2_reservations.append((left, top, right, bottom))
+            return True
+
+        def add_platform_forest2_if_free(x: int, y: int) -> bool:
+            if not has_pf2:
+                return False
+            if not reserve_platform_forest2(x, y, 50, 33):
+                return False
+            add_custom_solid(x, y, 50, 33, "platform-forest2", rescale=True)
+            return True
+
         main_slots = []
+        min_main_platform_gap = 50
+
+        def has_min_main_platform_gap(x: int, width: int) -> bool:
+            cand_left = int(x)
+            cand_right = cand_left + int(width)
+            for slot in main_slots:
+                slot_left = int(slot["x"])
+                slot_right = slot_left + int(slot["w"])
+                if cand_left < (slot_right + min_main_platform_gap) and (cand_right + min_main_platform_gap) > slot_left:
+                    return False
+            return True
+
         tier_idx = min(tier_max_idx, max(tier_min_idx, tier_min_idx + (tier_max_idx - tier_min_idx) // 2))
         tier_dir = rd.choice([-1, 1])
 
-        x_cursor = playable_start + rd.randint(0, 30)
+        x_cursor = playable_start + rd.randint(300, 415)
         while x_cursor < playable_end - 60:
-            if len(main_slots) > 1 and rd.random() < 0.22 and x_cursor < playable_end - 220:
-                x_cursor += rd.randint(110, 220)
+            if middle_checkpoint_enabled and middle_safe_start - 20 <= x_cursor <= middle_safe_end + 20:
+                x_cursor = middle_safe_end + rd.randint(18, 40) + 70
                 continue
 
-            plat_width = rd.randint(50, 200)
-            y_slot = tiers[tier_idx] + rd.randint(-10, 10)
+            plat_width = rd.randint(80, 150)
+            y_target = tiers[tier_idx] + rd.randint(-8, 8)
+            if main_slots:
+                prev_y = main_slots[-1]["y"]
+                delta_y = rd.randint(-140, 140)
+                if -14 < delta_y < 14:
+                    delta_y = 14 if rd.random() < 0.5 else -14
+                y_slot = prev_y + delta_y
+            else:
+                y_slot = y_target
             y_slot = max(safe_min_y, min(safe_max_y, y_slot))
+
+            if main_slots:
+                min_x_for_gap = main_slots[-1]["x"] + main_slots[-1]["w"] + min_main_platform_gap
+                if x_cursor < min_x_for_gap:
+                    x_cursor = min_x_for_gap
+
+            if middle_checkpoint_enabled and middle_safe_start - 20 <= x_cursor <= middle_safe_end + 20:
+                x_cursor = middle_safe_end + rd.randint(18, 40) + 70
+                continue
+
+            if not has_min_main_platform_gap(x_cursor, plat_width):
+                x_cursor += min_main_platform_gap
+                continue
 
             _, width, height = add_custom_solid(
                 x_cursor,
@@ -301,10 +430,11 @@ def start(game: Game):
             )
             main_slots.append({"x": int(x_cursor), "y": int(y_slot), "w": int(width), "h": int(height)})
 
-            x_cursor += max(180, main_step + rd.randint(-main_jitter, main_jitter))
+            target_gap = int(max(300, min(118, (main_step - 58) + rd.randint(-main_jitter, main_jitter))))
+            x_cursor += width + target_gap
 
             if rd.random() < 0.85:
-                tier_idx += tier_dir * rd.choice([1, 1, 2])
+                tier_idx += tier_dir * rd.choice([1, 1, 1, 2])
 
             if tier_idx >= tier_max_idx:
                 tier_idx = tier_max_idx
@@ -321,36 +451,159 @@ def start(game: Game):
         last_slot = main_slots[-1]
         first_stair_steps = max(3, min(8, int(abs((floor_y - 30) - first_slot["y"]) / 34) + 1))
         first_stair_origin = max(start_x + 20, first_slot["x"] - (first_stair_steps * 58) - 20)
-        first_stair_info = add_platform_staircase(first_stair_origin, floor_y - 30, first_slot["y"], direction=1)
+        first_stair_info = add_platform_staircase(
+            first_stair_origin,
+            floor_y - 30,
+            first_slot["y"],
+            direction=1,
+            add_landing=True,
+        )
 
         end_stair_origin = last_slot["x"] + last_slot["w"] + 20
         add_platform_staircase(end_stair_origin, last_slot["y"], floor_y - 30, direction=1)
 
-        # Zone de securite: pas d'elements bloquants avant la fin de l'escalier d'entree.
-        protected_until_x = max(first_slot["x"], first_stair_info["end_x"]) + 16
+        # Zone de securite resserree: protege l'escalier sans creer un grand vide apres.
+        protected_until_x = first_stair_info["end_x"] + 6
+
+        # Checkpoint central impose pour les longs segments (> 2000px), sans aleatoire concurrent.
+        if middle_checkpoint_enabled:
+            if main_slots:
+                ref_slot = min(main_slots, key=lambda slot: abs((slot["x"] + slot["w"] // 2) - middle_center_x))
+                middle_platform_y = max(safe_min_y + 25, min(safe_max_y, ref_slot["y"] + rd.randint(-8, 8)))
+            else:
+                middle_platform_y = max(safe_min_y + 25, min(safe_max_y, floor_y - 95))
+
+            middle_platform_x = middle_center_x - (middle_platform_w // 2)
+            add_custom_solid(middle_platform_x, middle_platform_y, middle_platform_w, 30, "platform_forest", rescale=False)
+
+            if plant1 and has_texture("plant1"):
+                plant_w_mid, _ = texture_size("plant1")
+                for px in [middle_platform_x + 26, middle_platform_x + 110, middle_platform_x + 210, middle_platform_x + 320]:
+                    if px + plant_w_mid <= middle_platform_x + middle_platform_w - 4:
+                        add_scaled_decor("plant1", px, middle_platform_y + 2, align_bottom=True)
+
+            #Add an anchor on the left side of the middle checkpoint so player can grapple
+            if anchor and has_texture("industrial_tile"):
+                add_anchor_decor(middle_platform_x + 20, middle_platform_y - 100)
+
+            if rain_collector and has_texture("rain_collector"):
+                rain_w_mid, rain_h_mid = texture_size("rain_collector")
+                rain_mid_x = middle_platform_x + middle_platform_w - rain_w_mid - 20
+                rain_mid_y = middle_platform_y - rain_h_mid
+                rain_mid = TriggerInteract(
+                    (rain_mid_x, rain_mid_y),
+                    (rain_w_mid, rain_h_mid),
+                    ["player"],
+                    [lambda obj: refill_water(p, game)],
+                )
+                rain_mid.set_texture(textures["rain_collector"], rescale=True)
+                collections.append(rain_mid)
+
+            if checkpoint_switch and has_texture("switch_on"):
+                sw_w_mid, sw_h_mid = (64, 64)
+                cp_mid_x = middle_platform_x + 168
+                cp_mid_y = middle_platform_y - sw_h_mid
+                cp_mid_pos = [cp_mid_x + (sw_w_mid // 2) - 4, middle_platform_y - 48]
+                checkpoint_mid = Trigger(
+                    (cp_mid_x, cp_mid_y),
+                    (sw_w_mid, sw_h_mid),
+                    ["player"],
+                    [lambda obj, cp=cp_mid_pos: save_checkpoint(p, cp, game)],
+                    once=True,
+                )
+                checkpoint_mid.set_texture(textures["switch_on"], rescale=True)
+                collections.append(checkpoint_mid)
+
+            mid_dialog = Dialog(game.RESSOURCES["fonts"]["default"])
+            mid_dialog.add_character("Mélanie Cavill", game.RESSOURCES["textures"]["melanie"])
+            mid_dialog.add_message("Mélanie Cavill", "Tu te rapproches de la zone de fin de niveau !")
+            scene.UI.add(middle_dialog_key, mid_dialog)
+
+            dialog_trigger_mid = Trigger(
+                (middle_platform_x + 70, middle_platform_y - 140),
+                (260, 170),
+                ["player"],
+                [lambda obj, key=middle_dialog_key: scene.UI.show(key)],
+                once=True,
+            )
+            collections.append(dialog_trigger_mid)
+
+            # Plateformes d'approche fixes pour eviter un vide excessif autour du checkpoint central.
+            approach_w = rd.randint(95, 140)
+            approach_gap = rd.randint(26, 40)
+            left_approach_x = middle_safe_start - approach_gap - approach_w
+            right_approach_x = middle_safe_end + approach_gap
+            left_approach_y = max(safe_min_y, min(safe_max_y, middle_platform_y + rd.randint(-14, 10)))
+            right_approach_y = max(safe_min_y, min(safe_max_y, middle_platform_y + rd.randint(-10, 14)))
+
+            if (
+                left_approach_x + approach_w + 14 < middle_safe_start
+                and left_approach_x >= playable_start
+                and has_min_main_platform_gap(left_approach_x, approach_w)
+            ):
+                _, left_w, left_h = add_custom_solid(
+                    left_approach_x,
+                    left_approach_y,
+                    approach_w,
+                    30,
+                    "platform_forest",
+                    rescale=False,
+                )
+                main_slots.append({"x": int(left_approach_x), "y": int(left_approach_y), "w": int(left_w), "h": int(left_h)})
+
+            if (
+                right_approach_x > middle_safe_end + 14
+                and right_approach_x + approach_w <= playable_end
+                and has_min_main_platform_gap(right_approach_x, approach_w)
+            ):
+                _, right_w, right_h = add_custom_solid(
+                    right_approach_x,
+                    right_approach_y,
+                    approach_w,
+                    30,
+                    "platform_forest",
+                    rescale=False,
+                )
+                main_slots.append({"x": int(right_approach_x), "y": int(right_approach_y), "w": int(right_w), "h": int(right_h)})
+
+            main_slots.sort(key=lambda slot: slot["x"])
 
         # Deuxieme chemin plus haut, regulier et deconnecte du chemin principal.
         upper_slots = []
-        upper_stride = 3
-        upper_offset = rd.randint(0, upper_stride - 1)
-        upper_keys = []
-        if platform_forest1 and has_texture("platform-forest1"):
-            upper_keys.append(("platform-forest1", 99, 78))
-        if platform_forest2 and has_texture("platform-forest2"):
-            upper_keys.append(("platform-forest2", 50, 33))
+        upper_stride = 2
+        upper_offset = 1
+        upper_step_limit = 14
 
-        if upper_keys:
+        upper_key = None
+        upper_w = 0
+        upper_h = 0
+        if platform_forest1 and has_texture("platform-forest1"):
+            upper_key = "platform-forest1"
+            upper_w, upper_h = (99, 78)
+        elif platform_forest2 and has_texture("platform-forest2"):
+            upper_key = "platform-forest2"
+            upper_w, upper_h = (50, 33)
+
+        if upper_key is not None:
             for idx, slot in enumerate(main_slots):
                 if idx % upper_stride != upper_offset:
                     continue
-                key, base_w, base_h = rd.choice(upper_keys)
-                repeat_x = 1 if key == "platform-forest1" else rd.choice([1, 2])
-                up_w = base_w * repeat_x
-                up_h = base_h
-                up_x = slot["x"] + rd.randint(-20, 20)
-                up_y = max(-320, min(safe_min_y - 35, slot["y"] - rd.randint(100, 190)))
-                add_custom_solid(up_x, up_y, up_w, up_h, key, rescale=True)
-                upper_slots.append({"x": up_x, "y": up_y, "w": up_w, "h": up_h})
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
+                    continue
+                up_x = int(slot["x"] + (slot["w"] // 2) - (upper_w // 2))
+                target_up_y = max(-320, min(safe_min_y - 42, slot["y"] - 140))
+                if upper_slots:
+                    prev_up_y = upper_slots[-1]["y"]
+                    up_y = prev_up_y + max(-upper_step_limit, min(upper_step_limit, target_up_y - prev_up_y))
+                else:
+                    up_y = target_up_y
+
+                add_custom_solid(up_x, up_y, upper_w, upper_h, upper_key, rescale=True)
+                if upper_key == "platform-forest2":
+                    reserve_platform_forest2(up_x, up_y, upper_w, upper_h, padding=2)
+                elif upper_key == "platform-forest1" and anchor and has_texture("industrial_tile"):
+                    add_anchor_decor(up_x - 35, up_y + 20)
+                upper_slots.append({"x": up_x, "y": up_y, "w": upper_w, "h": upper_h})
 
             for i in range(len(upper_slots) - 1):
                 left_u = upper_slots[i]
@@ -358,38 +611,48 @@ def start(game: Game):
                 gap_u = right_u["x"] - (left_u["x"] + left_u["w"])
                 if gap_u < 70:
                     continue
+                upper_span_start = left_u["x"] + left_u["w"]
+                upper_span_end = right_u["x"]
+                if middle_checkpoint_enabled and upper_span_start <= middle_safe_end and upper_span_end >= middle_safe_start:
+                    continue
 
-                if moving_platform and has_texture("moving_platform") and rd.random() < 0.45:
+                if has_pf2 and gap_u >= 120:
+                    support_u_x = left_u["x"] + left_u["w"] + max(8, gap_u // 2 - 25)
+                    support_u_y = int((left_u["y"] + right_u["y"]) / 2)
+                    support_u_y = max(safe_min_y, min(safe_max_y, support_u_y))
+                    add_platform_forest2_if_free(support_u_x, support_u_y)
+
+                if has_moving and gap_u >= 140:
                     mp_w_u = 100
                     mp_h_u = 15
                     min_x_u = left_u["x"] + left_u["w"] + 8
                     max_x_u = right_u["x"] - mp_w_u - 8
                     if max_x_u - min_x_u >= 30:
-                        mp_u = Solid((min_x_u, int((left_u["y"] + right_u["y"]) / 2)), (mp_w_u, mp_h_u))
-                        mp_u.set_texture(textures["moving_platform"], rescale=True)
-                        moving_platforms.append({
-                            "solid": mp_u,
-                            "axis": "x",
-                            "speed": round(rd.uniform(0.55, 1.05), 2),
-                            "direction": 1,
-                            "min_x": min_x_u,
-                            "max_x": max_x_u,
-                            "_current": float(min_x_u),
-                        })
-                        scene.add(mp_u, "#object")
+                        mp_u_y = int((left_u["y"] + right_u["y"]) / 2)
+                        travel_min_u = min_x_u
+                        travel_max_u = max_x_u + mp_w_u
+                        if reserve_moving_lane(travel_min_u, travel_max_u, mp_u_y, mp_h_u):
+                            mp_u = Solid((min_x_u, mp_u_y), (mp_w_u, mp_h_u))
+                            mp_u.set_texture(textures["moving_platform"], rescale=True)
+                            moving_platforms.append({
+                                "solid": mp_u,
+                                "axis": "x",
+                                "speed": round(rd.uniform(0.55, 1.05), 2),
+                                "direction": 1,
+                                "min_x": min_x_u,
+                                "max_x": max_x_u,
+                                "_current": float(min_x_u),
+                            })
+                            scene.add(mp_u, "#object")
 
-                if anchor and has_texture("industrial_tile"):
+                prev_anchor_x = x_start
+                if anchor and has_texture("industrial_tile") and rd.random() < 0.35:
                     anchor_mid_x = left_u["x"] + left_u["w"] + max(6, gap_u // 2 - 12)
-                    anchor_mid_y = min(left_u["y"], right_u["y"]) - rd.randint(60, 115)
-                    anchor_u, _, _ = add_custom_solid(
-                        anchor_mid_x,
-                        anchor_mid_y,
-                        25,
-                        25,
-                        "industrial_tile",
-                        rescale=True,
-                    )
-                    anchor_u.add_tag("anchor")
+                    
+                    #Prevents anchors from being placed too close
+                    if abs(anchor_mid_x - prev_anchor_x) >= 120:
+                        anchor_mid_y = min(left_u["y"], right_u["y"]) - rd.randint(55, 145)
+                        add_anchor_decor(anchor_mid_x, anchor_mid_y)
 
         anchor_stride = 2
         anchor_offset = rd.randint(0, anchor_stride - 1)
@@ -400,99 +663,110 @@ def start(game: Game):
             right_slot = main_slots[i + 1]
             gap = right_slot["x"] - (left_slot["x"] + left_slot["w"])
             vertical_gap = abs(right_slot["y"] - left_slot["y"])
-            connector_start_x = left_slot["x"] + left_slot["w"] + 12
+            connector_start_x = left_slot["x"] + left_slot["w"] + 8
+            connector_span_start = left_slot["x"] + left_slot["w"]
+            connector_span_end = right_slot["x"]
 
             if connector_start_x < protected_until_x:
                 continue
-
-            if gap <= 26:
-                continue
-            if gap < 120 and vertical_gap < 90:
+            if middle_checkpoint_enabled and connector_span_start <= middle_safe_end and connector_span_end >= middle_safe_start:
                 continue
 
-            connector_mode = rd.choice(connector_modes)
-            bridge_y = int((left_slot["y"] + right_slot["y"]) / 2) + rd.randint(-8, 8)
-            bridge_y = max(safe_min_y, min(safe_max_y, bridge_y))
-
-            if connector_mode == "moving_platform" and moving_platform and has_texture("moving_platform"):
-                mp_width = 100
-                mp_height = 15
-                min_x = left_slot["x"] + left_slot["w"] + 12
-                max_x = right_slot["x"] - mp_width - 12
-                if max_x - min_x >= 36:
-                    mp = Solid((min_x, bridge_y), (mp_width, mp_height))
-                    mp.set_texture(textures["moving_platform"], rescale=True)
-                    moving_platforms.append({
-                        "solid": mp,
-                        "axis": "x",
-                        "speed": round(rd.uniform(0.55, 1.05), 2),
-                        "direction": 1,
-                        "min_x": min_x,
-                        "max_x": max_x,
-                        "_current": float(min_x),
-                    })
-                    scene.add(mp, "#object")
-
-                if anchor and has_texture("industrial_tile") and i % anchor_stride == anchor_offset:
-                    anchor_w, anchor_h = (25, 25)
-                    anchor_x = left_slot["x"] + left_slot["w"] + max(8, gap // 2 - anchor_w // 2)
-                    anchor_y = max(safe_min_y - 50, bridge_y - rd.randint(60, 110))
-                    anchor_obj, _, _ = add_custom_solid(
-                        anchor_x,
-                        anchor_y,
-                        anchor_w,
-                        anchor_h,
-                        "industrial_tile",
-                        rescale=True,
-                    )
-                    anchor_obj.add_tag("anchor")
+            if gap <= 70 and vertical_gap <= 50:
                 continue
 
-            if connector_mode == "platform-forest1":
-                piece_w, piece_h = (99, 78)
-            else:
-                piece_w, piece_h = (50, 33)
-
-            if gap < piece_w + 16:
+            bridge_start = left_slot["x"] + left_slot["w"] + 8
+            bridge_end = right_slot["x"] - 8
+            span = max(0, bridge_end - bridge_start)
+            if span < 70 and vertical_gap < 50:
                 continue
 
-            # Parcours plus techniques: moins de pieces et espaces plus grands.
-            piece_count = max(1, min(4, int(gap / 125)))
-            spacing = max(22, int((gap - piece_count * piece_w) / (piece_count + 1)))
-            x_piece = left_slot["x"] + left_slot["w"] + spacing
-            y_piece = bridge_y
+            support_count = 1
+            if gap >= 80:
+                support_count += 1
+            if gap >= 140:
+                support_count += 1
+            if gap >= 210:
+                support_count += 1
+            if vertical_gap >= 55:
+                support_count += 1
+            support_count = max(1, min(5, support_count))
 
-            for _ in range(piece_count):
-                if x_piece + piece_w >= right_slot["x"]:
-                    break
-                y_piece = max(safe_min_y, min(safe_max_y, y_piece + rd.randint(-26, 26)))
-                add_custom_solid(x_piece, y_piece, piece_w, piece_h, connector_mode, rescale=True)
-                x_piece += piece_w + spacing
+            prev_support_y = left_slot["y"]
+            for s in range(1, support_count + 1):
+                t = float(s) / float(support_count + 1)
+                support_x = int(bridge_start + t * span)
+                target_y = int(left_slot["y"] + (right_slot["y"] - left_slot["y"]) * t)
+                delta_y = target_y - prev_support_y
+                support_y = prev_support_y + max(-56, min(56, delta_y))
+                support_y = support_y + rd.randint(-8, 8)
+                support_y = max(safe_min_y, min(safe_max_y, support_y))
 
-            if anchor and has_texture("industrial_tile") and i % anchor_stride == anchor_offset:
-                anchor_w, anchor_h = (25, 25)
-                anchor_x = left_slot["x"] + left_slot["w"] + max(8, gap // 2 - anchor_w // 2)
-                anchor_y = max(safe_min_y - 50, bridge_y - rd.randint(60, 110))
-                anchor_obj, _, _ = add_custom_solid(
-                    anchor_x,
-                    anchor_y,
-                    anchor_w,
-                    anchor_h,
-                    "industrial_tile",
-                    rescale=True,
-                )
-                anchor_obj.add_tag("anchor")
+                placed = False
+                can_place_moving = has_moving and span >= 110 and (s == ((support_count + 1) // 2) or rd.random() < 0.35)
+                if can_place_moving:
+                    mp_w_fb, mp_h_fb = (100, 15)
+                    min_x_fb = max(bridge_start, support_x - 32)
+                    max_x_fb = min(bridge_end - mp_w_fb, support_x + 32)
+                    if max_x_fb - min_x_fb >= 12:
+                        travel_min_fb = min_x_fb
+                        travel_max_fb = max_x_fb + mp_w_fb
+                        if reserve_moving_lane(travel_min_fb, travel_max_fb, support_y, mp_h_fb):
+                            mp_fb = Solid((min_x_fb, support_y), (mp_w_fb, mp_h_fb))
+                            mp_fb.set_texture(textures["moving_platform"], rescale=True)
+                            moving_platforms.append({
+                                "solid": mp_fb,
+                                "axis": "x",
+                                "speed": round(rd.uniform(0.60, 1.0), 2),
+                                "direction": 1,
+                                "min_x": min_x_fb,
+                                "max_x": max_x_fb,
+                                "_current": float(min_x_fb),
+                            })
+                            scene.add(mp_fb, "#object")
+                            placed = True
+
+                if not placed:
+                    prefer_narrow = has_pf2 and (rd.random() < 0.68 or not has_pf1)
+                    if prefer_narrow:
+                        placed = add_platform_forest2_if_free(support_x - 25, support_y)
+                        if (not placed) and has_pf1:
+                            add_custom_solid(support_x - 49, support_y, 99, 78, "platform-forest1", rescale=True)
+                            placed = True
+                    elif has_pf1:
+                        add_custom_solid(support_x - 49, support_y, 99, 78, "platform-forest1", rescale=True)
+                        placed = True
+                    elif has_pf2:
+                        placed = add_platform_forest2_if_free(support_x - 25, support_y)
+
+                if placed and anchor and has_texture("industrial_tile") and s % max(1, anchor_stride) == anchor_offset and rd.random() < 0.65:
+                    anc_x = support_x - 12
+                    anc_y = support_y - rd.randint(95, 145)
+                    add_anchor_decor(anc_x, anc_y)
+
+                prev_support_y = support_y
 
         if wall and has_texture("wall"):
             wall_w, wall_h = texture_size("wall")
-            wall_offset = rd.randint(0, 2)
+            wall_offset = rd.randint(0, 3)
             for idx, slot in enumerate(main_slots):
                 if slot["x"] < protected_until_x:
                     continue
-                if idx % 3 != wall_offset:
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
+                    continue
+                if slot["w"] < 145:
+                    continue
+                if idx <= 0 or idx >= len(main_slots) - 1:
+                    continue
+                if idx % 4 != wall_offset:
                     continue
 
-                col_tiles_h = rd.randint(2, 4)
+                left_gap = slot["x"] - (main_slots[idx - 1]["x"] + main_slots[idx - 1]["w"])
+                right_gap = main_slots[idx + 1]["x"] - (slot["x"] + slot["w"])
+                if left_gap > 120 or right_gap > 120:
+                    continue
+
+                col_tiles_h = rd.randint(1, 2)
                 col_height = wall_h * col_tiles_h
                 col_y = floor_y - col_height
                 col_x = slot["x"] + rd.choice([8, max(8, slot["w"] - wall_w - 8)])
@@ -502,6 +776,8 @@ def start(game: Game):
             plant_w, _ = texture_size("plant1")
             for slot in main_slots:
                 if slot["x"] < protected_until_x:
+                    continue
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
                     continue
                 plant_count = 1 + (1 if spawn_density > 0.55 and rd.random() < 0.50 else 0)
                 for _ in range(plant_count):
@@ -516,6 +792,8 @@ def start(game: Game):
             for idx, slot in enumerate(main_slots):
                 if slot["x"] < protected_until_x:
                     continue
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
+                    continue
                 if idx % 2 != tree2_offset or slot["w"] < tree2_w + 12:
                     continue
                 tree_x = slot["x"] + rd.randint(4, max(4, slot["w"] - tree2_w - 4))
@@ -527,10 +805,40 @@ def start(game: Game):
             for idx, slot in enumerate(main_slots):
                 if slot["x"] < protected_until_x:
                     continue
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
+                    continue
                 if idx % 4 != tree1_offset or slot["w"] < tree1_w + 12:
                     continue
                 tree_x = slot["x"] + rd.randint(2, max(2, slot["w"] - tree1_w - 2))
                 add_scaled_decor("tree1", tree_x, slot["y"] + 2, align_bottom=True)
+
+        if checkpoint_switch and has_texture("switch_on"):
+            cp_stride = 3 if spawn_density < 0.65 else 2
+            cp_offset = rd.randint(0, cp_stride - 1)
+            cp_w, cp_h = (64, 64)
+
+            for idx, slot in enumerate(main_slots):
+                if slot["x"] < protected_until_x:
+                    continue
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
+                    continue
+                if idx % cp_stride != cp_offset:
+                    continue
+                if slot["w"] < cp_w + 8:
+                    continue
+
+                cp_x = slot["x"] + max(0, min(slot["w"] - cp_w, slot["w"] // 2 - cp_w // 2))
+                cp_y = slot["y"] - cp_h
+                cp_pos = [cp_x + (cp_w // 2) - 4, slot["y"] - 48]
+                checkpoint_regular = Trigger(
+                    (cp_x, cp_y),
+                    (cp_w, cp_h),
+                    ["player"],
+                    [lambda obj, cp=cp_pos: save_checkpoint(p, cp, game)],
+                    once=True,
+                )
+                checkpoint_regular.set_texture(textures["switch_on"], rescale=True)
+                collections.append(checkpoint_regular)
 
         if rain_collector and has_texture("rain_collector"):
             rain_w, rain_h = texture_size("rain_collector")
@@ -540,6 +848,8 @@ def start(game: Game):
 
             for idx, slot in enumerate(main_slots):
                 if slot["x"] < protected_until_x:
+                    continue
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
                     continue
                 if idx % rain_stride != rain_offset:
                     continue
@@ -566,6 +876,8 @@ def start(game: Game):
 
             for idx, slot in enumerate(main_slots):
                 if slot["x"] < protected_until_x:
+                    continue
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
                     continue
                 if idx < 1 or idx > len(main_slots) - 2:
                     continue
@@ -602,6 +914,8 @@ def start(game: Game):
             for idx, slot in enumerate(main_slots):
                 if slot["x"] < protected_until_x:
                     continue
+                if middle_checkpoint_enabled and in_middle_safe(slot["x"], slot["w"]):
+                    continue
                 if idx < 1 or idx > len(main_slots) - 2:
                     continue
                 if idx % enemy_stride != enemy_offset:
@@ -613,7 +927,7 @@ def start(game: Game):
 
                 enemy_x = slot["x"] + max(0, min(slot["w"] - enemy_w, slot["w"] // 2 - enemy_w // 2))
                 enemy_y = slot["y"] - enemy_h
-                enemy_mode = "patrol" if idx % 2 == 0 else "idle"
+                enemy_mode = "patrol" if idx % 2 == 0 else "chase"
                 enemy_range = max(120, min(280, int(slot["w"] * 0.95)))
 
                 enemy_obj = Enemy(
@@ -658,7 +972,7 @@ def start(game: Game):
         pas = rd.randint(100, 250)
         x += pas
 
-    fillLevelWithALotOfWonderfulStuff(section1_start + 300, section1_end, 150, 600, density=1)
+    fillLevelWithALotOfWonderfulStuff(section1_start + 500, section1_end, 150, 800, density=1)
 
    # #### Collecteur de pluie #0
    # collections += [Solid((section1_start + 440, 250), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
