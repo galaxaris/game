@@ -1020,7 +1020,7 @@ def start(game: Game):
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["sign"],
         "Forêt de Verdance",
-        "Autrefois, cette forêt filtrait des milliers de tonnes de CO₂ par an "
+        "Autrefois, cette forêt filtrait des milliers de tonnes de CO2 par an "
         "et abritait des centaines d'espèces. Les robots de Cyclope Industries "
         "ont tout ravagé. Neutralise-les pour relancer la reforestation !"
     )
@@ -1180,7 +1180,7 @@ def start(game: Game):
         game.RESSOURCES["textures"]["sign"],
         "Alerte biodiversité",
         "Ces troncs sont les derniers vestiges d'une forêt qui couvrait "
-        "800 km². Chaque unité ennemie neutralisée libère une zone "
+        "800 km2. Chaque unité ennemie neutralisée libère une zone "
         "pour la reforestation naturelle."
     )
     scene.UI.add("ecol2", dialog_ecol2)
@@ -1220,9 +1220,9 @@ def start(game: Game):
         game.RESSOURCES["textures"]["sign"],
         "Journal de bord",
         [
-            "Jour 14 — Les unités CF-4 carbonisent les sous-bois pour extraire "
+            "Jour 14 - Les unités CF-4 carbonisent les sous-bois pour extraire "
             "les minéraux. La forêt brûle. Personne pour les arrêter.",
-            "Jour 31 — Signal détecté depuis la station orbitale. "
+            "Jour 31 - Signal détecté depuis la station orbitale. "
             "Un opérateur humain serait en route. Il y a encore de l'espoir.",
         ]
     )
@@ -1450,7 +1450,7 @@ def start(game: Game):
         game.RESSOURCES["textures"]["sign"],
         "Journal de bord",
         [
-            "Rapport de terrain, Jour 47 — Le CF-7 a renforcé son blindage "
+            "Rapport de terrain, Jour 47 - Le CF-7 a renforcé son blindage "
             "avec des pièces prélevées sur les arbres abattus. Ironie amère.",
             "Son refroidisseur dorsal reste le seul point vulnérable. "
             "L'eau est notre seule arme. "
@@ -1511,7 +1511,7 @@ def start(game: Game):
     dialog_boss.add_character("CF-7", game.RESSOURCES["textures"]["boss"])
     dialog_boss.add_message("Mélanie Cavill",
         "Attention ! Signal thermique immense devant toi. C'est le CF-7. "
-        "Son blindage est renforcé — mais son refroidisseur dorsal est exposé. "
+        "Son blindage est renforcé - mais son refroidisseur dorsal est exposé. "
         "Vise-le avec ton pistolet à eau !")
     dialog_boss.add_message("CF-7",
         "[PROTOCOLE ROUGE ACTIVÉ] CIBLE ORGANIQUE DÉTECTÉE. "

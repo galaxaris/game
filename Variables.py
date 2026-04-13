@@ -57,5 +57,5 @@ player_settings = {
 # TODO: Remove in Production, only for testing purposes
 story = {
     "has_started": False,
-    "current_chapter": 4,
+    "current_chapter": 0,
 }

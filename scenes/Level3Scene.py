@@ -2,6 +2,8 @@ from api.Game import Game
 from api.engine.GameCamera import GameCamera
 from api.engine.Scene import Scene
 from api.environment.Solid import Solid
+from api.environment.Trigger import Trigger, TriggerInteract
+from api.UI.Dialog import Dialog
 from api.utils import Debug
 from game.scripts.levels.level_generation import init_level
 from game.scripts.levels.level_ui import update_player_health_ui, update_ammo_ui
@@ -28,7 +30,26 @@ def start(game: Game):
     scene.this.moving_platform = []
     init_level(game, scene, scene.this.player)
 
+    # Early placeholder at level start: sign first, then end-level antenna.
+    dev_dialog = Dialog(game.RESSOURCES["fonts"]["default"])
+    dev_dialog.add_character("System", game.RESSOURCES["textures"]["sign"])
+    dev_dialog.add_message("System", "En DEV")
+    scene.UI.add("level3_dev_notice", dev_dialog)
 
+    dev_sign = TriggerInteract(
+        (640, 248), (32, 32), ["player"],
+        [lambda obj: scene.UI.show("level3_dev_notice")]
+    )
+    dev_sign.set_texture(game.RESSOURCES["textures"]["sign"])
+    scene.add(dev_sign)
+
+    end_level = Trigger(
+        (720, 63), (191, 337), ["player"],
+        [lambda obj: game.event_manager.triggerEvent("end_level")],
+        once=True
+    )
+    end_level.set_texture(game.RESSOURCES["textures"]["antenna"])
+    scene.add(end_level)
 
     game.audio_manager.play_music("level3")
 
@@ -83,4 +104,3 @@ def update(game: Game):
     update_ammo_ui(scene.this.player_ui_ammo, scene.this.player.ammo)
 
     update_moving_platform(scene.this.moving_platform)
-
