@@ -17,9 +17,12 @@ scene = None
 player = None
 
 
-def _make_block(pos, size, color=(200, 200, 200)):
+def _make_block(pos, size, color=None):
     block = Solid(pos, size)
-    block.set_color(color)
+    if color:
+        block.set_color(color)
+    else:
+        block.add_tag("tile")
     return block
 
 
@@ -130,7 +133,7 @@ def start(game: Game):
     scene.UI.add("eco_recycling_plan", eco_recycling)
 
     # Start corridor + first jumps.
-    collections += [_make_block((80, y), (20, 40), (110, 110, 110)) for y in range(80, 360, 40)]
+    collections += [_make_block((80, y), (20, 40)) for y in range(80, 360, 40)]
     collections += [_make_block((100, 300), (420, 60))]
     collections += [_make_block((560, 270), (70, 20))]
     collections += [_make_block((690, 235), (70, 20))]
@@ -158,11 +161,11 @@ def start(game: Game):
     scene.this.arena_left = arena_left
     scene.this.arena_right = arena_right
 
-    collections += [_make_block((arena_left, 300), (arena_right - arena_left, 60), (150, 150, 150))]
+    collections += [_make_block((arena_left, 300), (arena_right - arena_left, 60))]
 
     last_platform_pos = (arena_left + 415, 250)
     last_platform_size = (95, 18)
-    collections += [_make_block(last_platform_pos, last_platform_size, (175, 175, 175))]
+    collections += [_make_block(last_platform_pos, last_platform_size)]
     scene.this.arena_checkpoint = [arena_left + 120, 202]
 
     # Lock walls are present but disabled until player enters the arena.
@@ -181,7 +184,7 @@ def start(game: Game):
         {"player"},
         [lambda obj: setattr(scene.this.player, "ammo", 25)],
     )
-    refill_trigger.set_color((60, 160, 210))
+    refill_trigger.set_texture(game.RESSOURCES["textures"]["rain_collector"])
     collections.append(refill_trigger)
 
     # Arena entry trigger: closes doors only after the player is fully inside.
@@ -212,6 +215,7 @@ def start(game: Game):
     scene.this.boss = boss
 
     for coll in collections:
+        if("tile" in coll.tags): coll.set_texture(game.RESSOURCES["textures"]["industrial_tile"])
         scene.add(coll, "#object")
 
     scene.add(arena_wall_left, "#object")
