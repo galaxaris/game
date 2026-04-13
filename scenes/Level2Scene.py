@@ -21,9 +21,12 @@
 #  - caméra limits TOP : y≈−458 / BOTTOM : y≈500
 #=============================================================================
 
+import random as rd
+
 from api.Game import Game
 from api.engine.Scene import Scene
 from api.environment.Solid import Solid
+from api.GameObject import GameObject
 from api.utils import Debug
 from game.scripts.levels.level_generation import init_level
 from game.scripts.levels.level_ui import update_player_health_ui, update_ammo_ui
@@ -92,13 +95,12 @@ def start(game: Game):
     # curseur de progression horizontal: chaque section incrémente cursor
     cursor = 100
     floor_y = 300
-    ground_w = 80
+    ground_w = 640
 
-    def add_ground_strip(x_start: int, x_end: int, texture_key: str = "grass"):
-        for x in range(int(x_start), int(x_end), ground_w):
-            collections.append(
-                Solid((x, floor_y), (ground_w, 40)).set_texture(game.RESSOURCES["textures"][texture_key])
-            )
+    def add_ground_strip(x_start: int, x_end: int, texture_key: str = "platform_forest"):
+        collections.append(
+            Solid((x_start, floor_y), (x_end - x_start, 100)).set_texture(game.RESSOURCES["textures"][texture_key])
+        )
 
     def add_simple_platforms(
         x_start: int,
@@ -113,6 +115,270 @@ def start(game: Game):
                 Solid((x, y), (width, 27)).set_texture(game.RESSOURCES["textures"][texture_key])
             )
 
+    def fillLevelWithALotOfWonderfulStuff(
+        x_start: int,
+        x_end: int,
+        y_min: int,
+        y_max: int,
+        density: float = 0.12,
+        platform_forest: bool = True,
+        checkpoint_ground: bool = True,
+        tree_stump: bool = True,
+        wall: bool = True,
+        platform_forest1: bool = True,
+        platform_forest2: bool = True,
+        tree1: bool = True,
+        tree2: bool = True,
+        plant1: bool = True,
+        moving_platform: bool = True,
+        bridge_plank: bool = True,
+        trap_idle: bool = True,
+        rain_collector: bool = True,
+        enemy: bool = True,
+    ):
+        """
+        Generate un segment de foret procedurale, jouable et paramétrable.
+        Chaque famille d'elements peut etre activee/desactivee via booleen.
+        """
+        start_x = int(min(x_start, x_end))
+        end_x = int(max(x_start, x_end))
+        if end_x - start_x < 220:
+            return
+
+        spawn_density = max(0.06, min(float(density), 0.35))
+
+        safe_min_y = max(95, int(min(y_min, y_max)))
+        safe_max_y = min(floor_y - 36, int(max(y_min, y_max)))
+        if safe_max_y - safe_min_y < 35:
+            safe_min_y = max(95, safe_max_y - 35)
+
+        playable_start = start_x + 70
+        playable_end = end_x - 70
+        if playable_end <= playable_start:
+            return
+
+        base_step = int(max(150, min(290, ground_w * (0.58 - spawn_density))))
+        jitter = max(14, int(base_step * 0.20))
+
+        lane_count = 5
+        lane_span = max(1, safe_max_y - safe_min_y)
+        lanes = [
+            safe_min_y + int(i * lane_span / (lane_count - 1))
+            for i in range(lane_count)
+        ]
+
+        lane_idx = rd.randint(1, lane_count - 2)
+        lane_dir = rd.choice([-1, 1])
+        anchors = []
+
+        x_cursor = playable_start + rd.randint(0, 35)
+        while x_cursor < playable_end:
+            if rd.random() < 0.66:
+                lane_idx += lane_dir
+                lane_idx = max(0, min(lane_count - 1, lane_idx))
+                if lane_idx in (0, lane_count - 1):
+                    lane_dir *= -1
+
+            y_anchor = lanes[lane_idx] + rd.randint(-12, 12)
+            y_anchor = max(safe_min_y, min(safe_max_y, y_anchor))
+            anchors.append((x_cursor, int(y_anchor)))
+
+            x_cursor += max(120, base_step + rd.randint(-jitter, jitter))
+
+        if not anchors:
+            return
+
+        platform_catalog = []
+        if platform_forest:
+            platform_catalog.append(("platform_forest", (88, 130), 16))
+        if checkpoint_ground:
+            platform_catalog.append(("checkpoint_ground", (74, 120), 15))
+        if tree_stump:
+            platform_catalog.append(("tree_stump", (45, 58), 27))
+        if platform_forest1:
+            platform_catalog.append(("platform-forest1", (68, 110), 16))
+        if platform_forest2:
+            platform_catalog.append(("platform-forest2", (68, 110), 16))
+        if bridge_plank:
+            platform_catalog.append(("bridge_plank", (56, 84), 12))
+
+        platform_slots = []
+        if platform_catalog:
+            for ax, ay in anchors:
+                texture_key, width_range, height = rd.choice(platform_catalog)
+                width = rd.randint(*width_range)
+
+                if texture_key == "tree_stump":
+                    width = rd.choice([45, 50, 56])
+                    height = 27
+                elif texture_key == "bridge_plank":
+                    ay = max(safe_min_y, ay - rd.randint(0, 10))
+
+                plat = Solid((ax, ay), (width, height))
+                plat.set_texture(game.RESSOURCES["textures"][texture_key])
+                collections.append(plat)
+                platform_slots.append((ax, ay, width, height))
+
+        if wall:
+            last_wall_x = playable_start - 9999
+            for ax, _, _, _ in platform_slots:
+                if ax - last_wall_x < 260:
+                    continue
+                if rd.random() > (0.23 + spawn_density * 0.20):
+                    continue
+
+                pillar_h = rd.randint(40, 95)
+                pillar_x = ax + rd.randint(-18, 18)
+                pillar = Solid((pillar_x, floor_y - pillar_h), (18, pillar_h))
+                pillar.set_texture(game.RESSOURCES["textures"]["wall"])
+                collections.append(pillar)
+                last_wall_x = ax
+
+        last_tree1_x = playable_start - 9999
+        last_tree2_x = playable_start - 9999
+        for ax, _ in anchors:
+            if plant1 and rd.random() < (0.52 + spawn_density * 0.25):
+                plant_y = rd.randint(
+                    max(110, safe_min_y - 15),
+                    min(floor_y - 42, safe_max_y + 25),
+                )
+                collections.append(
+                    GameObject((ax + rd.randint(-20, 20), plant_y), (32, 32)).set_texture(
+                        game.RESSOURCES["textures"]["plant1"]
+                    )
+                )
+
+            if tree2 and ax - last_tree2_x > 220 and rd.random() < 0.30:
+                collections.append(
+                    GameObject((ax + rd.randint(-25, 20), floor_y - 78), (78, 78)).set_texture(
+                        game.RESSOURCES["textures"]["tree2"]
+                    )
+                )
+                last_tree2_x = ax
+
+            if tree1 and ax - last_tree1_x > 360 and rd.random() < 0.20:
+                collections.append(
+                    GameObject((ax + rd.randint(-15, 20), floor_y - 116), (123, 116)).set_texture(
+                        game.RESSOURCES["textures"]["tree1"]
+                    )
+                )
+                last_tree1_x = ax
+
+        if moving_platform and platform_slots:
+            max_moving = max(1, min(3, int((playable_end - playable_start) / 900)))
+            added_moving = 0
+            last_moving_x = playable_start - 9999
+
+            for px, py, pw, _ in platform_slots:
+                if added_moving >= max_moving:
+                    break
+                if px - last_moving_x < 420:
+                    continue
+                if rd.random() > (0.20 + spawn_density * 0.70):
+                    continue
+
+                mp_x = px + max(0, pw // 2 - 36)
+                mp_y = max(safe_min_y + 8, py - rd.randint(18, 45))
+                min_y_mp = max(95, mp_y - rd.randint(35, 70))
+                max_y_mp = min(floor_y - 60, mp_y + rd.randint(45, 95))
+                if max_y_mp - min_y_mp < 35:
+                    continue
+
+                mp = Solid((mp_x, mp_y), (72, 15))
+                mp.set_texture(game.RESSOURCES["textures"]["moving_platform"])
+                moving_platforms.append({
+                    "solid": mp,
+                    "axis": "y",
+                    "speed": round(rd.uniform(0.45, 0.95), 2),
+                    "direction": rd.choice([-1, 1]),
+                    "min_y": min_y_mp,
+                    "max_y": max_y_mp,
+                    "_current": float(mp_y),
+                })
+                scene.add(mp, "#object")
+                added_moving += 1
+                last_moving_x = px
+
+        if rain_collector and platform_slots:
+            last_rain_x = playable_start - 9999
+            high_band_limit = safe_min_y + int((safe_max_y - safe_min_y) * 0.65)
+            for px, py, pw, _ in platform_slots:
+                if px - last_rain_x < 430:
+                    continue
+                if py > high_band_limit:
+                    continue
+                if rd.random() > (0.16 + spawn_density * 0.35):
+                    continue
+
+                rain_x = px + max(0, pw // 2 - 20)
+                rain_y = max(90, py - 44)
+                rain = TriggerInteract(
+                    (rain_x, rain_y),
+                    (42, 42),
+                    ["player"],
+                    [lambda obj: refill_water(p, game)],
+                )
+                rain.set_texture(game.RESSOURCES["textures"]["rain_collector"])
+                collections.append(rain)
+                last_rain_x = px
+
+        if trap_idle and platform_slots:
+            last_trap_x = playable_start - 9999
+            for px, py, pw, _ in platform_slots:
+                if px - last_trap_x < 360:
+                    continue
+                if px < playable_start + 120 or px > playable_end - 120:
+                    continue
+                if rd.random() > (0.18 + spawn_density * 0.50):
+                    continue
+
+                trap_x = px + rd.randint(8, max(8, pw - 36))
+                trap_y = floor_y - 15 if py >= floor_y - 70 else py - 15
+                trap = Trap(
+                    (trap_x, trap_y),
+                    (32, 15),
+                    "player",
+                    rd.randint(12, 22),
+                    cooldown=rd.randint(1200, 2300),
+                )
+                trap.bind_textures({
+                    "idle": game.RESSOURCES["textures"]["trap_idle"],
+                    "active": game.RESSOURCES["textures"]["trap_active"],
+                })
+                scene.add(trap, "#object")
+                last_trap_x = px
+
+        if enemy and platform_slots:
+            max_enemies = max(1, min(3, int((playable_end - playable_start) / 950)))
+            if spawn_density < 0.10:
+                max_enemies = max(1, max_enemies - 1)
+
+            last_enemy_x = playable_start - 9999
+            added_enemies = 0
+            for px, py, pw, _ in platform_slots:
+                if added_enemies >= max_enemies:
+                    break
+                if px - last_enemy_x < 520:
+                    continue
+                if rd.random() > (0.30 + spawn_density * 0.45):
+                    continue
+
+                enemy_x = px + max(0, min(pw - 48, pw // 2 - 20))
+                enemy_y = py - 48
+                enemy_obj = Enemy(
+                    (enemy_x, enemy_y),
+                    (48, 48),
+                    mode=rd.choice(["idle", "patrol"]),
+                    range=rd.randint(120, 260),
+                )
+                enemy_obj.set_gravity(game_settings["GRAVITY"])
+                enemy_obj.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
+                collections.append(enemy_obj)
+
+                added_enemies += 1
+                last_enemy_x = px
+    
+
     # Mur gauche (barrière de départ) - laisser visible
     collections += [
         Solid((100, y), (60, 30)).set_texture(game.RESSOURCES["textures"]["wall"])
@@ -124,22 +390,36 @@ def start(game: Game):
     ###########################################################################
     section1_start = cursor
     section1_end = section1_start + 2000
-    add_ground_strip(section1_start, section1_end, "grass")
+    add_ground_strip(section1_start, section1_end, "platform_forest")
 
-    collections += [Solid((section1_start + 115, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
-    collections += [Solid((section1_start + 255, 225), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
-    collections += [Solid((section1_start + 410, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
-    collections += [Solid((section1_start + 560, 225), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
+    #collections += [Solid((section1_start + 115, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
+    #collections += [Solid((section1_start + 255, 225), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
+    #collections += [Solid((section1_start + 410, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
+    #collections += [Solid((section1_start + 560, 225), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
-    #### Collecteur de pluie #0
-    collections += [Solid((section1_start + 440, 168), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
-    rain_secret0 = TriggerInteract(
-        (section1_start + 445, 128), (48, 48), ["player"],
-        [lambda obj: refill_water(p, game)]
-    )
-    rain_secret0.set_texture(game.RESSOURCES["textures"]["rain_collector"])
-    collections += [rain_secret0]
+    # Add a lot of tree1
+    pas = rd.randint(100, 250)
+    x = int(section1_start)
+    while x < int(section1_end):
+        collections += [GameObject((x, 185), (123, 116)).set_texture(game.RESSOURCES["textures"]["tree1"])]
+        # Add a second tree on the right if the random number is superior to 200
+        if rd.randint(1, 100) > 200:
+            collections += [GameObject((x + 50, 185), (123, 116)).set_texture(game.RESSOURCES["textures"]["tree1"])]
 
+        pas = rd.randint(100, 250)
+        x += pas
+
+    fillLevelWithALotOfWonderfulStuff(section1_start, section1_end, 150, 600, density=1)
+
+   # #### Collecteur de pluie #0
+   # collections += [Solid((section1_start + 440, 250), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
+   # rain_secret0 = TriggerInteract(
+   #     (section1_start + 445, 128), (48, 48), ["player"],
+   #     [lambda obj: refill_water(p, game)]
+   # )
+   # rain_secret0.set_texture(game.RESSOURCES["textures"]["rain_collector"])
+   # collections += [rain_secret0]
+#
     #Panneau #1 (situation & direction à suivre)
     dialog_ecol1 = make_ecology_dialog(
         game.RESSOURCES["fonts"]["default"],
@@ -151,36 +431,36 @@ def start(game: Game):
     )
     scene.UI.add("ecol1", dialog_ecol1)
     sign1 = TriggerInteract(
-        (section1_start + 400, 270), (32, 32), ["player"],
+        (section1_start + 300, 270), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol1")]
     )
     sign1.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign1]
 
     ### Ennenmi #1
-    enemy1 = Enemy((section1_start + 700, 252), (48, 48), mode="patrol", range=180)
-    enemy1.set_gravity(game_settings["GRAVITY"])
-    enemy1.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
-    collections += [enemy1]
-
-    #Piège #1
-    trap1 = Trap((section1_start + 840, 285), (32, 15), "player", 15, cooldown=2000)
-    trap1.bind_textures({
-        "idle":   game.RESSOURCES["textures"]["trap_idle"],
-        "active": game.RESSOURCES["textures"]["trap_active"],
-    })
-    scene.add(trap1, "#object")
-
-    ### Collecteur de pluie #1 
-    rain1 = TriggerInteract(
-        (section1_start + 800, 252), (48, 48), ["player"],
-        [lambda obj: refill_water(p, game)]
-    )
-    rain1.set_texture(game.RESSOURCES["textures"]["rain_collector"])
-    collections += [rain1]
+    #enemy1 = Enemy((section1_start + 700, 252), (48, 48), mode="patrol", range=180)
+    #enemy1.set_gravity(game_settings["GRAVITY"])
+    #enemy1.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
+    #collections += [enemy1]
+#
+    ##Piège #1
+    #trap1 = Trap((section1_start + 840, 285), (32, 15), "player", 15, cooldown=2000)
+    #trap1.bind_textures({
+    #    "idle":   game.RESSOURCES["textures"]["trap_idle"],
+    #    "active": game.RESSOURCES["textures"]["trap_active"],
+    #})
+    #scene.add(trap1, "#object")
+#
+    #### Collecteur de pluie #1 
+    #rain1 = TriggerInteract(
+    #    (section1_start + 800, 252), (48, 48), ["player"],
+    #    [lambda obj: refill_water(p, game)]
+    #)
+    #rain1.set_texture(game.RESSOURCES["textures"]["rain_collector"])
+    #collections += [rain1]
 
     # Plateformes simples pour rythmer les grands espaces entre triggers.
-    add_simple_platforms(section1_start + 170, section1_end - 40, y=272, step=170, width=45)
+    #add_simple_platforms(section1_start + 170, section1_end - 40, y=272, step=170, width=45)
 
     cursor = section1_end
 
