@@ -9,6 +9,7 @@ from api.assets.Texture import *
 from api.entity.Enemy import *
 from api.environment.Trigger import *
 from api.assets.Animation import *
+from game.scripts.scene_manager import *
 from game.scripts.levels.level2 import (
     summon_stairs1,
     refill_water,
@@ -18,6 +19,7 @@ from game.scripts.levels.level2 import (
     make_melanie_dialog,
     make_story_dialog,
 )
+
 
 
 scene = None
@@ -143,7 +145,7 @@ def start(game: Game):
         game.RESSOURCES["fonts"]["default"],
         game.RESSOURCES["textures"]["melanie"],
         "Mélanie Cavill",
-        ["The radar didn't told me a Cyclope's robot was there.\nReload your water tank in the rain collector and select a weapon in the weapon's selection menu (\"TAB\".",
+        ["The radar didn't told me a Cyclope's robot was there.\nReload your water tank in the rain collector and select a weapon in the weapon's selection menu (\"TAB\").",
          "Then, like you did with the grappling gun, aim the robot and shoot."]
 
     )
@@ -172,6 +174,37 @@ def start(game: Game):
     new_obj = Enemy((2925,350),(30,50))
     new_obj.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     scene.add(new_obj)
+
+    dialog_story = make_story_dialog(
+        game.RESSOURCES["fonts"]["default"],
+        game.RESSOURCES["textures"]["sign"],
+        "Preserve water",
+        [
+            "Did you know that water was necessary for life...\n"
+            "Did you know that less of 1% of the water on eath was drinkable...",
+            "Please save the water as much as you can."
+        ]
+    )
+    scene.UI.add("tuto3", dialog_story)
+    sign_story = TriggerInteract(
+        (2950, 370), (32, 32), ["player"],
+        [lambda obj: scene.UI.show("tuto3")]
+    )
+    sign_story.set_texture(game.RESSOURCES["textures"]["sign"])
+    scene.add(sign_story)
+
+    new_obj = Solid((3150, 400), (150, 300))
+    new_obj.set_texture(game.RESSOURCES["textures"]["platform_forest"])
+    scene.add(new_obj)
+
+###################################
+######## END LEVEL TRIGGER ########
+###################################
+
+    end_level = Trigger((3225, 375), (48, 48), ["player"],
+                          [lambda obj: game.event_manager.triggerEvent("goto_base")],
+                          once=True)
+    scene.add(end_level)
 
     init_level(game, scene, scene.this.player)
     scene.camera.set_offset((scene.size.x // 2 - scene.this.player.size.x, scene.size.y // 2 - scene.this.player.size.y + 50))
