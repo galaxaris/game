@@ -83,7 +83,7 @@ def menu_in_game(game: Game, menu_name: str):
     menu_button((0,150), (100, 40), "Title Screen", lambda e: game.event_manager.triggerEvent("goto_title_screen"), menu, FONT_FR, color_set=COLOR_SET_DANGER)
     menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.event_manager.triggerEvent("enable_debug"), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
     menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_audio(audio_manager, menu), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
-    menu_button((screen_w-220,150), (100, 40), "Quit", lambda e: game.event_manager.triggerEvent("QUIT"), menu, FONT_FR, color_set=COLOR_SET_DANGER,  column_index=1)
+    #menu_button((screen_w-220,150), (100, 40), "Quit", lambda e: game.event_manager.triggerEvent("QUIT"), menu, FONT_FR, color_set=COLOR_SET_DANGER,  column_index=1)
 
     return menu
     ## Add menu to scene UI
