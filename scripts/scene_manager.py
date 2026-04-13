@@ -18,8 +18,8 @@ current_scene_instance = None
 def refresh_screen(scene):
     scene.default_surface.fill((0,0,0,0))
     scene.set_layer(1, "#object")
-    scene.set_layer(2, "#player")
-    scene.set_layer(3, "#enemies")
+    scene.set_layer(2, "#enemies")
+    scene.set_layer(3, "#player")
     scene.set_layer(4, "_trajectory")
     scene.set_layer(5, "#projectile")
 
