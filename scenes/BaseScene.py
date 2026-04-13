@@ -32,84 +32,84 @@ def play_warning_dialogue(game):
     dialog.setup({
         "characters": [
             {"name": "Mélanie Cavill", "texture": game.RESSOURCES["textures"]["melanie"]},
-            {"name": "Ordinateur", "texture": game.RESSOURCES["textures"]["ai_icon"]},
-            {"name": "Toi", "texture": game.RESSOURCES["textures"]["player_base"]},
+            {"name": "Computer", "texture": game.RESSOURCES["textures"]["ai_icon"]},
+            {"name": "You", "texture": game.RESSOURCES["textures"]["player_base"]},
             {"name": "Galaxaris", "texture": game.RESSOURCES["textures"]["icon"]}
         ],
         "messages": [
             # --- RÉVEIL ET CONTEXTE ---
-            ("Galaxaris", "Ce jeu est une démonstration technique et est encore en développement. Certaines mécaniques et éléments narratifs ont été enlevés."),
-            ("Galaxaris", "L'histoire et les dialogues présentés ici sont des ébauches et peuvent être sujets à des changements importants dans la version finale du jeu.",
+            ("Galaxaris", "This game is a technical demo and is still in development. Some mechanics and narrative elements have been removed."),
+            ("Galaxaris", "The story and dialogues shown here are drafts and may change significantly in the final version of the game.",
              [
-                 ("Je comprends, continuez.", "continue_dialogue", lambda e: game.event_manager.triggerEvent("back_to_ship") )
+                 ("I understand, continue.", "continue_dialogue", lambda e: game.event_manager.triggerEvent("back_to_ship") )
              ]),
             ("Mélanie Cavill",
-             "Les capteurs de stase indiquent un réveil complet. Respire calmement, tes fonctions vitales se stabilisent."),
-            ("Toi", "Capitaine Cavill ? Je me sens... étrangement léger. Combien de temps s'est écoulé ?"),
+             "The stasis sensors indicate a complete awakening. Breathe calmly, your vital signs are stabilizing."),
+            ("You", "Captain Cavill? I feel... strangely light. How much time has passed?"),
 
             ("Mélanie Cavill",
-             "Trop longtemps. Pendant ton sommeil, l'humanité a fini par abandonner la Terre. L'entreprise 'Cyclope Industries' a détruit la planète à cause de l'exploitation industrielle."),
+             "Too long. During your sleep, humanity ended up abandoning Earth. The company 'Cyclope Industries' destroyed the planet through industrial exploitation."),
 
             # Transition visuelle : Vue satellite de la désolation
-            ("Mélanie Cavill", "Regarde l'écran principal. Ce n'est plus la planète que tu as connue.",
+            ("Mélanie Cavill", "Look at the main screen. This is no longer the planet you once knew.",
              [
-                 ("Regarder", "view_desolated_earth", lambda e: game.event_manager.triggerEvent("view_desolated_earth"))
+                 ("Look", "view_desolated_earth", lambda e: game.event_manager.triggerEvent("view_desolated_earth"))
              ]),
 
             ("Mélanie Cavill",
-             "Les robots d'extraction qu'ils ont créés tournent en boucle. Sans personne pour les guider, ils continuent de puiser des ressources dans un sol déjà épuisé, aggravant la pollution chaque jour.", "view_desolated_earth"),
+             "The extraction robots they created are running in loops. With no one to guide them, they keep draining resources from already exhausted ground, worsening pollution every day.", "view_desolated_earth"),
 
             # --- ENJEU ÉCOLOGIQUE ---
             ("Mélanie Cavill",
-             "Le Conseil International t'a choisi pour une mission unique : inverser la tendance. Nous ne sommes pas ici pour exploiter, mais pour restaurer."),
+             "The International Council chose you for a unique mission: reverse the trend. We are not here to exploit, but to restore."),
 
-            ("Mélanie Cavill", "Acceptes-tu cette responsabilité ? Devenir le lien entre la technologie et la vie ?", [
-                ("Je suis prêt. Rendons cette planète habitable.", "accept_mission",
+            ("Mélanie Cavill", "Do you accept this responsibility? To become the link between technology and life?", [
+                ("I'm ready. Let's make this planet livable again.", "accept_mission",
                  lambda e: game.event_manager.triggerEvent("back_to_ship")),
-                ("Tout seul ?", "doubt_mission",
+                ("Alone?", "doubt_mission",
                  lambda e: game.event_manager.triggerEvent("back_to_ship"))
             ], "choice_commitment"),
 
             # Branche : Le doute
             ("Mélanie Cavill",
-             "Tu n'es pas seule. Je serai tes yeux et tes oreilles. Et surtout, nous avons la science pour nous.",
+             "You are not alone. I will be your eyes and ears. And above all, we have science on our side.",
              "doubt_mission"),
             ("GOTO", "gameplay_details"),
 
             # Branche : L'acceptation
             ("Mélanie Cavill",
-             "C'est l'esprit dont nous avons besoin. La détermination est le premier pas vers la guérison de l'écosystème.",
+             "That's the spirit we need. Determination is the first step toward healing the ecosystem.",
              "accept_mission"),
             ("GOTO", "gameplay_details"),
 
             # --- EXPLICATIONS TECHNIQUES (GAMEPLAY) ---
             ("Mélanie Cavill",
-             "Voici notre stratégie : nous allons utiliser l'antenne orbitale pour pirater les unités de Cyclope Industries au sol.",
+             "Here is our strategy: we will use the orbital antenna to hack Cyclope Industries units on the ground.",
              "gameplay_details"),
 
             ("Mélanie Cavill",
-             "Certains modèles sont trop corrompus pour être sauvés. Il faudra les démanteler. Mais rien ne sera perdu."),
+             "Some models are too corrupted to be saved. We will have to dismantle them. But nothing will be lost."),
 
             ("Mélanie Cavill",
-             "Nous recyclerons leurs composants pour construire des centres de traitement : purificateurs d'eau, stabilisateurs de sols et nurseries pour la flore locale."),
+             "We will recycle their components to build treatment centers: water purifiers, soil stabilizers, and nurseries for local flora."),
 
             # Déclenchement : Activation de la console de contrôle
-            ("Mélanie Cavill", "Le signal de l'antenne vient de se stabiliser. Nous avons une fenêtre d'accès."),
+            ("Mélanie Cavill", "The antenna signal has just stabilized. We have an access window."),
 
-            ("Ordinateur",
-             "Interface de liaison activée. Terminal de contrôle à distance opérationnel. Liaison avec l'unité 'Alpha-01' en attente."),
+            ("Computer",
+             "Link interface activated. Remote control terminal operational. Link with unit 'Alpha-01' pending."),
 
             ("Mélanie Cavill",
-             "C'est le moment. Prends les commandes de ce premier robot. Ta mission commence par un geste simple : ramasser les débris et préparer le terrain pour le futur."),
+             "This is the moment. Take control of this first robot. Your mission starts with a simple action: collect debris and prepare the ground for the future."),
 
-            ("Mélanie Cavill", "L'ordinateur de bord n'attend plus que tes directives. Fais-en bon usage."),
+            ("Mélanie Cavill", "The onboard computer is waiting for your directives. Put it to good use."),
 
-            ("Toi", "Pour la Terre !!!", [
-                ("Allons-y !", "start_gameplay", lambda e: enable_player_control(True,scene))
+            ("You", "For Earth!!!", [
+                ("Let's go!", "start_gameplay", lambda e: enable_player_control(True,scene))
             ]),
 
             # --- FIN DU DIALOGUE ---
-            ("Mélanie Cavill", "Bonne chance, Capitaine. Nous avons confiance en toi.", "start_gameplay"),
+            ("Mélanie Cavill", "Good luck, Captain. We believe in you.", "start_gameplay"),
             ("STOP")
         ]
     })
@@ -129,11 +129,11 @@ def exit_game_dialogue(game):
             {"name": "Mélanie Cavill", "texture": game.RESSOURCES["textures"]["melanie"]},
         ],
         "messages": [
-            ("Mélanie Cavill", "Veux-tu vraiement quitter la partie ?", [
-                ("Oui", "quit_game", lambda e: game.event_manager.triggerEvent("QUIT")),
-                ("Non", "continue_game", lambda e: None)
+            ("Mélanie Cavill", "Do you really want to quit the game?", [
+                ("Yes", "quit_game", lambda e: game.event_manager.triggerEvent("QUIT")),
+                ("No", "continue_game", lambda e: None)
             ]),
-            ("Mélanie Cavill", "Très bien, dirige toi vers l'ordinateur de bord pour continuer ta mission.", "continue_game"),
+            ("Mélanie Cavill", "Alright, head to the onboard computer to continue your mission.", "continue_game"),
             ("STOP")
         ]
     })
@@ -147,11 +147,11 @@ def play_boss_end_dialogue(game):
     dialog.add_character("Mélanie Cavill", game.RESSOURCES["textures"]["melanie"])
     dialog.add_message(
         "Mélanie Cavill",
-        "Bravo, on va pouvoir sauver la planete car tu as battu les mechants robots !"
+        "Great job, we can save the planet now that you defeated the evil robots!"
     )
     dialog.add_message(
         "Mélanie Cavill",
-        "Nous allons recycler leurs composants pour restaurer la Terre."
+        "We will recycle their components to restore Earth."
     )
     scene.UI.add("boss_end_dialogue", dialog)
     scene.UI.show("boss_end_dialogue")
@@ -199,11 +199,11 @@ def launch_computer(game):
 
 
 
-    if(story["current_chapter"] > 1):
+    if(story["current_chapter"] >= 1):
         menu.add_element(foret_button, x=0)
-    if(story["current_chapter"] > 2):
+    if(story["current_chapter"] >= 2):
         menu.add_element(desert_button, x=1)
-    if(story["current_chapter"] > 3):
+    if(story["current_chapter"] >= 3):
         menu.add_element(industrial_button, x=2)
     menu.add_element(tutoriel_button, x=0)
 
