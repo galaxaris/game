@@ -24,7 +24,6 @@
         "fall_anim": "Player/NinjaFrog/fall_scaled.png",
 
         "menu_bg": "UI/Background/Background_space.png",
-        "bomb": "UI/bomb.png",
 
         "forest_bg": "Background/Parallax/Forest/bg.png",
         "forest_layer1": "Background/Parallax/Forest/forest1.png",
