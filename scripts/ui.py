@@ -39,6 +39,22 @@ def menu_button(pos: int, size: int, text: str, callback: callable, menu: Modal,
     button.set_callback(callback)
     menu.add_element(button, column_index)
 
+
+def getCurrentLevelMusic(game: Game):
+    current_level_music = None
+    if game.scene.name == "BaseScene":
+        current_level_music = "titleScreen"
+    elif game.scene.name == "Level1Scene":
+        current_level_music = "level1"
+    elif game.scene.name == "Level2Scene":
+        current_level_music = "level2"
+    elif game.scene.name == "Level3Scene":
+        current_level_music = "level3"
+    elif game.scene.name == "BossLevelScene":
+        current_level_music = "bossLevel"
+
+    return current_level_music
+
 def menu_in_game(game: Game, menu_name: str):
 
     if(game.scene.name == "MainMenuScene"):
@@ -57,13 +73,17 @@ def menu_in_game(game: Game, menu_name: str):
     text = Text((0,0), 20, "Game Menu", FONT_FR, (3, 161, 45))
     menu.add_element(text, x=0)
 
+
+    ## Get current level name to play it's corresponding music when resuming the game
+    current_level_music = getCurrentLevelMusic(game)
+
     ## Buttons
-    menu_button((0,50), (100, 40), "Resume", lambda e: (scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
-    menu_button((0,100), (100, 40), "Restart", lambda e: (game.event_manager.triggerEvent("restart_level"), scene.UI.hide(menu_name), audio_manager.play_music("inGame")), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+    menu_button((0,50), (100, 40), "Resume", lambda e: (scene.UI.hide(menu_name), audio_manager.play_music(current_level_music)), menu, FONT_FR, color_set=COLOR_SET_COMMON)
+    menu_button((0,100), (100, 40), "Restart", lambda e: (game.event_manager.triggerEvent("restart_level"), scene.UI.hide(menu_name), audio_manager.play_music(current_level_music)), menu, FONT_FR, color_set=COLOR_SET_COMMON)
     menu_button((0,150), (100, 40), "Title Screen", lambda e: game.event_manager.triggerEvent("goto_title_screen"), menu, FONT_FR, color_set=COLOR_SET_DANGER)
     menu_button((screen_w-220,50), (100, 40), "Debug", lambda e: game.event_manager.triggerEvent("enable_debug"), menu, FONT_FR, column_index=1, color_set=COLOR_SET_DEBUG)
     menu_button((screen_w-220,100), (100, 40), "Mute", lambda e: toggle_audio(audio_manager, menu), menu, FONT_FR, column_index=1, color_set=COLOR_SET_SETTINGS)
-    menu_button((screen_w-220,150), (100, 40), "Quit", lambda e: game.event_manager.triggerEvent("QUIT"), menu, FONT_FR, color_set=COLOR_SET_DANGER,  column_index=1)
+    #menu_button((screen_w-220,150), (100, 40), "Quit", lambda e: game.event_manager.triggerEvent("QUIT"), menu, FONT_FR, color_set=COLOR_SET_DANGER,  column_index=1)
 
     return menu
     ## Add menu to scene UI
@@ -92,13 +112,9 @@ def main_menu( game: Game, scene):
 #%%############### UI CALLBACKS ##########################
 ##########################################################
 def start_game_scene(game_scene: Scene, game: Game):
-    audio_manager = game.audio_manager
-    audio_manager.play_music("inGame")
     game.scene = game_scene
 
 def goto_title_scene(menu_scene: Scene, game: Game):
-    audio_manager = game.audio_manager
-    audio_manager.play_music("titleScreen")
     game.scene = menu_scene
 
 def toggle_audio(audio_manager: AudioManager = None, menu = None):
@@ -131,6 +147,8 @@ def toggle_audio(audio_manager: AudioManager = None, menu = None):
 def toggle_menu_inGame(game: Game):
     if game.scene and game.scene.name == "MainMenuScene":
         return None
+    
+    current_level_music = getCurrentLevelMusic(game)
 
     if not "menu" in game.scene.UI.enabled_elements:
         if onKeyUp("pause"):
@@ -140,7 +158,7 @@ def toggle_menu_inGame(game: Game):
     elif "menu" in game.scene.UI.enabled_elements:
         if onKeyUp("pause"):
             game.scene.UI.hide("menu")
-            game.audio_manager.play_music("inGame") #Resume the main theme when closing the menu
+            game.audio_manager.play_music(current_level_music) #Resume the main theme when closing the menu
 
 def update_player_health_UI(player_ui_health: ProgressBar, player_health: int):
     player_ui_health.set_progress(player_health)

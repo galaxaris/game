@@ -10,6 +10,7 @@ from api.environment.Solid import Solid
 from api.environment.Trigger import TriggerInteract
 from api.utils import Debug
 
+from api.utils.Console import print_info
 from game.Variables import *
 
 
@@ -65,7 +66,7 @@ def play_warning_dialogue(game):
             ("Mélanie Cavill", "Acceptes-tu cette responsabilité ? Devenir le lien entre la technologie et la vie ?", [
                 ("Je suis prêt. Rendons cette planète habitable.", "accept_mission",
                  lambda e: game.event_manager.triggerEvent("back_to_ship")),
-                ("Toute seule ?", "doubt_mission",
+                ("Tout seul ?", "doubt_mission",
                  lambda e: game.event_manager.triggerEvent("back_to_ship"))
             ], "choice_commitment"),
 
@@ -140,9 +141,26 @@ def exit_game_dialogue(game):
     scene.UI.show("quit_dialog")
 
 
+def play_boss_end_dialogue(game):
+    global scene
+    dialog = Dialog(game.RESSOURCES["fonts"]["default"])
+    dialog.add_character("Mélanie Cavill", game.RESSOURCES["textures"]["melanie"])
+    dialog.add_message(
+        "Mélanie Cavill",
+        "Bravo, on va pouvoir sauver la planete car tu as battu les mechants robots !"
+    )
+    dialog.add_message(
+        "Mélanie Cavill",
+        "Nous allons recycler leurs composants pour restaurer la Terre."
+    )
+    scene.UI.add("boss_end_dialogue", dialog)
+    scene.UI.show("boss_end_dialogue")
+
+
 def launch_computer(game):
     global scene
     menu = Modal((75, 37), (510, 286))
+
 
 
     scene.UI.add("computer_menu", menu)
@@ -198,6 +216,14 @@ def start(game: Game):
     scene.name = "BaseScene"
     bg = Background(game.RESSOURCES["textures"]["ship"], False, scene.size)
 
+    #Condition, because this music is launched in the main menu, but not the same in the levels
+    print_info(f"Current music : {game.audio_manager.current_music()}")
+
+    if game.audio_manager.current_music() != "titleScreen":
+        print_info("Replaying title screen music")
+        game.audio_manager.play_music("titleScreen")
+
+
     ground = Solid((0,270), (640,360))
     left_wall = Solid((-50,0),(50,360))
     right_wall = Solid((640,0),(50,360))
@@ -231,6 +257,10 @@ def start(game: Game):
 
     scene.add(computer)
     scene.add(exit)
+
+    if getattr(game, "boss_victory_return", False):
+        setattr(game, "boss_victory_return", False)
+        play_boss_end_dialogue(game)
 
     """player = init_player(game)
     scene.add(player, "#player")"""

@@ -69,6 +69,10 @@ def start(game: Game):
     scene.name = "Level2Scene"
     scene.this.player = init_player(game)
     init_level(game, scene, scene.this.player)
+
+    scene.camera.set_offset((scene.size.x // 2 - scene.this.player.size.x, scene.size.y // 2 - scene.this.player.size.y + 100))
+    scene.camera.set_limits((150, -scene.size.y - 100), (scene.size.x * 20, scene.size.y - 100))
+
     p = scene.this.player          # alias court, capturé dans les lambdas
     player = p
 
@@ -102,17 +106,17 @@ def start(game: Game):
         x_end: int,
         y: int,
         step: int = 120,
-        width: int = 60,
+        width: int = 45,
         texture_key: str = "tree_stump"
     ):
         for x in range(int(x_start), int(x_end), int(step)):
             collections.append(
-                Solid((x, y), (width, 15)).set_texture(game.RESSOURCES["textures"][texture_key])
+                Solid((x, y), (width, 27)).set_texture(game.RESSOURCES["textures"][texture_key])
             )
 
-    # Mur gauche (barrière de départ)
+    # Mur gauche (barrière de départ) - laisser visible
     collections += [
-        Solid((80, y), (20, 30)).set_texture(game.RESSOURCES["textures"]["wall"])
+        Solid((100, y), (60, 30)).set_texture(game.RESSOURCES["textures"]["wall"])
         for y in range(0, 430, 30)
     ]
 
@@ -128,9 +132,10 @@ def start(game: Game):
     collections += [Solid((section1_start + 410, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     collections += [Solid((section1_start + 560, 225), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
-    collections += [Solid((section1_start + 340, 168), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
+    #### Collecteur de pluie #0
+    collections += [Solid((section1_start + 440, 168), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     rain_secret0 = TriggerInteract(
-        (section1_start + 345, 128), (48, 48), ["player"],
+        (section1_start + 445, 128), (48, 48), ["player"],
         [lambda obj: refill_water(p, game)]
     )
     rain_secret0.set_texture(game.RESSOURCES["textures"]["rain_collector"])
@@ -147,20 +152,20 @@ def start(game: Game):
     )
     scene.UI.add("ecol1", dialog_ecol1)
     sign1 = TriggerInteract(
-        (section1_start + 55, 270), (32, 32), ["player"],
+        (section1_start + 400, 270), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol1")]
     )
     sign1.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign1]
 
     ### Ennenmi #1
-    enemy1 = Enemy((section1_start + 365, 252), (48, 48), mode="patrol", range=180)
+    enemy1 = Enemy((section1_start + 700, 252), (48, 48), mode="patrol", range=180)
     enemy1.set_gravity(game_settings["GRAVITY"])
     enemy1.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy1]
 
     #Piège #1
-    trap1 = Trap((section1_start + 240, 285), (32, 15), "player", 15, cooldown=2000)
+    trap1 = Trap((section1_start + 840, 285), (32, 15), "player", 15, cooldown=2000)
     trap1.bind_textures({
         "idle":   game.RESSOURCES["textures"]["trap_idle"],
         "active": game.RESSOURCES["textures"]["trap_active"],
@@ -169,7 +174,7 @@ def start(game: Game):
 
     ### Collecteur de pluie #1 
     rain1 = TriggerInteract(
-        (section1_start + 632, 252), (48, 48), ["player"],
+        (section1_start + 800, 252), (48, 48), ["player"],
         [lambda obj: refill_water(p, game)]
     )
     rain1.set_texture(game.RESSOURCES["textures"]["rain_collector"])
@@ -186,7 +191,7 @@ def start(game: Game):
     gap1_start = cursor
     cursor += 180
     gap1_end = cursor
-    add_simple_platforms(gap1_start + 40, gap1_end - 25, y=250, step=60, width=38)
+    add_simple_platforms(gap1_start + 40, gap1_end - 25, y=250, step=60, width=45)
 
     #%%########################################################################
     # SECTION 2 — TRONCS ET PLATEFORMES MOBILES
@@ -257,7 +262,7 @@ def start(game: Game):
     sign2.set_texture(game.RESSOURCES["textures"]["sign"])
     collections += [sign2]
 
-    add_simple_platforms(section2_start + 70, section2_end - 80, y=240, step=150, width=52)
+    add_simple_platforms(section2_start + 70, section2_end - 80, y=240, step=150, width=45)
 
     cursor = section2_end
 
@@ -315,10 +320,10 @@ def start(game: Game):
     collections += [melanie_trigger]
 
     tier_low = [
-        (section3_start + 120, 260, 90, 15),
-        (section3_start + 300, 260, 90, 15),
-        (section3_start + 470, 260, 80, 15),
-        (section3_start + 650, 260, 70, 15),
+        (section3_start + 120, 260, 45, 27),
+        (section3_start + 300, 260, 45, 27),
+        (section3_start + 470, 260, 45, 27),
+        (section3_start + 650, 260, 45, 27),
     ]
     for sx, sy, sw, sh in tier_low:
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
@@ -332,9 +337,9 @@ def start(game: Game):
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
 
     tier_high = [
-        (section3_start + 220, 160, 72, 15),
-        (section3_start + 420, 155, 95, 15),
-        (section3_start + 620, 160, 72, 15),
+        (section3_start + 220, 160, 45, 27),
+        (section3_start + 420, 155, 45, 27),
+        (section3_start + 620, 160, 45, 27),
     ]
     for sx, sy, sw, sh in tier_high:
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
@@ -408,7 +413,7 @@ def start(game: Game):
     rain2.set_texture(game.RESSOURCES["textures"]["rain_collector"])
     collections += [rain2]
 
-    add_simple_platforms(section3_start + 80, section3_end - 60, y=275, step=180, width=48)
+    add_simple_platforms(section3_start + 80, section3_end - 60, y=275, step=180, width=45)
 
     cursor = section3_end
 
@@ -423,7 +428,7 @@ def start(game: Game):
     scene.this.bridge1_rows = (238, 288)
 
     # Guide visuel minimal en attendant l'activation du switch.
-    add_simple_platforms(gap2_start + 55, gap2_end - 45, y=210, step=85, width=34)
+    add_simple_platforms(gap2_start + 55, gap2_end - 45, y=210, step=85, width=45)
 
     #%%########################################################################
     # SECTION 4 — TRANSITION / MINI-SAUTS
@@ -433,10 +438,10 @@ def start(game: Game):
     add_ground_strip(section4_start, section4_end, "grass")
 
     jump_pads = [
-        (section4_start + 10, 285, 65, 15),
-        (section4_start + 120, 268, 60, 15),
-        (section4_start + 210, 250, 60, 15),
-        (section4_start + 310, 268, 60, 15),
+        (section4_start + 10, 285, 45, 27),
+        (section4_start + 120, 268, 45, 27),
+        (section4_start + 210, 250, 45, 27),
+        (section4_start + 310, 268, 45, 27),
     ]
     for sx, sy, sw, sh in jump_pads:
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
@@ -450,7 +455,7 @@ def start(game: Game):
     })
     scene.add(mp3, "#object")
 
-    add_simple_platforms(section4_start + 55, section4_end - 40, y=246, step=120, width=46)
+    add_simple_platforms(section4_start + 55, section4_end - 40, y=246, step=120, width=45)
 
     cursor = section4_end
 

@@ -28,6 +28,11 @@ def start(game: Game):
     scene.this.moving_platform = []
     init_level(game, scene, scene.this.player)
 
+
+
+    game.audio_manager.play_music("level3")
+
+
     scene.camera.set_offset((scene.size.x // 2 - scene.this.player.size.x, scene.size.y // 2 - scene.this.player.size.y + 100))
     scene.camera.set_limits((150, -scene.size.y - 100), (scene.size.x * 20, scene.size.y - 100))
 
