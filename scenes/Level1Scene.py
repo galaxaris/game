@@ -132,7 +132,7 @@ def start(game: Game):
     new_obj.set_texture(game.RESSOURCES["textures"]["hook"])
     scene.add(new_obj)
 
-    new_obj = Solid((2250, -50), (32, 354))
+    new_obj = Solid((2250, -40), (32, 354))
     new_obj.set_texture(game.RESSOURCES["textures"]["chain"])
     scene.add(new_obj)
 

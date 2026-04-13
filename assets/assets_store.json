@@ -55,8 +55,8 @@
         "enemy": "Player/little robot/idle_robot_scaled.png",
         "health": "UI/heart.png",
 
-        "trap_idle": "Objects/trap_idle.png",
-        "trap_active": "Objects/trap_active.png",
+        "trap_idle": "Objects/trap_active.png",
+        "trap_active": "Objects/trap_idle.png",
 
         "melanie": "Portrait/melanie.jpeg",
         "ai_icon": "Portrait/ai_icon.jpeg",
