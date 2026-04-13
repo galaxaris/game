@@ -1097,7 +1097,7 @@ def start(game: Game):
 
 
     #TP the player here for debug
-    p.set_position((section2_start + 200, 0))
+    #p.set_position((section2_start + 200, 0))
 
     collections += [Solid((section2_start + 120, 275), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     ac1 = Solid((section2_start + 100, 100), (25, 25)).set_texture(game.RESSOURCES["textures"]["industrial_tile"], rescale=True)
@@ -1257,7 +1257,6 @@ def start(game: Game):
 
     tier_mid = [
         (section3_start + 170, 210, 85, 15),
-        (section3_start + 540, 210, 80, 15),
     ]
     for sx, sy, sw, sh in tier_mid:
         collections += [Solid((sx, sy), (sw, sh)).set_texture(game.RESSOURCES["textures"]["mossy_steel"])]
@@ -1489,24 +1488,18 @@ def start(game: Game):
     cursor += 120
 
     boss_start = cursor
-    boss_end = boss_start + 260
+    boss_end = boss_start + 1200
     add_ground_strip(boss_start, boss_end, "wall")
 
-    collections += [
-        Solid((boss_start - 5, y), (16, 20)).set_texture(game.RESSOURCES["textures"]["wall"])
-        for y in range(155, 310, 20)
-    ]
+
     collections += [
         Solid((boss_end - 16, y), (16, 20)).set_texture(game.RESSOURCES["textures"]["wall"])
         for y in range(155, 310, 20)
     ]
 
-    collections += [Solid((boss_start + 40, 248), (50, 12)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
-    collections += [Solid((boss_start + 165, 248), (50, 12)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
-    collections += [Solid((boss_start + 100, 210), (60, 12)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
 
     #### Boss : CF-7
-    bigBoss = Boss((boss_start + 110, 252), (64, 64))
+    bigBoss = Boss((boss_start + 310, 252), (64, 64))
     boss_anim = Animation(game.RESSOURCES["textures"]["boss"], 11, 100)
     bigBoss.set_animation(boss_anim)
     bigBoss.set_gravity(game_settings["GRAVITY"])
@@ -1534,6 +1527,18 @@ def start(game: Game):
         once=True
     )
     collections += [boss_trigger]
+
+    ###################################
+    ######## END LEVEL TRIGGER ########
+    ###################################
+
+    end_level = Trigger(
+        (boss_end - 350, -30), (191,337), ["player"],
+        [lambda obj: game.event_manager.triggerEvent("end_level")],
+        once=True)
+
+    end_level.set_texture(game.RESSOURCES["textures"]["antenna"])
+    scene.add(end_level)
 
 
     #%%### Ajout de tous les objets à la scène
