@@ -1,8 +1,24 @@
 #Events
 from api.Game import Game
 from api.utils.Console import print_success
+from game.Variables import story
 from game.scripts.history import start_game
 from game.scripts.scene_manager import *
+
+def end_level(game: Game):
+    if(game.scene.name == "Level1Scene"):
+        if story["current_chapter"] == 0:
+            story["current_chapter"] = 1
+    elif(game.scene.name == "Level2Scene"):
+        if story["current_chapter"] == 1:
+            story["current_chapter"] = 2
+    elif(game.scene.name == "Level3Scene"):
+        if story["current_chapter"] == 2:
+            story["current_chapter"] = 3
+    elif(game.scene.name == "BossLevelScene"):
+        if story["current_chapter"] == 3:
+            story["current_chapter"] = 4
+    load_scene("BaseScene", game)
 
 def register_events(game: Game):
     game.event_manager.Instances.bindInstancesDict({
@@ -19,5 +35,7 @@ def register_events(game: Game):
     game.event_manager.registerEvent("goto_desert", [lambda e: load_scene("Level3Scene", game)])
     game.event_manager.registerEvent("goto_industrial", [lambda e: load_scene("BossLevelScene", game)])
     game.event_manager.registerEvent("goto_base", [lambda e: load_scene("BaseScene", game)])
+    game.event_manager.registerEvent("end_level", [lambda e: end_level(game)])
+
 
     print_success("Events registered successfully")
