@@ -67,9 +67,9 @@
         "run_fast": ["Player/NinjaFrog/run_scaled.png", 12, 50],
         "idle": ["Player/NinjaFrog/idle_scaled.png", 11, 100],
         "hit": ["Player/NinjaFrog/hit_scaled.png", 7, 50],
-        "you_idle": ["Player/You/idle.png", 4, 150],
-        "you_run": ["Player/You/run.png", 4, 150],
-        "you_run_fast": ["Player/You/run.png", 4, 75]
+        "you_idle": ["Player/You/idle.png", 2, 250],
+        "you_run": ["Player/You/run.png", 3, 150],
+        "you_run_fast": ["Player/You/run.png", 3, 100]
     },
     "music": {
         "titleScreen": "MainTheme.mp3",
