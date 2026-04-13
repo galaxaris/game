@@ -41,6 +41,8 @@
         "industrial_layer2": "Background/Parallax/Industrial/layer2.png",
         "industrial_layer3": "Background/Parallax/Industrial/layer3.png",
 
+        "industrial_tile": "Terrain/industrial_tile.png",
+
         "water_drop": "Objects/water_drop.png",
 
         "rain_collector": "Objects/rain_collector.png",
