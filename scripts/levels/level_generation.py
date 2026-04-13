@@ -39,7 +39,7 @@ def init_level(game: Game, scene: Scene, player):
 
 def create_killBoxes(scene, length):
     trigger_box = TriggerKillBox((-1000, scene.size.y+400), (length*1000, 100), ["player", "projectile"], once=False, sfx=["death"])
-    scene.add(trigger_box, "#objects")
+    scene.add(trigger_box, "#object")
 
 
 def get_parallax_background(name, game):

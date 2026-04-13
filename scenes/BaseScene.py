@@ -227,12 +227,12 @@ def start(game: Game):
     ground = Solid((0,270), (640,360))
     left_wall = Solid((-50,0),(50,360))
     right_wall = Solid((640,0),(50,360))
-    scene.add(left_wall, "#objects")
-    scene.add(right_wall, "#objects")
-    scene.add(ground, "#objects")
+    scene.add(left_wall, "#object")
+    scene.add(right_wall, "#object")
+    scene.add(ground, "#object")
 
     player = Player((288, 174), (32, 64))
-
+    player.set_gravity(game_settings["GRAVITY"])
 
     player.bind_animations(
         {
@@ -243,6 +243,7 @@ def start(game: Game):
     )
 
     scene.add(player, "#player")
+    scene.this.player = player
 
 
     if story["has_started"] == False:
