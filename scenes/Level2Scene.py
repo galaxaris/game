@@ -515,13 +515,43 @@ def start(game: Game):
                 collections.append(checkpoint_mid)
 
             mid_dialog = Dialog(game.RESSOURCES["fonts"]["default"])
-            mid_dialog.add_character("Mélanie Cavill", game.RESSOURCES["textures"]["melanie"])
-            mid_dialog.add_message("Mélanie Cavill", "Tu te rapproches de la zone de fin de niveau !")
+            mid_dialog.setup({
+                "characters": [
+                    {"name": "Mélanie Cavill", "texture": game.RESSOURCES["textures"]["melanie"]},
+                    {"name": "System", "texture": game.RESSOURCES["textures"]["ai_icon"]},
+                    {"name": "You", "texture": game.RESSOURCES["textures"]["player_base"]},
+                ],
+                "messages": [
+                    ("System", "Checkpoint atteint : zone de sécurité établie."),
+                    ("System", "Contact radio entrant !"),
+                    ("System", "Interlocuteur : Mélanie Cavill. Accepter l'appel ?", [
+                        ("Accepter l'appel", "accept_call", lambda e: print_info("Choix radio: appel accepté")),
+                        ("Ignorer pour l'instant", "delay_call", lambda e: print_info("Choix radio: appel différé")),
+                    ], "radio_choice"),
+
+                    ("Mélanie Cavill", "Allô ? Tu me reçois ?", "accept_call"),
+                    ("You", "Reçu 5 sur 5 Mélanie. Je t'écoute.", "accept_call"),
+                    ("Mélanie Cavill", "C'est un soulagement, j'ai cru que tu avais été touché par les robots.", "accept_call"),
+                    ("Mélanie Cavill", "D'après ta position, tu es presque arrivé à la zone industrielle au fond de la forêt. Continue !", "accept_call"),
+                    ("You", "Bien reçu. Je vais essayer de trouver un chemin à travers la forêt. A plus tard !", "accept_call"),
+                    #Choice unique pour terminer l'appel :
+                    ("System", "Appel terminé...", [
+                        ("Continuer", "dialog_end", lambda e: print_info("Choix radio: appel terminé")),
+                    ], "radio_choice2"),
+
+                    ("System", "Canal radio mis en attente. Reconnexion possible plus loin.", "delay_call"),
+                    ("You", "Je rappellerai après la prochaine plateforme.", "delay_call"),
+                    ("GOTO", "dialog_end"),
+
+                    ("System", "Transmission terminée.", "dialog_end"),
+                    ("STOP",),
+                ],
+            })
             scene.UI.add(middle_dialog_key, mid_dialog)
 
             dialog_trigger_mid = Trigger(
-                (middle_platform_x + 70, middle_platform_y - 140),
-                (260, 170),
+                (middle_platform_x + 170, middle_platform_y - 140),
+                (160, 170),
                 ["player"],
                 [lambda obj, key=middle_dialog_key: scene.UI.show(key)],
                 once=True,
@@ -1040,7 +1070,14 @@ def start(game: Game):
     ###########################################################################
     section2_start = cursor
     section2_end = section2_start + 700
-    add_ground_strip(section2_start, section2_end, "grass")
+    add_ground_strip(section2_start, section2_end)
+
+    ###############################################################################
+##############################################################################################################################################################
+###############################################################################
+
+    #TP the player here for debug
+    p.set_position((section2_start + 200, 150))
 
     stump_layout = [
         (0, 285, 45, 27),
@@ -1074,13 +1111,13 @@ def start(game: Game):
     #scene.add(mp2, "#object")
 
     ### Ennemi #2
-    enemy2 = Enemy((section2_start + 360, 200), (48, 48), mode="idle", range=220)
+    enemy2 = Enemy((section2_start + 420, 100), (48, 48), mode="patrol", range=220)
     enemy2.set_gravity(game_settings["GRAVITY"])
     enemy2.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy2]
 
     #### Piège #2
-    trap2 = Trap((section2_start + 180, 285), (28, 15), "player", 20, cooldown=1500)
+    trap2 = Trap((section2_start + 180, 185), (28, 15), "player", 20, cooldown=1500)
     trap2.bind_textures({
         "idle":   game.RESSOURCES["textures"]["trap_idle"],
         "active": game.RESSOURCES["textures"]["trap_active"],
@@ -1098,7 +1135,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol2", dialog_ecol2)
     sign2 = TriggerInteract(
-        (section2_end - 60, 255), (32, 32), ["player"],
+        (section2_end - 80, 268), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol2")]
     )
     sign2.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -1113,7 +1150,7 @@ def start(game: Game):
     ###########################################################################
     section3_start = cursor
     section3_end = section3_start + 820
-    add_ground_strip(section3_start, section3_end, "grass")
+    add_ground_strip(section3_start, section3_end)
 
     cp1_x = section3_start + 40
     collections += [Solid((cp1_x, 260), (95, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
@@ -1194,12 +1231,13 @@ def start(game: Game):
     rain_secret1.set_texture(game.RESSOURCES["textures"]["rain_collector"])
     collections += [rain_secret1]
 
-    enemy3 = Enemy((section3_start + 335, 252), (48, 48), mode="patrol", range=230)
+    #### Ennemis #3 & #4
+    enemy3 = Enemy((section3_start + 300, 152), (48, 48), mode="patrol", range=230)
     enemy3.set_gravity(game_settings["GRAVITY"])
     enemy3.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy3]
 
-    enemy4 = Enemy((section3_start + 610, 107), (48, 48), mode="idle", range=140)
+    enemy4 = Enemy((section3_start + 610, 157), (48, 48), mode="idle", range=140)
     enemy4.set_gravity(game_settings["GRAVITY"])
     enemy4.set_animation(Animation(game.RESSOURCES["textures"]["enemy"], 11, 50))
     collections += [enemy4]
@@ -1241,7 +1279,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol3", dialog_ecol3)
     sign3 = TriggerInteract(
-        (section3_start + 755, 230), (32, 32), ["player"],
+        (section3_start + 755, 268), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol3")]
     )
     sign3.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -1277,7 +1315,7 @@ def start(game: Game):
     ###########################################################################
     section4_start = cursor
     section4_end = section4_start + 420
-    add_ground_strip(section4_start, section4_end, "grass")
+    add_ground_strip(section4_start, section4_end)
 
     jump_pads = [
         (section4_start + 10, 285, 45, 27),
@@ -1363,7 +1401,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol4", dialog_ecol4)
     sign4 = TriggerInteract(
-        (section5_start + 900, 202), (32, 32), ["player"],
+        (section5_start + 900, 268), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol4")]
     )
     sign4.set_texture(game.RESSOURCES["textures"]["sign"])
