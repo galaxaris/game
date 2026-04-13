@@ -68,6 +68,10 @@ def start(game: Game):
     scene.name = "Level2Scene"
     scene.this.player = init_player(game)
     init_level(game, scene, scene.this.player)
+
+    scene.camera.set_offset((scene.size.x // 2 - scene.this.player.size.x, scene.size.y // 2 - scene.this.player.size.y + 100))
+    scene.camera.set_limits((150, -scene.size.y - 100), (scene.size.x * 20, scene.size.y - 100))
+
     p = scene.this.player          # alias court, capturé dans les lambdas
     player = p
 
@@ -109,9 +113,9 @@ def start(game: Game):
                 Solid((x, y), (width, 27)).set_texture(game.RESSOURCES["textures"][texture_key])
             )
 
-    # Mur gauche (barrière de départ)
+    # Mur gauche (barrière de départ) - laisser visible
     collections += [
-        Solid((80, y), (20, 30)).set_texture(game.RESSOURCES["textures"]["wall"])
+        Solid((100, y), (60, 30)).set_texture(game.RESSOURCES["textures"]["wall"])
         for y in range(0, 430, 30)
     ]
 
@@ -127,6 +131,7 @@ def start(game: Game):
     collections += [Solid((section1_start + 410, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     collections += [Solid((section1_start + 560, 225), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
 
+    #### Collecteur de pluie #0
     collections += [Solid((section1_start + 440, 168), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     rain_secret0 = TriggerInteract(
         (section1_start + 445, 128), (48, 48), ["player"],
