@@ -65,7 +65,7 @@ def play_warning_dialogue(game):
             ("Mélanie Cavill", "Acceptes-tu cette responsabilité ? Devenir le lien entre la technologie et la vie ?", [
                 ("Je suis prêt. Rendons cette planète habitable.", "accept_mission",
                  lambda e: game.event_manager.triggerEvent("back_to_ship")),
-                ("Toute seule ?", "doubt_mission",
+                ("Tout seul ?", "doubt_mission",
                  lambda e: game.event_manager.triggerEvent("back_to_ship"))
             ], "choice_commitment"),
 
