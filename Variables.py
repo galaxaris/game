@@ -34,7 +34,7 @@ player_settings = {
         },
         "GrapplingPistol": {
             "cooldown": 500,
-            "projectile_damage": 15
+            "projectile_damage": 0
         }
     },
 

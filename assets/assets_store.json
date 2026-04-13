@@ -3,6 +3,8 @@
         "icon": "icon.png",
 
         "grass": "Terrain/grass.png",
+        "mossy_steel": "Terrain/mossy_steel.png",
+        "platform_forest": "Terrain/platform_forest.png",
         "checkpoint_ground": "Terrain/beach_sand.png",
         "wall": "Terrain/wall.png",
         "sign": "Objects/sign.png",
