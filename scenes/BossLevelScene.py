@@ -15,6 +15,9 @@ def start(game: Game):
     scene = Scene(game.render_size)
     scene.name = "BossLevelScene"
     player = init_player(game)
+
+    game.audio_manager.play_music("bossLevel")
+
     scene.this.player = player
     init_level(game, scene, player)
     scene.camera.set_offset((scene.size.x // 2 - player.size.x, scene.size.y // 2 - player.size.y + 100))

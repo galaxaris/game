@@ -12,6 +12,9 @@ def start(game: Game):
     global player
     scene = Scene(game.render_size)
     scene.name = "MainMenuScene"
+
+    game.audio_manager.play_music("titleScreen")
+
     b_bg = Background(game.RESSOURCES["textures"]["menu_bg"], False, scene.size)
     scene.set_background(b_bg)
     menu2 = main_menu(game, scene)

@@ -10,6 +10,7 @@ from api.environment.Solid import Solid
 from api.environment.Trigger import TriggerInteract
 from api.utils import Debug
 
+from api.utils.Console import print_info
 from game.Variables import *
 
 
@@ -145,6 +146,7 @@ def launch_computer(game):
     menu = Modal((75, 37), (510, 286))
 
 
+
     scene.UI.add("computer_menu", menu)
     scene.UI.show("computer_menu")
 
@@ -197,6 +199,14 @@ def start(game: Game):
     scene = Scene(game.render_size)
     scene.name = "BaseScene"
     bg = Background(game.RESSOURCES["textures"]["ship"], False, scene.size)
+
+    #Condition, because this music is launched in the main menu, but not the same in the levels
+    print_info(f"Current music : {game.audio_manager.current_music()}")
+
+    if game.audio_manager.current_music() != "titleScreen":
+        print_info("Replaying title screen music")
+        game.audio_manager.play_music("titleScreen")
+
 
     ground = Solid((0,270), (640,360))
     left_wall = Solid((-50,0),(50,360))

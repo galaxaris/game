@@ -3,6 +3,8 @@
         "icon": "icon.png",
 
         "grass": "Terrain/grass.png",
+        "mossy_steel": "Terrain/mossy_steel.png",
+        "platform_forest": "Terrain/platform_forest.png",
         "checkpoint_ground": "Terrain/beach_sand.png",
         "wall": "Terrain/wall.png",
         "sign": "Objects/sign.png",
@@ -65,9 +67,12 @@
     },
     "music": {
         "titleScreen": "MainTheme.mp3",
-        "inGame": "Desert.mp3",
-        "pause": "Alicia.mp3",
-        "level2": "Idee3.mp3"
+        "inGame": "Dear To The Heart.mp3",
+        "level1": "Dear To The Heart.mp3",
+        "level2": "Idee3.mp3",
+        "level3": "Desert.mp3",
+        "bossLevel": "industrial.mp3",
+        "pause": "Idea2.mp3"
     },
     "sfx": {
         "jump": "robot-jump.mp3",
