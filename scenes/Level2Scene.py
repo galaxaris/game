@@ -1532,10 +1532,7 @@ def start(game: Game):
     ######## END LEVEL TRIGGER ########
     ###################################
 
-    end_level = Trigger(
-        (boss_end - 350, -30), (191,337), ["player"],
-        [lambda obj: game.event_manager.triggerEvent("end_level")],
-        once=True)
+    end_level = Trigger((boss_end - 350, 179), (64,128), ["player"],[lambda obj: game.event_manager.triggerEvent("end_level")],once=True)
 
     end_level.set_texture(game.RESSOURCES["textures"]["antenna"])
     scene.add(end_level)

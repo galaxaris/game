@@ -24,12 +24,24 @@ fire animation by brullov, "This asset pack can be used in free and commercial p
 industrial ost by ansimuz, free to use: https://ansimuz.itch.io/industrial-parallax-background
 through the desert's moon by Raphaël
 title screen by Raphaël
+level 2 by Raphaël
 
 -SFX-
 empty_weapon sfx made by BoostSound, free to use, link to his Youtube channel :www.youtube.com/@BoostSound.
 
 -SPRITE-
 character by Buddhadeb Chhetri, free to use: https://github.com/Buddhad/The_Virtual_Guy/tree/main/Assets/Main%20Characters/Virtual%20Guy
+
+-OBJECTS-
+traps by Axel
+antenna by Axel
+hook & chains by Axel
+rain collector by Axel
+sign by Axel
+
+-ICONS-
+water balloon, graplin by Axel
+droplets, classic emoji online
 
 --ASSETS USED FOR THE EDITOR--
 
