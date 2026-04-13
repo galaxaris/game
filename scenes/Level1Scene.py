@@ -132,7 +132,7 @@ def start(game: Game):
     new_obj.set_texture(game.RESSOURCES["textures"]["hook"])
     scene.add(new_obj)
 
-    new_obj = Solid((2250, -50), (32, 314))
+    new_obj = Solid((2250, -50), (32, 354))
     new_obj.set_texture(game.RESSOURCES["textures"]["chain"])
     scene.add(new_obj)
 
@@ -145,7 +145,7 @@ def start(game: Game):
     new_obj.set_texture(game.RESSOURCES["textures"]["hook"])
     scene.add(new_obj)
 
-    new_obj = Solid((2595, -50), (32, 220))
+    new_obj = Solid((2595, -50), (32, 270))
     new_obj.set_texture(game.RESSOURCES["textures"]["chain"])
     scene.add(new_obj)
 
@@ -209,9 +209,7 @@ def start(game: Game):
 ######## END LEVEL TRIGGER ########
 ###################################
 
-    end_level = Trigger((3125, 63), (191,337), ["player"],
-                          [lambda obj: game.event_manager.triggerEvent("end_level")],
-                          once=True)
+    end_level = Trigger((3200, 274), (64,128), ["player"],[lambda obj: game.event_manager.triggerEvent("end_level")],once=True)
 
     end_level.set_texture(game.RESSOURCES["textures"]["antenna"])
     scene.add(end_level)
