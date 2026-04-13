@@ -231,7 +231,8 @@ def start(game: Game):
     scene.add(right_wall, "#objects")
     scene.add(ground, "#objects")
 
-    player = Player((550, 0), (32, 64))
+    player = Player((288, 174), (32, 64))
+
 
     player.bind_animations(
         {
