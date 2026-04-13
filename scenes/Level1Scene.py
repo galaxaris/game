@@ -6,7 +6,7 @@ from game.scripts.levels.level_ui import update_player_health_ui, update_ammo_ui
 from game.scripts.player_manager import init_player
 from api.environment.Solid import *
 from api.assets.Texture import *
-
+from api.entity.Enemy import *
 
 scene = None
 
@@ -74,6 +74,10 @@ def start(game: Game):
     scene.add(new_obj)
 
     new_obj = Solid((2850, 400), (200, 25))
+    new_obj.set_texture(Texture(0, 0, is_missing=True))
+    scene.add(new_obj)
+
+    new_obj = Enemy((2925,350),(30,50))
     new_obj.set_texture(Texture(0, 0, is_missing=True))
     scene.add(new_obj)
 
