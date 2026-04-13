@@ -28,14 +28,12 @@ title screen by Raphaël
 -SFX-
 empty_weapon sfx made by BoostSound, free to use, link to his Youtube channel :www.youtube.com/@BoostSound.
 
+-SPRITE-
+character by Buddhadeb Chhetri, free to use: https://github.com/Buddhad/The_Virtual_Guy/tree/main/Assets/Main%20Characters/Virtual%20Guy
+
 --ASSETS USED FOR THE EDITOR--
 
 -ICONS-
 play button icon by icons8, free to use if mentioned: https://icons8.com/icon/12965/right-button
 pause button icon by icons8, free to use if mentioned: https://icons8.com/icon/110292/pause-squared
 replay button icon by icons8, free to use if mentioned: https://icons8.com/icon/63815/replay
-
-
--TEXTURES-
-https://craftpix.net/freebies/free-robot-pixel-art-sprite-sheets/
-https://www.gameart2d.com/red-hat-boy-free-sprites.html

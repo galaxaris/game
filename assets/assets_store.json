@@ -19,9 +19,9 @@
         "moving_platform": "Terrain/forest-tiles/tile_06.png",
         "bridge_plank": "Terrain/forest-tiles/tile_44.png",
 
-        "player": "Player/NinjaFrog/jump.png",
-        "jump_anim": "Player/NinjaFrog/jump_scaled.png",
-        "fall_anim": "Player/NinjaFrog/fall_scaled.png",
+        "player": "Player/VirtualGuy/jump.png",
+        "jump_anim": "Player/VirtualGuy/jump.png",
+        "fall_anim": "Player/VirtualGuy/fall.png",
 
         "menu_bg": "UI/Background/Background_space.png",
 
@@ -65,10 +65,10 @@
 
     },
     "animations": {
-        "run": ["Player/NinjaFrog/run_scaled.png", 12, 70],
-        "run_fast": ["Player/NinjaFrog/run_scaled.png", 12, 50],
-        "idle": ["Player/NinjaFrog/idle_scaled.png", 11, 100],
-        "hit": ["Player/NinjaFrog/hit_scaled.png", 7, 50],
+        "run": ["Player/VirtualGuy/run.png", 12, 70],
+        "run_fast": ["Player/VirtualGuy/run.png", 12, 50],
+        "idle": ["Player/VirtualGuy/idle.png", 11, 100],
+        "hit": ["Player/VirtualGuy/hit.png", 7, 50],
         "you_idle": ["Player/You/idle.png", 2, 250],
         "you_run": ["Player/You/run.png", 3, 150],
         "you_run_fast": ["Player/You/run.png", 3, 100]
