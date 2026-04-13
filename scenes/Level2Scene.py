@@ -119,7 +119,7 @@ def start(game: Game):
     # SECTION 1 — LISIÈRE DE LA FORÊT
     ###########################################################################
     section1_start = cursor
-    section1_end = section1_start + 720
+    section1_end = section1_start + 2000
     add_ground_strip(section1_start, section1_end, "grass")
 
     collections += [Solid((section1_start + 115, 258), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
@@ -217,13 +217,13 @@ def start(game: Game):
     scene.add(mp1, "#object")
 
     #### Plateforme mobile #2 : (verticale)
-    mp2 = Solid((section2_start + 520, 195), (70, 15))
-    mp2.set_texture(game.RESSOURCES["textures"]["moving_platform"])
-    moving_platforms.append({
-        "solid": mp2, "axis": "y", "speed": 0.5, "direction": 1,
-        "min_y": 175, "max_y": 265, "_current": 195.0,
-    })
-    scene.add(mp2, "#object")
+    #mp2 = Solid((section2_start + 520, 195), (70, 15))
+    #mp2.set_texture(game.RESSOURCES["textures"]["moving_platform"])
+    #moving_platforms.append({
+    #    "solid": mp2, "axis": "y", "speed": 0.5, "direction": 1,
+    #    "min_y": 175, "max_y": 265, "_current": 195.0,
+    #})
+    #scene.add(mp2, "#object")
 
     ### Ennemi #2
     enemy2 = Enemy((section2_start + 360, 200), (48, 48), mode="idle", range=220)
@@ -467,13 +467,13 @@ def start(game: Game):
     collections += [Solid((section5_start + 790, 252), (90, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
 
     #### Plateforme mobile #4 : (verticale)
-    mp4 = Solid((section5_start + 190, 208), (82, 15))
-    mp4.set_texture(game.RESSOURCES["textures"]["moving_platform"])
-    moving_platforms.append({
-        "solid": mp4, "axis": "y", "speed": 0.9, "direction": 1,
-        "min_y": 192, "max_y": 282, "_current": 208.0,
-    })
-    scene.add(mp4, "#object")
+    #mp4 = Solid((section5_start + 190, 208), (82, 15))
+    #mp4.set_texture(game.RESSOURCES["textures"]["moving_platform"])
+    #moving_platforms.append({
+    #    "solid": mp4, "axis": "y", "speed": 0.9, "direction": 1,
+    #    "min_y": 192, "max_y": 282, "_current": 208.0,
+    #})
+    #scene.add(mp4, "#object")
 
     #### Ennemi #5
     enemy5 = Enemy((section5_start + 320, 182), (48, 48), mode="patrol", range=300)
@@ -631,6 +631,7 @@ def update(game: Game):
         s = mp["solid"]
         mp["_current"] += mp["speed"] * mp["direction"]
 
+        ### Plateformes horizontales
         if mp["axis"] == "x":
             x_new = int(mp["_current"])
             s.rect.x = x_new
@@ -641,6 +642,7 @@ def update(game: Game):
             if mp["_current"] >= mp["max_x"] or mp["_current"] <= mp["min_x"]:
                 mp["direction"] *= -1
 
+        ### Plateformes verticales
         elif mp["axis"] == "y":
             y_new = int(mp["_current"])
             s.rect.y = y_new
