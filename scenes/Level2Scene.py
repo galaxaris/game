@@ -132,6 +132,7 @@ def start(game: Game):
         tree2: bool = True,
         plant1: bool = True,
         moving_platform: bool = True,
+        anchor: bool = True,
         bridge_plank: bool = True,
         trap_idle: bool = True,
         rain_collector: bool = True,
@@ -177,6 +178,20 @@ def start(game: Game):
             collections.append(deco)
             return deco, tex_w, tex_h
 
+        def add_custom_solid(
+            x: int,
+            y: int,
+            width: int,
+            height: int,
+            texture_key: str,
+            rescale: bool | None = None,
+        ):
+            solid = Solid((int(x), int(y)), (int(width), int(height)))
+            use_rescale = (texture_key != "platform_forest") if rescale is None else rescale
+            solid.set_texture(textures[texture_key], rescale=use_rescale)
+            collections.append(solid)
+            return solid, int(width), int(height)
+
         start_x = int(min(x_start, x_end))
         end_x = int(max(x_start, x_end))
         if end_x - start_x < 260:
@@ -217,32 +232,18 @@ def start(game: Game):
         main_step = int(max(210, min(360, 370 - spawn_density * 150)))
         main_jitter = int(max(20, min(55, 64 - spawn_density * 18)))
 
-        main_platform_keys = []
-        if checkpoint_ground and has_texture("checkpoint_ground"):
-            main_platform_keys.append("checkpoint_ground")
-        if tree_stump and has_texture("tree_stump"):
-            main_platform_keys.append("tree_stump")
-        if platform_forest1 and has_texture("platform-forest1"):
-            main_platform_keys.append("platform-forest1")
-        if platform_forest2 and has_texture("platform-forest2"):
-            main_platform_keys.append("platform-forest2")
-        if bridge_plank and has_texture("bridge_plank"):
-            main_platform_keys.append("bridge_plank")
-        if platform_forest and has_texture("platform_forest"):
-            main_platform_keys.append("platform_forest")
-
-        if not main_platform_keys:
+        if not (platform_forest and has_texture("platform_forest")):
             return
 
-        connector_keys = []
-        if tree_stump and has_texture("tree_stump"):
-            connector_keys.append("tree_stump")
-        if checkpoint_ground and has_texture("checkpoint_ground"):
-            connector_keys.append("checkpoint_ground")
-        if bridge_plank and has_texture("bridge_plank"):
-            connector_keys.append("bridge_plank")
-        if not connector_keys:
-            connector_keys = list(main_platform_keys)
+        connector_modes = []
+        if platform_forest1 and has_texture("platform-forest1"):
+            connector_modes.append("platform-forest1")
+        if platform_forest2 and has_texture("platform-forest2"):
+            connector_modes.append("platform-forest2")
+        if moving_platform and has_texture("moving_platform"):
+            connector_modes.append("moving_platform")
+        if not connector_modes:
+            return
 
         main_slots = []
         tier_idx = min(tier_max_idx, max(tier_min_idx, tier_min_idx + (tier_max_idx - tier_min_idx) // 2))
@@ -250,18 +251,18 @@ def start(game: Game):
 
         x_cursor = playable_start + rd.randint(0, 30)
         while x_cursor < playable_end - 60:
-            texture_key = rd.choice(main_platform_keys)
-            tex_w, _ = texture_size(texture_key)
-
-            target_width = rd.randint(180, 290)
-            if texture_key == "bridge_plank":
-                target_width += rd.randint(20, 70)
-
-            tiles_x = max(2, int(round(target_width / max(1, tex_w))))
+            plat_width = rd.randint(50, 200)
             y_slot = tiers[tier_idx] + rd.randint(-10, 10)
             y_slot = max(safe_min_y, min(safe_max_y, y_slot))
 
-            _, width, height = add_scaled_solid(x_cursor, y_slot, texture_key, tiles_x=tiles_x)
+            _, width, height = add_custom_solid(
+                x_cursor,
+                y_slot,
+                plat_width,
+                30,
+                "platform_forest",
+                rescale=False,
+            )
             main_slots.append({"x": int(x_cursor), "y": int(y_slot), "w": int(width), "h": int(height)})
 
             x_cursor += max(180, main_step + rd.randint(-main_jitter, main_jitter))
@@ -279,7 +280,10 @@ def start(game: Game):
         if not main_slots:
             return
 
-        # Relier les grandes plateformes pour garder une progression jouable.
+        anchor_stride = 2 if spawn_density >= 0.5 else 3
+        anchor_offset = rd.randint(0, anchor_stride - 1)
+
+        # Relier les grandes plateformes avec les connecteurs demandes.
         for i in range(len(main_slots) - 1):
             left_slot = main_slots[i]
             right_slot = main_slots[i + 1]
@@ -291,24 +295,75 @@ def start(game: Game):
             if gap < 120 and vertical_gap < 90:
                 continue
 
-            texture_key = rd.choice(connector_keys)
-            tex_w, _ = texture_size(texture_key)
-            max_bridge_width = max(70, gap - 36)
-            target_bridge_width = min(max_bridge_width, max(90, int(gap * 0.70)))
-            tiles_x = max(1, int(round(target_bridge_width / max(1, tex_w))))
-            bridge_width = tex_w * tiles_x
-
-            if bridge_width >= gap - 24:
-                tiles_x = max(1, (gap - 28) // max(1, tex_w))
-                bridge_width = tex_w * tiles_x
-            if tiles_x <= 0:
-                continue
-
-            bridge_x = left_slot["x"] + left_slot["w"] + max(8, (gap - bridge_width) // 2)
-            bridge_y = int((left_slot["y"] + right_slot["y"]) / 2) + rd.randint(-12, 12)
+            connector_mode = rd.choice(connector_modes)
+            bridge_y = int((left_slot["y"] + right_slot["y"]) / 2) + rd.randint(-8, 8)
             bridge_y = max(safe_min_y, min(safe_max_y, bridge_y))
 
-            add_scaled_solid(bridge_x, bridge_y, texture_key, tiles_x=tiles_x)
+            if connector_mode == "moving_platform" and moving_platform and has_texture("moving_platform"):
+                mp_width = 100
+                mp_height = 15
+                min_x = left_slot["x"] + left_slot["w"] + 12
+                max_x = right_slot["x"] - mp_width - 12
+                if max_x - min_x >= 36:
+                    mp = Solid((min_x, bridge_y), (mp_width, mp_height))
+                    mp.set_texture(textures["moving_platform"], rescale=True)
+                    moving_platforms.append({
+                        "solid": mp,
+                        "axis": "x",
+                        "speed": round(rd.uniform(0.55, 1.05), 2),
+                        "direction": 1,
+                        "min_x": min_x,
+                        "max_x": max_x,
+                        "_current": float(min_x),
+                    })
+                    scene.add(mp, "#object")
+
+                if anchor and has_texture("industrial_tile") and i % anchor_stride == anchor_offset:
+                    anchor_w, anchor_h = (25, 25)
+                    anchor_x = left_slot["x"] + left_slot["w"] + max(8, gap // 2 - anchor_w // 2)
+                    anchor_y = max(safe_min_y - 50, bridge_y - rd.randint(60, 110))
+                    anchor_obj, _, _ = add_custom_solid(
+                        anchor_x,
+                        anchor_y,
+                        anchor_w,
+                        anchor_h,
+                        "industrial_tile",
+                        rescale=True,
+                    )
+                    anchor_obj.add_tag("anchor")
+                continue
+
+            if connector_mode == "platform-forest1":
+                piece_w, piece_h = (99, 78)
+            else:
+                piece_w, piece_h = (50, 33)
+
+            if gap < piece_w + 16:
+                continue
+
+            piece_count = max(1, min(6, int(gap / (piece_w + 18))))
+            spacing = max(8, int((gap - piece_count * piece_w) / (piece_count + 1)))
+            x_piece = left_slot["x"] + left_slot["w"] + spacing
+
+            for _ in range(piece_count):
+                if x_piece + piece_w >= right_slot["x"]:
+                    break
+                add_custom_solid(x_piece, bridge_y, piece_w, piece_h, connector_mode, rescale=True)
+                x_piece += piece_w + spacing
+
+            if anchor and has_texture("industrial_tile") and i % anchor_stride == anchor_offset:
+                anchor_w, anchor_h = (25, 25)
+                anchor_x = left_slot["x"] + left_slot["w"] + max(8, gap // 2 - anchor_w // 2)
+                anchor_y = max(safe_min_y - 50, bridge_y - rd.randint(60, 110))
+                anchor_obj, _, _ = add_custom_solid(
+                    anchor_x,
+                    anchor_y,
+                    anchor_w,
+                    anchor_h,
+                    "industrial_tile",
+                    rescale=True,
+                )
+                anchor_obj.add_tag("anchor")
 
         if wall and has_texture("wall"):
             wall_w, wall_h = texture_size("wall")
@@ -350,45 +405,6 @@ def start(game: Game):
                     continue
                 tree_x = slot["x"] + rd.randint(2, max(2, slot["w"] - tree1_w - 2))
                 add_scaled_decor("tree1", tree_x, slot["y"] + 2, align_bottom=True)
-
-        if moving_platform and has_texture("moving_platform") and len(main_slots) > 1:
-            mp_tex_w, mp_tex_h = texture_size("moving_platform")
-            mp_tiles_w = 2 if mp_tex_w < 70 else 1
-            mp_w = mp_tex_w * mp_tiles_w
-            moving_stride = 3
-            moving_offset = rd.randint(0, moving_stride - 1)
-
-            for idx in range(len(main_slots) - 1):
-                if idx % moving_stride != moving_offset:
-                    continue
-
-                left_slot = main_slots[idx]
-                right_slot = main_slots[idx + 1]
-                gap = right_slot["x"] - (left_slot["x"] + left_slot["w"])
-                if gap < mp_w + 30:
-                    continue
-
-                mp_x = left_slot["x"] + left_slot["w"] + (gap - mp_w) // 2
-                base_y = int((left_slot["y"] + right_slot["y"]) / 2) + rd.randint(-10, 10)
-                base_y = max(safe_min_y + 8, min(floor_y - mp_tex_h - 24, base_y))
-
-                min_y_mp = max(safe_min_y, base_y - rd.randint(80, 145))
-                max_y_mp = min(floor_y - mp_tex_h - 8, base_y + rd.randint(75, 130))
-                if max_y_mp - min_y_mp < 70:
-                    continue
-
-                mp = Solid((mp_x, base_y), (mp_w, mp_tex_h))
-                mp.set_texture(textures["moving_platform"], rescale=True)
-                moving_platforms.append({
-                    "solid": mp,
-                    "axis": "y",
-                    "speed": round(rd.uniform(0.40, 0.85), 2),
-                    "direction": rd.choice([-1, 1]),
-                    "min_y": min_y_mp,
-                    "max_y": max_y_mp,
-                    "_current": float(base_y),
-                })
-                scene.add(mp, "#object")
 
         if rain_collector and has_texture("rain_collector"):
             rain_w, rain_h = texture_size("rain_collector")
