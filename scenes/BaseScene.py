@@ -10,6 +10,8 @@ from api.environment.Solid import Solid
 from api.environment.Trigger import TriggerInteract
 from api.utils import Debug
 
+import pygame as pg
+
 from api.utils.Console import print_info
 from game.Variables import *
 
@@ -224,7 +226,7 @@ def start(game: Game):
         game.audio_manager.play_music("titleScreen")
 
 
-    ground = Solid((0,270), (640,360))
+    ground = Solid((0,270), (640,10))
     left_wall = Solid((-50,0),(50,360))
     right_wall = Solid((640,0),(50,360))
     scene.add(left_wall, "#objects")
@@ -232,7 +234,6 @@ def start(game: Game):
     scene.add(ground, "#objects")
 
     player = Player((288, 174), (32, 64))
-
 
     player.bind_animations(
         {
@@ -267,6 +268,9 @@ def start(game: Game):
     scene.add(player, "#player")"""
 
 def update(game: Game):
+    if player.pos.y > 175:  # If player falls through the ground, reset position
+        player.pos = pg.Vector2(288, 174)
+        player.vel = pg.Vector2(0, 0)
     Debug.register_debug_entity(game, player)
 
 

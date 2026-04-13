@@ -6,18 +6,7 @@ from game.scripts.history import start_game
 from game.scripts.scene_manager import *
 
 def end_level(game: Game):
-    if(game.scene.name == "Level1Scene"):
-        if story["current_chapter"] == 0:
-            story["current_chapter"] = 1
-    elif(game.scene.name == "Level2Scene"):
-        if story["current_chapter"] == 1:
-            story["current_chapter"] = 2
-    elif(game.scene.name == "Level3Scene"):
-        if story["current_chapter"] == 2:
-            story["current_chapter"] = 3
-    elif(game.scene.name == "BossLevelScene"):
-        if story["current_chapter"] == 3:
-            story["current_chapter"] = 4
+    story["current_chapter"] += 1
     load_scene("BaseScene", game)
 
 def register_events(game: Game):
