@@ -129,7 +129,7 @@ def start(game: Game):
 
     collections += [Solid((section1_start + 340, 168), (45, 27)).set_texture(game.RESSOURCES["textures"]["tree_stump"])]
     rain_secret0 = TriggerInteract(
-        (section1_start + 345, 136), (32, 32), ["player"],
+        (section1_start + 345, 128), (48, 48), ["player"],
         [lambda obj: refill_water(p, game)]
     )
     rain_secret0.set_texture(game.RESSOURCES["textures"]["rain_collector"])
@@ -146,7 +146,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol1", dialog_ecol1)
     sign1 = TriggerInteract(
-        (section1_start + 55, 268), (24, 32), ["player"],
+        (section1_start + 55, 270), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol1")]
     )
     sign1.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -165,10 +165,10 @@ def start(game: Game):
         "active": game.RESSOURCES["textures"]["trap_active"],
     })
     scene.add(trap1, "#object")
-    
+
     ### Collecteur de pluie #1 
     rain1 = TriggerInteract(
-        (section1_start + 640, 268), (32, 32), ["player"],
+        (section1_start + 632, 252), (48, 48), ["player"],
         [lambda obj: refill_water(p, game)]
     )
     rain1.set_texture(game.RESSOURCES["textures"]["rain_collector"])
@@ -250,7 +250,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol2", dialog_ecol2)
     sign2 = TriggerInteract(
-        (section2_end - 60, 253), (24, 32), ["player"],
+        (section2_end - 60, 255), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol2")]
     )
     sign2.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -293,7 +293,7 @@ def start(game: Game):
     )
     scene.UI.add("story1", dialog_story1)
     sign_story1 = TriggerInteract(
-        (cp1_x + 240, 268), (24, 32), ["player"],
+        (cp1_x + 240, 270), (32, 32), ["player"],
         [lambda obj: scene.UI.show("story1")]
     )
     sign_story1.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -340,7 +340,7 @@ def start(game: Game):
 
     collections += [Solid((section3_start + 385, 105), (65, 15)).set_texture(game.RESSOURCES["textures"]["checkpoint_ground"])]
     rain_secret1 = TriggerInteract(
-        (section3_start + 390, 73), (32, 32), ["player"],
+        (section3_start + 382, 57), (48, 48), ["player"],
         [lambda obj: refill_water(p, game)]
     )
     rain_secret1.set_texture(game.RESSOURCES["textures"]["rain_collector"])
@@ -393,7 +393,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol3", dialog_ecol3)
     sign3 = TriggerInteract(
-        (section3_start + 755, 228), (24, 32), ["player"],
+        (section3_start + 755, 230), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol3")]
     )
     sign3.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -401,7 +401,7 @@ def start(game: Game):
 
     #### Collecteur de pluie #2
     rain2 = TriggerInteract(
-        (section3_start + 170, 178), (32, 32), ["player"],
+        (section3_start + 162, 162), (48, 48), ["player"],
         [lambda obj: refill_water(p, game)]
     )
     rain2.set_texture(game.RESSOURCES["textures"]["rain_collector"])
@@ -498,7 +498,7 @@ def start(game: Game):
 
     ####### Collecteur de pluie #3
     rain3 = TriggerInteract(
-        (section5_start + 640, 223), (32, 32), ["player"],
+        (section5_start + 632, 207), (48, 48), ["player"],
         [lambda obj: refill_water(p, game)]
     )
     rain3.set_texture(game.RESSOURCES["textures"]["rain_collector"])
@@ -515,7 +515,7 @@ def start(game: Game):
     )
     scene.UI.add("ecol4", dialog_ecol4)
     sign4 = TriggerInteract(
-        (section5_start + 900, 200), (24, 32), ["player"],
+        (section5_start + 900, 202), (32, 32), ["player"],
         [lambda obj: scene.UI.show("ecol4")]
     )
     sign4.set_texture(game.RESSOURCES["textures"]["sign"])
@@ -536,7 +536,7 @@ def start(game: Game):
     )
     scene.UI.add("story2", dialog_story2)
     sign_story2 = TriggerInteract(
-        (section5_start + 450, 223), (24, 32), ["player"],
+        (section5_start + 450, 225), (32, 32), ["player"],
         [lambda obj: scene.UI.show("story2")]
     )
     sign_story2.set_texture(game.RESSOURCES["textures"]["sign"])
