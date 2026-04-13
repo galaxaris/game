@@ -197,10 +197,14 @@ def start(game: Game):
         def add_anchor_decor(x: int, y: int):
             if not (anchor and has_texture("industrial_tile")) and x >= x_start + 450:
                 return None
-            anchor_obj = Solid((int(x), int(y)), (25, 25))
-            anchor_obj.set_texture(textures["industrial_tile"], rescale=True)
+            anchor_obj = Solid((int(x-3), int(y-3)), (32, 32))
             anchor_obj.add_tag("anchor")
+            anchor_obj.set_texture(game.RESSOURCES["textures"]["hook"])
             collections.append(anchor_obj)
+
+            chain = GameObject((int(x-3), int(y-504-3)), (32, 504))
+            chain.set_texture(game.RESSOURCES["textures"]["chain"])
+            collections.append(chain)
             return anchor_obj
 
         def add_platform_staircase(

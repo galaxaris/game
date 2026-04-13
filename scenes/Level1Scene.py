@@ -127,18 +127,26 @@ def start(game: Game):
     new_obj.set_texture(game.RESSOURCES["textures"]["platform_forest"])
     scene.add(new_obj)
 
-    new_obj = Solid((2250, 320), (25, 25))
-    new_obj.set_texture(Texture(0, 0, is_missing=True))
+    new_obj = Solid((2250, 314), (32, 32))
     new_obj.add_tag("anchor")
+    new_obj.set_texture(game.RESSOURCES["textures"]["hook"])
+    scene.add(new_obj)
+
+    new_obj = Solid((2250, -50), (32, 314))
+    new_obj.set_texture(game.RESSOURCES["textures"]["chain"])
     scene.add(new_obj)
 
     new_obj = Solid((2550, 310), (275, 300))
     new_obj.set_texture(game.RESSOURCES["textures"]["platform_forest"])
     scene.add(new_obj)
 
-    new_obj = Solid((2595, 220), (25, 25))
-    new_obj.set_texture(Texture(0, 0, is_missing=True))
+    new_obj = Solid((2595, 220), (32, 32))
     new_obj.add_tag("anchor")
+    new_obj.set_texture(game.RESSOURCES["textures"]["hook"])
+    scene.add(new_obj)
+
+    new_obj = Solid((2595, -50), (32, 220))
+    new_obj.set_texture(game.RESSOURCES["textures"]["chain"])
     scene.add(new_obj)
 
     dialog_melanie = make_story_dialog(

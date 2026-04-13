@@ -8,6 +8,8 @@
         "checkpoint_ground": "Terrain/beach_sand.png",
         "wall": "Terrain/wall.png",
         "sign": "Objects/sign.png",
+        "hook": "Objects/hook.png",
+        "chain": "Objects/chain.png",
 
         "tree1": "Terrain/tree1.png",
         "tree2": "Terrain/tree2-little.png",
