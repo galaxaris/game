@@ -35,3 +35,9 @@ THIS DOCUMENT AUTHORIZES YOU TO USE THE GAME ROBOT RECOVERY (V. 1.0).
 
 - _Copyright © 2026 Galaxaris & Associates. All rights reserved._
 - All other copyrights and trademarks are properties of their respective owners.
+
+---
+
+- Galaxaris has made every effort to use resources, images, 2D assets, sounds, and other assets, that are entirely free of copyright. Licensed products that must be credited are. In the event of an oversight or unintentional error, Galaxaris apologizes and is prepared to consider any claims.
+
+- All other resources have been created by Galaxaris & Associates and are subject to copyright (in accordance with article L. 111-1 of the French Intellectual Property Code: "the author of a work of the mind enjoys, by the mere fact of its creation, an exclusive incorporeal property right enforceable against all. This right comprises attributes of an intellectual and moral nature as well as attributes of an economic nature").
