@@ -4,7 +4,7 @@
 
 ----
 
-<img src="assets/Images/icon.png" alt="Hogwarts Game Logo" width="100"/>
+<img src="assets/Images/icon.png" alt="Galaxaris Logo" width="100"/>
 
 <!-- TEST2 -->
 # ✨ Robot Recovery ✨
@@ -50,12 +50,11 @@ The _Omicronde Project_ is platformer video game project. Intended for children 
 
 You will play a little robot responsible for cleaning up the planet and fighting pollution. You will explore different environments, solve mysteries, and fight bosses to save the world!
 
-**Still in development (Beta)! This is, for now, a demo of the Game Engine (based on the _Omicronde API_).**
 
 -----------------------------
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+Copyright © 2026 Galaxaris & Associates. All rights reserved.
 
 **You can read the License in the LICENSE file:
 [[LICENSE](LICENSE)]**
