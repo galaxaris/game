@@ -4,7 +4,7 @@
 
 ----
 
-<img src="assets/Images/icon.png" alt="Galaxaris Logo" width="100"/>
+<img src="assets/Images/icon.png" alt="Galaxaris Logo" width="100"/><span style="margin-left: 40px;"></span><img src="Logo-Robot-recovery.png" alt="Robot Recovery Screenshot" width="100"/>
 
 <!-- TEST2 -->
 # ✨ Robot Recovery ✨
